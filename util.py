@@ -1,5 +1,32 @@
 
+""""
+gin usage
 
+
+congig.gin
+
+import use_gin
+my_other_func.a = -2.9
+my_other_func.b = 9.3
+
+# Comments!
+my_other_func.c = 'Oh, Dear.'
+test.py
+
+import gin
+gin.parse_config_file('config.gin')
+import use_gin
+print(use_gin.my_other_func())
+use_gin.py
+
+import gin
+@gin.configurable
+def my_other_func(a, b, c):
+  return a, b, c
+
+
+
+"""
 def config_load(config_path:str = None, 
                 path_default:str=None, 
                 config_default:dict=None):
