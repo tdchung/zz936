@@ -1,6 +1,8 @@
 
 
-def config_load(config_path: Optional[Union[str, pathlib.Path]] = None):
+def config_load(config_path:str = None, 
+                path_default:str=None, 
+                config_default:dict=None):
     """Load Config file into a dict
     1) load config_path
     2) If not, load in HOME USER
@@ -9,39 +11,61 @@ def config_load(config_path: Optional[Union[str, pathlib.Path]] = None):
         config_path: path of config or 'default' tag value
     Returns: dict config
     """
-    path_default = pathlib.Path.home() / ".mygenerator"
+    import json, yaml
+    from Path import pathlib
+
+    path_default        = pathlib.Path.home() / ".mygenerator" if path_default is None else path_default
     config_path_default = path_default / "config.yaml"
+    if config_default is None :
+        config_default = {
+            "current_dataset": "mnist",
+            "datasets": {
+                "mnist": {
+                    "url": "/mnist_png.tar.gz",
+                    "path": ""),
+                }
+            },
+        }
 
+    #####################################################################
     if config_path is None or config_path == "default":
-        logw(f"Using config: {config_path_default}")
+        log(f"Using config: {config_path_default}")
         config_path = config_path_default
-
+    else :
+        config_path = pathlib.Path(config_path)
+        
     try:
-        log2("loading config", config_path)
-        return yaml.load(config_path.read_text(), Loader=yaml.Loader)
+        log("loading config", config_path)
+        if ".yaml" in config_path :
+            cfg = yaml.load(config_path.read_text(), Loader=yaml.Loader)
+            dd = {}
+            for x in cfg :   ### Map to dict
+                for key,val in x.items():
+                   dd[key] = val
+            return cfg
+
+        if ".json" in config_path :
+           return json.load(config_path.read_text())
 
     except Exception as e:
-        logw(f"Cannot read yaml file {config_path}", e)
+        log(f"Cannot read yaml/json file {config_path}", e)
 
-    logw("#### Using default configuration")
-    config_default = {
-        "current_dataset": "mnist",
-        "datasets": {
-            "mnist": {
-                "url": "https://github.com/arita37/mnist_png/raw/master/mnist_png.tar.gz",
-                "path": str(path_default / "mnist_png" / "training"),
-            }
-        },
-    }
-    log2(config_default)
 
+    log("#### Using default configuration")
+    log(config_default)
     log(f"Creating config file in {config_path_default}")
     os.makedirs(path_default, exist_ok=True)
     with open(config_path_default, mode="w") as fp:
-        json.dump(config_default, fp)
+        yaml.dump(config_default, fp)
     return config_default
 
 
+class to_namespace(object):
+    ### Dict into Namespace
+    def __init__(self, d):
+        self.__dict__ = d
+        
+  
   
   
   
@@ -259,12 +283,7 @@ def config_load(config_path:str='config.yaml'):
 
 
 ##########################################################################################
-class to_namespace(object):
-    ### Dict into Namespace
-    def __init__(self, d):
-        self.__dict__ = d
-        
-  
+
 
   
   
