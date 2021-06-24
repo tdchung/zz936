@@ -27,6 +27,33 @@ def my_other_func(a, b, c):
 
 
 """
+
+
+
+def example_gin():
+  import ginin
+  
+  name = "prod/config_gin"
+  
+  gin.parse_config_file( f"config/{name}" )
+  """
+  ### config/config_gin.gin
+  myfun.a1 = [1,2,3]
+  myfun.a3 = True
+
+
+
+  """
+
+  @gin.configurable
+  def myfun(a1=1,a2=2):
+     return a1,a2
+
+
+
+  
+  
+
 def config_load(config_path:str = None, 
                 path_default:str=None, 
                 config_default:dict=None):
