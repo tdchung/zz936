@@ -54,9 +54,10 @@ def example_gin():
   
   
 
-def config_load(config_path:str = None, 
-                path_default:str=None, 
-                config_default:dict=None):
+def config_load(config_path:str = None,
+                path_default:str=None,
+                config_default:dict=None,
+                save_default=False):
     """Load Config file into a dict
     1) load config_path
     2) If not, load in HOME USER
@@ -65,52 +66,52 @@ def config_load(config_path:str = None,
         config_path: path of config or 'default' tag value
     Returns: dict config
     """
-    import json, yaml
-    from Path import pathlib
-
-    path_default        = pathlib.Path.home() / ".mygenerator" if path_default is None else path_default
+    import json, yaml, pathlib
+    path_default        = pathlib.Path.home() / ".myconfig" if path_default is None else path_default
     config_path_default = path_default / "config.yaml"
     if config_default is None :
         config_default = {
-            "current_dataset": "mnist",
-            "datasets": {
-                "mnist": {
-                    "url": "/mnist_png.tar.gz",
-                    "path": ""),
-                }
-            },
+            "current_dataset": "",
+            "datasets": {}
         }
 
     #####################################################################
     if config_path is None or config_path == "default":
-        log(f"Using config: {config_path_default}")
+        log(f"Using config: {config_path_default}" )
         config_path = config_path_default
     else :
         config_path = pathlib.Path(config_path)
-        
+
     try:
         log("loading config", config_path)
-        if ".yaml" in config_path :
-            cfg = yaml.load(config_path.read_text(), Loader=yaml.Loader)
+        if config_path.endswith(".yaml") :
+            cfg = yaml.safe_load(config_path.read_text())
             dd = {}
             for x in cfg :   ### Map to dict
                 for key,val in x.items():
                    dd[key] = val
             return cfg
 
-        if ".json" in config_path :
-           return json.load(config_path.read_text())
+        elif config_path.endswith(".json") :
+           return json.loads(config_path.read_text())
+
+        elif config_path.endswith(".properties") or config_path.endswith(".ini") :
+           from configparser import SafeConfigParser
+           cfg = SafeConfigParser()
+           cfg.read(str(config_path))
+           return cfg  ### Can be used as dict
 
     except Exception as e:
         log(f"Cannot read yaml/json file {config_path}", e)
 
-
+    #####################################################################
     log("#### Using default configuration")
     log(config_default)
-    log(f"Creating config file in {config_path_default}")
-    os.makedirs(path_default, exist_ok=True)
-    with open(config_path_default, mode="w") as fp:
-        yaml.dump(config_default, fp)
+    if save_default:
+        log(f"Creating config file in {config_path_default}")
+        os.makedirs(path_default, exist_ok=True)
+        with open(config_path_default, mode="w") as fp:
+            yaml.dump(config_default, fp)
     return config_default
 
 
