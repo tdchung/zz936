@@ -177,11 +177,166 @@ def config_validate(config_dict:dict = None,
             yaml.dump(config_default, fp)
     return config_default
 
-####################################################################################
-####################################################################################
 
 
 
+
+
+
+
+
+###########################################################################################################
+###########################################################################################################
+def logger_setup(log_level:str=None, log_format:str=None, log_config_path:str=None,
+    backtrace=True, diagnose=True):
+    """ Generic Logging setup
+     logger.add(log_file_name,level=level,format=format, 
+        rotation="30 days", filter=None, colorize=None, serialize=False, backtrace=True, enqueue=False, catch=True)
+      Overried logging using loguru setup
+      1) Default Config using log_level and log_format.
+      2) Custom config from log_config_path .yaml file
+      3) Use shortname log, log2, logw, loge for logging output
+
+
+      log_config.yaml
+
+        log_level : INFO
+
+        log_format : format0
+        handlers :
+            handle1:
+               sinK : std.out
+               format : format1
+
+
+
+        format_dict:
+              'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
+              'format1': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
+              'format2': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+              'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",     
+
+
+    """
+    import logging, sys
+    from pprint import pformat
+    # from loguru import logger
+    from loguru._defaults import LOGURU_FORMAT
+    import yaml 
+
+    cfg        = yaml.safe_load(log_config_path) if log_config_path is not None else {}
+
+    ########## Log: init variable  ################################################
+    log_level  = log_level  if log_level  is not None else cfg.get('log_level', 'INFO')
+    log_format = log_format if log_format is not None else cfg.get('log_format', 'format0')
+
+
+    ########## Log: Format  ######################################################
+    format_dict = {
+      'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
+      'format1': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
+      'format2': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+      'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+
+
+    }
+    format_dict   = cfg.get('format_dict', format_dict)
+    LOGURU_FORMAT = fmt_dict[log_format]
+
+
+    ##############################################################################  
+    class loggingInterceptHandler(logging.Handler):
+        """Logs to loguru from Python logging module"""
+        def emit(self, record: logging.LogRecord) -> None:
+            try:
+                level = logger.level(record.levelname).name
+            except ValueError:
+                level = str(record.levelno)
+
+            frame, depth = logging.currentframe(), 2
+            while frame.f_code.co_filename == logging.__file__:  # noqa: WPS609
+                # frame = cast(FrameType, frame.f_back)
+                frame = frame.f_back
+                depth += 1
+            logger.opt(depth=depth, exception=record.exc_info).log( level, record.getMessage(),)
+
+
+    def format_record_custom(record: dict) -> str:
+        """ Custom format for loguru loggers.
+        Uses pformat for log any data like request/response body during debug. Works with logging if loguru handler it.
+        Example:
+        >>> payload = [{"users":[{"name": "Nick", "age": 87, "is_active": True}, {"name": "Alex", "age": 27, "is_active": True}], "count": 2}]
+        >>> logger.bind(payload=).debug("users payload")
+        >>> [   {   'count': 2,
+        >>>         'users': [   {'age': 87, 'is_active': True, 'name': 'Nick'},
+        >>>                      {'age': 27, 'is_active': True, 'name': 'Alex'}]}]
+        """
+        format_string = LOGURU_FORMAT
+        if record["extra"].get("payload") is not None:
+            record["extra"]["payload"] = pformat( record["extra"]["payload"], indent=4, compact=True, width=88
+            )
+            format_string += "\n<level>{extra[payload]}</level>"
+
+        format_string += "{exception}\n"
+        return format_string
+
+
+    def handler_custom():
+        """Determines the file to write log to.
+        The format of the filename is   The log file is stored in the 'data/log' directory.
+        """
+        data_root              = Path(__file__).resolve().parent / "data/log"
+        today                  = datetime.now().strftime("%Y%m")
+        data_file              = "{}.log".format(datetime.now().strftime("%Y%m%d"))
+        data_dir               = data_root / today
+        data_dir.mkdir(parents = True, exist_ok=True)
+        dst                    = data_dir / data_file
+        logger.remove()
+        logger.add(str(dst), format="[{level} {time:YYYY-MM-DD HH:mm:ss:SSS}] {message}")
+
+
+    def get_handlers(ddict):
+        return ddict
+
+
+    def loguru_setup():
+        # intercept everything at the root logger
+        logging.root.handlers = [ loggingInterceptHandler()]
+        logging.root.setLevel(log_level)
+
+        # Remove every other logger's handlers and propagate to root logger
+        for name in logging.root.manager.loggerDict.keys():
+            logging.getLogger(name).handlers = []
+            logging.getLogger(name).propagate = True
+
+        # configure loguru  from Config File  
+        handlers_default = [
+             {   "sink": sys.stdout, "level": logging.DEBUG,  # "format": format_record_custom,
+                 "format": "format1"   },
+             {   "sink": sys.stderr, "level": logging.DEBUG,  "format": "format1"   },
+        ]
+        handlers = get_handlers(cfg.get('handlers', None))
+
+
+        if handlers is None :
+            logger.configure( handlers= handlers_default ,  backtrace=backtrace, diagnose=diagnose )            
+            logger.level("TIMEIT", no=22, color="<cyan>")
+        else :
+            logger.configure( handlers= handlers_default,  backtrace=backtrace, diagnose=diagnose  ) 
+        
+
+        loguru_setup()
+
+
+
+##### Usage   
+from loguru import logger
+logger_setup(log_level='INFO', log_format='format1', log_config_path:str=None)
+def log(*s):  logger.info(",".join([str(t) for t in s]))
+def log2(*s): logger.debug(",".join([str(t) for t in s]))
+def logw(*s): logger.warning(",".join([str(t) for t in s]))
+def logc(*s): logger.critical(",".join([str(t) for t in s]))
+def loge(*s): logger.error(",".join([str(t) for t in s]))
 
 
 
