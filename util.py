@@ -1,4 +1,216 @@
 
+
+
+####################################################################################
+####################################################################################
+def config_load(config_path:str = None,
+                path_default:str=None,
+                config_default:dict=None,
+                save_default:bool=False,
+                as_dataclass:True
+                ):
+    """Load Config file into a dict
+    1) load config_path
+    2) If not, load in USER/.myconfig/.config.yaml
+    3) If not, create default save in USER/.myconfig/.config.yaml
+    Args:
+        config_path:   path of config or 'default' tag value
+        path_default : path of default config
+        config_default: dict value of default config
+        save_default: save default config on disk 
+    Returns: dict config
+    """
+    import json, yaml, pathlib
+
+    #########Default value setup ###########################################
+    path_default        = pathlib.Path.home() / ".myconfig" if path_default is None else path_default
+    config_path_default = path_default / "config.yaml"
+    if config_default is None :
+        config_default = {
+            "field1": "",
+            "field2": {}
+        }
+
+    #########Config path setup #############################################
+    if config_path is None or config_path == "default":
+        log(f"Config: Using {config_path_default}" )
+        config_path = config_path_default
+    else :
+        config_path = pathlib.Path(config_path)
+
+    ######### Load Config ##################################################
+    try:
+        log("Config: Loading ", config_path)
+        if config_path.endswith(".yaml") :
+            cfg = yaml.safe_load(config_path.read_text())
+            dd  = {}
+            for x in cfg :   ### Map to dict
+                for key,val in x.items():
+                   dd[key] = val
+            return cfg
+
+        elif config_path.endswith(".json") :
+           cfg = json.loads(config_path.read_text())
+
+        elif config_path.endswith(".properties") or config_path.endswith(".ini") :
+           from configparser import SafeConfigParser
+           cfg = SafeConfigParser()
+           cfg.read(str(config_path))
+
+        elif config_path.endswith(".toml") :
+           import toml 
+           cfg = toml.loads(config_path.read_text())
+
+        else :
+           raise Exception( f'not supported file {config_path}')   
+
+        class to_namespace(object):
+            ### Dict into Namespace
+            def __init__(self, d):
+                self.__dict__ = d
+
+        if to_dataclass :   ### myconfig.val  , myconfig.val2
+            return to_namespace(cfg)
+        return cfg
+
+
+    except Exception as e:
+        log(f"Config: Cannot read file {config_path}", e)
+
+    ######################################################################
+    log("Config: Using default config")
+    log(config_default)
+    if save_default:
+        log(f"Config: Writingg config in {config_path_default}")
+        os.makedirs(path_default, exist_ok=True)
+        with open(config_path_default, mode="w") as fp:
+            yaml.dump(config_default, fp)
+    return config_default
+
+
+
+def config_validate(config_dict:dict = None,
+                    config_validate_dict:dict=None,)
+    #config_validate_path:=None,):
+    """Validate configuration based on template type validator
+
+        cfg_validator = {
+      'f1' :{
+         'v1':  'int,<=10,>=0',
+         'v2':  'float,>-1.0,<100.5',
+         'v3':  'bool',
+         'v3':  'enum,one|two|three|',
+         'v4':  'list',
+         'v5':  'dict'
+      }
+    }
+    Returns: dict config
+    """
+    import json, yaml, pathlib
+
+
+    def is_valid(x, rules_str):
+
+      r1    = rules_str.split(",")[0]
+      type1 = r1[0]
+
+      if type1 == 'bool':
+        return isinstance(x, bool)
+
+      elif type1 == 'int':
+        if isinstance(x, float) :
+            if len(r1)>=1 :
+                res = eval( f"{x}{r1[1]}")
+                if res and len(r1)>=2 :
+                   res2 = eval( f"{x}{r1[2]}")
+                   return res2
+                else :
+                   return res
+            else :
+                return True            
+
+
+      elif type1 == 'float':
+          if isinstance(x, float) :
+            if len(r1)>=1 :
+                res = eval( f"{x}{r1[1]}")
+                if res and len(r1)>=2 :
+                   res2 = eval( f"{x}{r1[2]}")
+                   return res2
+                else :
+                   return res
+            else :
+                return True       
+                      
+          return False 
+      else :
+        return True
+
+
+    #### Recursively parse a dict  ########################################
+    cfg_val = {
+
+      'f1' :{
+         'v1':  'int,<=10,>=0',
+         'v2':  'float,>-1.0,<100.5',
+         'v3':  'bool',
+         'v3':  'enum,one|two|three|',
+         'v4':  'list',
+         'v5':  'dict'
+      }
+    }
+    
+    cfg_list = to_list(config_dict)
+
+    for i, (key,val) in enumerate(cfg_list):
+       rulei = cfg_validate[key]
+       assert is_valid(val, rulei) , f'{i}, {key}, {val} invalid: {rulei}'
+
+
+    #######################################################################
+    log("Config: Using default config")
+    log(config_default)
+    if save_default:
+        log(f"Config: Writingg config in {config_path_default}")
+        os.makedirs(path_default, exist_ok=True)
+        with open(config_path_default, mode="w") as fp:
+            yaml.dump(config_default, fp)
+    return config_default
+
+####################################################################################
+####################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """"
 gin usage
 
