@@ -187,7 +187,7 @@ def config_validate(config_dict:dict = None,
 
 ###########################################################################################################
 ###########################################################################################################
-def logger_setup(log_level:str=None, log_format:str=None, log_config_path:str=None,
+def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=None,
     backtrace=True, diagnose=True):
     """ Generic Logging setup
      logger.add(log_file_name,level=level,format=format, 
@@ -227,11 +227,11 @@ def logger_setup(log_level:str=None, log_format:str=None, log_config_path:str=No
     cfg        = yaml.safe_load(log_config_path) if log_config_path is not None else {}
 
     ########## Log: init variable  ################################################
-    log_level  = log_level  if log_level  is not None else cfg.get('log_level', 'INFO')
-    log_format = log_format if log_format is not None else cfg.get('log_format', 'format0')
-
+    log_level    = log_level  if log_level  is not None else cfg.get('log_level', 'INFO')
+    log_template = log_template if log_template is not None else 'template0'
 
     ########## Log: Format  ######################################################
+    log_format = 'format0'
     format_dict = {
       'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
       'format1': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
@@ -332,11 +332,21 @@ def logger_setup(log_level:str=None, log_format:str=None, log_config_path:str=No
 ##### Usage   
 from loguru import logger
 logger_setup(log_level='INFO', log_format='format1', log_config_path:str=None)
-def log(*s):  logger.info(",".join([str(t) for t in s]))
-def log2(*s): logger.debug(",".join([str(t) for t in s]))
-def logw(*s): logger.warning(",".join([str(t) for t in s]))
-def logc(*s): logger.critical(",".join([str(t) for t in s]))
-def loge(*s): logger.error(",".join([str(t) for t in s]))
+
+def log(*s):  
+  return logger.info(",".join([str(t) for t in s]))
+
+def log2(*s): 
+  return logger.debug(",".join([str(t) for t in s]))
+
+def logw(*s): 
+  return logger.warning(",".join([str(t) for t in s]))
+
+def logc(*s): 
+  return logger.critical(",".join([str(t) for t in s]))
+
+def loge(*s): 
+  return logger.error(",".join([str(t) for t in s]))
 
 
 
