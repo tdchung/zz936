@@ -1,8 +1,9 @@
 parent:
-  name: 'Andrew'
-  age: 45
-  childrens:
-    - name: 'Jane'
-      age: 12
-    - name: 'Joanna'
-      age: 13
+  name: str()
+  age: int()
+  children: list(include('child'))
+
+---
+child:
+  name: str()
+  age: str()

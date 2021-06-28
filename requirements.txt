@@ -2,3 +2,5 @@ python-box
 pydantic
 pyyaml
 json2python-models
+yamale
+python-box

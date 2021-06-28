@@ -4,6 +4,7 @@ import pathlib
 import subprocess
 
 import yaml
+from box import Box
 
 
 def validate_yaml(yaml_path: str, template_path: str) -> None:
@@ -50,6 +51,36 @@ def _create_pydantic_instances(actual_data=1):
 
     for name, data in inspect.getmembers(template, inspect.isclass):
         pass
+
+
+def validate_yaml_with_yamale(yaml_path: str, schema_path: str) -> Box:
+    import yamale
+
+    schema = yamale.make_schema(schema_path)
+    data = yamale.make_data(yaml_path)
+
+    try:
+        yamale.validate(schema, data)
+        print("Validation success!")
+
+        return _yaml_to_box(yaml_path)
+    except yamale.YamaleError as e:
+        print("Validation failed!\n")
+        for result in e.results:
+            print(
+                "Error validating data '%s' with '%s'\n\t"
+                % (result.data, result.schema)
+            )
+            for error in result.errors:
+                print("\t%s" % error)
+        raise e
+
+
+def _yaml_to_box(yaml_path: str) -> Box:
+    with open(yaml_path) as f:
+        data = yaml.load(f)
+
+    return Box(data)
 
 
 if __name__ == "__main__":
