@@ -7,7 +7,7 @@ def config_load(config_path:str = None,
                 path_default:str=None,
                 config_default:dict=None,
                 save_default:bool=False,
-                as_dataclass:True
+                to_dataclass:bool=True
                 ):
     """Load Config file into a dict
     1) load config_path
@@ -89,8 +89,24 @@ def config_load(config_path:str = None,
 
 
 
+def config_validate_pydantic(config_dict:dict = None,
+                    pydantic_file_path:str='config.validate.myclassname.py',):
+    #config_validate_path:=None,):
+    """Validate configuration based on template type validator
+        wiht Pydantic
+        
+    Returns: dict config
+    """
+    import json, yaml, pathlib
+    
+    
+    
+    
+    
+    
+
 def config_validate(config_dict:dict = None,
-                    config_validate_dict:dict=None,)
+                    config_validate_dict:dict=None,):
     #config_validate_path:=None,):
     """Validate configuration based on template type validator
 
@@ -187,6 +203,8 @@ def config_validate(config_dict:dict = None,
 
 ###########################################################################################################
 ###########################################################################################################
+from loguru import logger
+
 def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=None,
     backtrace=True, diagnose=True):
     """ Generic Logging setup
@@ -219,6 +237,7 @@ def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=
 
     """
     import logging, sys
+    from pathlib import Path
     from pprint import pformat
     # from loguru import logger
     from loguru._defaults import LOGURU_FORMAT
@@ -233,15 +252,13 @@ def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=
     ########## Log: Format  ######################################################
     log_format = 'format0'
     format_dict = {
-      'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
+      'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>",
       'format1': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
       'format2': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
       'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-
-
     }
     format_dict   = cfg.get('format_dict', format_dict)
-    LOGURU_FORMAT = fmt_dict[log_format]
+    LOGURU_FORMAT = format_dict[log_format]
 
 
     ##############################################################################  
@@ -324,29 +341,29 @@ def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=
         else :
             logger.configure( handlers= handlers_default,  backtrace=backtrace, diagnose=diagnose  ) 
         
-
-        loguru_setup()
+    return loguru_setup()
 
 
 
 ##### Usage   
 from loguru import logger
-logger_setup(log_level='INFO', log_format='format1', log_config_path:str=None)
+logger_setup(log_level='INFO', log_template='template0', log_config_path=None)
+
 
 def log(*s):  
-  return logger.info(",".join([str(t) for t in s]))
+  logger.info(",".join([str(t) for t in s]))
 
 def log2(*s): 
-  return logger.debug(",".join([str(t) for t in s]))
+  logger.debug(",".join([str(t) for t in s]))
 
 def logw(*s): 
-  return logger.warning(",".join([str(t) for t in s]))
+  logger.warning(",".join([str(t) for t in s]))
 
 def logc(*s): 
-  return logger.critical(",".join([str(t) for t in s]))
+  logger.critical(",".join([str(t) for t in s]))
 
 def loge(*s): 
-  return logger.error(",".join([str(t) for t in s]))
+   logger.error(",".join([str(t) for t in s]))
 
 
 
