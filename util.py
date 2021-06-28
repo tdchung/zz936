@@ -17,7 +17,7 @@ def config_load(config_path:str = None,
         config_path:   path of config or 'default' tag value
         path_default : path of default config
         config_default: dict value of default config
-        save_default: save default config on disk 
+        save_default: save default config on disk
     Returns: dict config
     """
     import json, yaml, pathlib
@@ -58,11 +58,11 @@ def config_load(config_path:str = None,
            cfg.read(str(config_path))
 
         elif config_path.endswith(".toml") :
-           import toml 
+           import toml
            cfg = toml.loads(config_path.read_text())
 
         else :
-           raise Exception( f'not supported file {config_path}')   
+           raise Exception( f'not supported file {config_path}')
 
         class to_namespace(object):
             ### Dict into Namespace
@@ -94,16 +94,16 @@ def config_validate_pydantic(config_dict:dict = None,
     #config_validate_path:=None,):
     """Validate configuration based on template type validator
         wiht Pydantic
-        
+
     Returns: dict config
     """
     import json, yaml, pathlib
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
 
 def config_validate(config_dict:dict = None,
                     config_validate_dict:dict=None,):
@@ -143,7 +143,7 @@ def config_validate(config_dict:dict = None,
                 else :
                    return res
             else :
-                return True            
+                return True
 
 
       elif type1 == 'float':
@@ -156,9 +156,9 @@ def config_validate(config_dict:dict = None,
                 else :
                    return res
             else :
-                return True       
-                      
-          return False 
+                return True
+
+          return False
       else :
         return True
 
@@ -175,7 +175,7 @@ def config_validate(config_dict:dict = None,
          'v5':  'dict'
       }
     }
-    
+
     cfg_list = to_list(config_dict)
 
     for i, (key,val) in enumerate(cfg_list):
@@ -208,7 +208,7 @@ from loguru import logger
 def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=None,
     backtrace=True, diagnose=True):
     """ Generic Logging setup
-     logger.add(log_file_name,level=level,format=format, 
+     logger.add(log_file_name,level=level,format=format,
         rotation="30 days", filter=None, colorize=None, serialize=False, backtrace=True, enqueue=False, catch=True)
       Overried logging using loguru setup
       1) Default Config using log_level and log_format.
@@ -218,21 +218,34 @@ def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=
 
       log_config.yaml
 
+  
         log_level : INFO
-
-        log_format : format0
-        handlers :
-            handle1:
-               sinK : std.out
-               format : format1
-
-
-
-        format_dict:
+        template_default:  mytemp2
+        
+        formats:
               'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
               'format1': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
               'format2': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-              'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",     
+              'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+
+        templates:
+          mydjangotemp1:
+             handler1:
+                sink:  sys.stdout
+                format:    "<green>{tim:DD.MM.YY}</green> | <level>{level: <8}</level> | <level>{message}</level>"
+
+             handler2:
+                sink:  sys.stderr
+                format:    "<green>{tim:DD.MM.YY}</green> | <level>{level: <8}</level> | <level>{message}</level>"
+
+          mytemp2:
+             handler1:
+                sink:  sys.stdout
+                format:    "<green>{tim:DD.MM.YY}</green> | <level>{level: <8}</level> | <level>{message}</level>"
+
+             handler2:
+                sink:  sys.stderr
+                format:    "<green>{tim:DD.MM.YY}</green> | <level>{level: <8}</level> | <level>{message}</level>"
 
 
     """
@@ -241,7 +254,7 @@ def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=
     from pprint import pformat
     # from loguru import logger
     from loguru._defaults import LOGURU_FORMAT
-    import yaml 
+    import yaml
 
     cfg        = yaml.safe_load(log_config_path) if log_config_path is not None else {}
 
@@ -261,7 +274,7 @@ def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=
     LOGURU_FORMAT = format_dict[log_format]
 
 
-    ##############################################################################  
+    ##############################################################################
     class loggingInterceptHandler(logging.Handler):
         """Logs to loguru from Python logging module"""
         def emit(self, record: logging.LogRecord) -> None:
@@ -326,7 +339,7 @@ def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=
             logging.getLogger(name).handlers = []
             logging.getLogger(name).propagate = True
 
-        # configure loguru  from Config File  
+        # configure loguru  from Config File
         handlers_default = [
              {   "sink": sys.stdout, "level": logging.DEBUG,  # "format": format_record_custom,
                  "format": "format1"   },
@@ -336,33 +349,33 @@ def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=
 
 
         if handlers is None :
-            logger.configure( handlers= handlers_default ,  backtrace=backtrace, diagnose=diagnose )            
+            logger.configure( handlers= handlers_default ,  backtrace=backtrace, diagnose=diagnose )
             logger.level("TIMEIT", no=22, color="<cyan>")
         else :
-            logger.configure( handlers= handlers_default,  backtrace=backtrace, diagnose=diagnose  ) 
-        
+            logger.configure( handlers= handlers_default,  backtrace=backtrace, diagnose=diagnose  )
+
     return loguru_setup()
 
 
 
-##### Usage   
+##### Usage
 from loguru import logger
 logger_setup(log_level='INFO', log_template='template0', log_config_path=None)
 
 
-def log(*s):  
+def log(*s):
   logger.info(",".join([str(t) for t in s]))
 
-def log2(*s): 
+def log2(*s):
   logger.debug(",".join([str(t) for t in s]))
 
-def logw(*s): 
+def logw(*s):
   logger.warning(",".join([str(t) for t in s]))
 
-def logc(*s): 
+def logc(*s):
   logger.critical(",".join([str(t) for t in s]))
 
-def loge(*s): 
+def loge(*s):
    logger.error(",".join([str(t) for t in s]))
 
 
@@ -426,9 +439,9 @@ def my_other_func(a, b, c):
 
 def example_gin():
   import ginin
-  
+
   name = "prod/config_gin"
-  
+
   gin.parse_config_file( f"config/{name}" )
   """
   ### config/config_gin.gin
@@ -445,8 +458,8 @@ def example_gin():
 
 
 
-  
-  
+
+
 
 def config_load(config_path:str = None,
                 path_default:str=None,
@@ -513,12 +526,12 @@ class to_namespace(object):
     ### Dict into Namespace
     def __init__(self, d):
         self.__dict__ = d
-        
-  
-  
-  
-  
-  
+
+
+
+
+
+
 from loguru import logger
 
 ##########################################################################################
@@ -553,9 +566,9 @@ def logger_setup():
 
 logger_setup()
 
-  
-  
-  
+
+
+
 config2 = {
     "handlers": [
         { "sink": sys.stdout,
@@ -626,10 +639,10 @@ class Logger_setup():
             logger.error(msg)
         elif level == "warning":
             logger.warning(msg)
-            
-            
-            
-def logger_setup3():  
+
+
+
+def logger_setup3():
     import logging
     import sys
     from pprint import pformat
@@ -707,13 +720,13 @@ def logger_setup3():
             ]
         )
         logger.level("TIMEIT", no=22, color="<cyan>")
-    
-    
-    
-    
 
-        
-#############################################################################################        
+
+
+
+
+
+#############################################################################################
 # pylint: disable=C0321,C0103,E1221,C0301,E1305,E1121,C0302,C0330
 # -*- coding: utf-8 -*-
 """
@@ -801,26 +814,26 @@ class logger_class(object):
 
 
     def log(self,*s, level=1) :
-        if level <= self.level_max : 
+        if level <= self.level_max :
             self.logger.info(*s)
 
 
     def debug(self,*s, level=1) :
-        if level <= self.level_max : 
+        if level <= self.level_max :
             self.logger.debug(*s)
 
 
 
 ##########################################################################################
 ##########################################################################################
-def logger_setup(logger_name=None, log_file=None, formatter='FORMATTER_0', isrotate=False, 
+def logger_setup(logger_name=None, log_file=None, formatter='FORMATTER_0', isrotate=False,
     isconsole_output=True, logging_level='info',):
     """
     my_logger = util_log.logger_setup("my module name", log_file="")
     APP_ID    = util_log.create_appid(__file__ )
     def log(*argv):
       my_logger.info(",".join([str(x) for x in argv]))
-  
+
    """
     logging_level = {  'info':logging.INFO, 'debug' : logging.DEBUG }[logging_level]
     formatter     = {'FORMATTER_0': FORMATTER_0, 'FORMATTER_1': FORMATTER_1}.get(formatter, formatter)
@@ -902,6 +915,6 @@ def test_log():
 
 
 
-  
-  
-  
+
+
+
