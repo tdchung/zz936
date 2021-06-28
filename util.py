@@ -205,65 +205,38 @@ def config_validate(config_dict:dict = None,
 ###########################################################################################################
 from loguru import logger
 
-def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=None,
-    backtrace=True, diagnose=True):
+def logger_setup(log_level:str=None, log_config_path:str=None, template_name:str=None, 
+    log_format:str=None, backtrace=True, diagnose=True):
     """ Generic Logging setup
-     logger.add(log_file_name,level=level,format=format,
+     logger.add(log_file_name,level=level,format=format, 
         rotation="30 days", filter=None, colorize=None, serialize=False, backtrace=True, enqueue=False, catch=True)
       Overried logging using loguru setup
       1) Default Config using log_level and log_format.
       2) Custom config from log_config_path .yaml file
       3) Use shortname log, log2, logw, loge for logging output
-
-
       log_config.yaml
-
-  
         log_level : INFO
-        template_default:  mytemp2
-        
-        formats:
+        log_format : format0
+        handlers :
+            handle1:
+               sinK : std.out
+               format : format1
+        format_dict:
               'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
               'format1': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
               'format2': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-              'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-
-        templates:
-          mydjangotemp1:
-             handler1:
-                sink:  sys.stdout
-                format:    "<green>{tim:DD.MM.YY}</green> | <level>{level: <8}</level> | <level>{message}</level>"
-
-             handler2:
-                sink:  sys.stderr
-                format:    "<green>{tim:DD.MM.YY}</green> | <level>{level: <8}</level> | <level>{message}</level>"
-
-          mytemp2:
-             handler1:
-                sink:  sys.stdout
-                format:    "<green>{tim:DD.MM.YY}</green> | <level>{level: <8}</level> | <level>{message}</level>"
-
-             handler2:
-                sink:  sys.stderr
-                format:    "<green>{tim:DD.MM.YY}</green> | <level>{level: <8}</level> | <level>{message}</level>"
-
-
+              'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",     
     """
-    import logging, sys
-    from pathlib import Path
-    from pprint import pformat
-    # from loguru import logger
-    from loguru._defaults import LOGURU_FORMAT
-    import yaml
 
-    cfg        = yaml.safe_load(log_config_path) if log_config_path is not None else {}
+    cfg = {}
+    with open(log_config_path, "r") as lcp:
+        cfg = yaml.safe_load(lcp)
 
     ########## Log: init variable  ################################################
-    log_level    = log_level  if log_level  is not None else cfg.get('log_level', 'INFO')
-    log_template = log_template if log_template is not None else 'template0'
+    log_level  = log_level  if log_level  is not None else cfg.get('log_level', 'INFO')
+    log_format = log_format if log_format is not None else cfg.get('log_format', 'format0')
 
     ########## Log: Format  ######################################################
-    log_format = 'format0'
     format_dict = {
       'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>",
       'format1': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
@@ -272,6 +245,31 @@ def logger_setup(log_level:str=None, log_template:str=None, log_config_path:str=
     }
     format_dict   = cfg.get('format_dict', format_dict)
     LOGURU_FORMAT = format_dict[log_format]
+
+    ########## Parse handlers  ###################################################
+    
+    cfg["log_format"] = format_dict[log_format]
+
+    if template_name:
+        for hndl in cfg["handlers"][template_name]:
+            for i, hndl in enumerate(cfg["handlers"][template_name]):
+                if hndl["format"] in format_dict:
+                    cfg["handlers"][template_name][i]["format"] = format_dict[hndl["format"]]
+                
+                if hndl["sink"] == "sys.stdout":
+                    print("Parsing sink: ", hndl["sink"])
+                    hndl["sink"] = sys.stdout
+
+    ########## Create loguru config  ##############################################
+
+    loguru_cfg = {}
+
+    if template_name:
+        loguru_cfg["handlers"] = cfg["handlers"][template_name]
+
+    logger.configure(**loguru_cfg)
+
+    return logger
 
 
     ##############################################################################
