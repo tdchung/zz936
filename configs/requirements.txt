@@ -1,4 +1,0 @@
-python-box
-pyyaml
-yamale
-pytest
