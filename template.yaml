@@ -1,0 +1,9 @@
+parent:
+  name: str()
+  age: int()
+  children: list(include('child'))
+
+---
+child:
+  name: str()
+  age: str()
