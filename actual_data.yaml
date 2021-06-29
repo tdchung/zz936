@@ -2,7 +2,7 @@ parent:
   name: 'Andrew'
   age: 45
   children:
-    - name: 'Jane'
-      age: 12
+    - name: 'Jane  from Jane|Steve'
+      age: 12        ###  [9,15]
     - name: 'Joanna'
-      age: 13
+      ages: 13.6   ### from 11.2  17.8
