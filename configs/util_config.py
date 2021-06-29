@@ -56,24 +56,25 @@ def config_load(
     ######### Load Config ##################################################
     try:
         log("Config: Loading ", config_path)
-        if config_path.endswith(".yaml"):
+        if str(config_path).endswith(".yaml"):
             cfg = yaml.safe_load(config_path.read_text())
-            dd = {}
-            for x in cfg:  ### Map to dict
-                for key, val in x.items():
-                    dd[key] = val
-            return cfg
+            return cfg 
 
-        elif config_path.endswith(".json"):
+            #dd = {}
+            #for x in cfg:  ### Map to dict
+            #    for key, val in x.items():
+            #        dd[key] = val
+            #return cfg
+
+        elif str(config_path).endswith(".json"):
             cfg = json.loads(config_path.read_text())
 
-        elif config_path.endswith(".properties") or config_path.endswith(".ini"):
+        elif str(config_path).endswith(".properties") or config_path.endswith(".ini"):
             from configparser import SafeConfigParser
-
             cfg = SafeConfigParser()
             cfg.read(str(config_path))
 
-        elif config_path.endswith(".toml"):
+        elif str(config_path).endswith(".toml"):
             import toml
 
             cfg = toml.loads(config_path.read_text())
@@ -97,6 +98,7 @@ def config_load(
         with open(config_path_default, mode="w") as fp:
             yaml.dump(config_default, fp)
     return config_default
+
 
 
 def dict_to_yamale(cfg_dict: dict = None):
