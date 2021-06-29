@@ -2,8 +2,10 @@ parent:
   name: str()
   age: int()
   children: list(include('child'))
-
 ---
 child:
   name: str()
-  age: str()
+  age: num(min=11.2, max=17.8)
+  student: enum('yes', 'no', required=False)
+  firstGen: bool(required=False)
+  friends: list(str(), max=4)
