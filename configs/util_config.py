@@ -170,5 +170,30 @@ def test2():
     log(isok)
 
 
+
+
+def test_example():
+    ss = """
+string: ok
+regex:  abcd
+number: 6.7
+integer: 3
+boolean: True
+list: [1,2,3]
+enum: 'one'
+map:
+null:
+date:
+nest:
+    integer: 7
+    nest:
+        string: "ok"
+
+    """
+    return ss
+
+
+
+
 if __name__ == "__main__":
     fire.Fire()
