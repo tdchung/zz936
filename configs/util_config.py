@@ -1,16 +1,18 @@
 #
 # python util_config.py test
 #
-import importlib
+# pip install pydantic-gen
+import os
 from typing import Union
+
 import fire
 import yamale
 import yaml
 from box import Box
-import os
+from pydantic import BaseModel
+from pydantic_gen import SchemaGen
 
 #########################################################################################################
-from pydantic import BaseModel
 
 
 def log(*s):
@@ -153,7 +155,6 @@ def config_validate_pydantic(
 
     Returns: dict config
     """
-    import json, yaml, pathlib
 
 
 def _yaml_to_box(yaml_path: str) -> Box:
@@ -164,9 +165,6 @@ def _yaml_to_box(yaml_path: str) -> Box:
 
 
 def convert_yaml_to_pydantic(yaml_name: str):
-    # pip install pydantic-gen
-    from pydantic_gen import SchemaGen
-
     pydantic_module_name = f"{yaml_name.split('.')[0]}.py"
 
     generated = SchemaGen(yaml_name)
