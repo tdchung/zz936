@@ -62,6 +62,7 @@ def config_load(
             cfg = json.loads(config_path.read_text())
         elif config_path.suffix in [".properties", ".ini"]:
             from configparser import SafeConfigParser
+
             cfg = SafeConfigParser()
             cfg.read(str(config_path))
         elif config_path.suffix == ".toml":
@@ -89,18 +90,6 @@ def config_load(
     return config_default
 
 
-
-def dict_to_yamale(cfg_dict: dict = None):
-    """
-    from . import readers
-    raw_data = readers.parse_yaml(path, parser, content=content)
-    if len(raw_data) == 0:
-        return [({}, path)]
-    return [(d, path) for d in raw_data]
-    """
-    return [(cfg_dict, "")]
-
-
 def config_isvalid(config_dict: dict, schema_path: str, silent: bool = False) -> bool:
     """Validate using a  yaml file
     Args:
@@ -111,11 +100,13 @@ def config_isvalid(config_dict: dict, schema_path: str, silent: bool = False) ->
     """
 
     schema = yamale.make_schema(schema_path)
-    # data = yamale.make_data(config_path)
-    data = dict_to_yamale(config_dict)
 
     try:
-        yamale.validate(schema, data)
+        result = schema.validate(config_dict, data_name=schema_path, strict=True)
+
+        if not result.isValid():
+            raise yamale.YamaleError([result])
+
         return True
 
     except yamale.YamaleError as e:
