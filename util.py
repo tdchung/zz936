@@ -205,10 +205,105 @@ def config_validate(config_dict:dict = None,
 ###########################################################################################################
 from loguru import logger
 
-def logger_setup(log_level:str=None, log_config_path:str=None, template_name:str=None, 
+def logger_setup(log_level:str=None,
+                 log_config_path:str=None,
+                 template_name:str='default',
+                 backtrace=True, diagnose=True, **kwargs):
+    """ Generic Logging setup
+
+      Overide logging using loguru setup
+      1) Default Config using log_level and log_format.
+      2) Custom config from log_config_path .yaml file
+      3) Use shortname log, log2, logw, loge for logging output
+
+
+      config_log.yaml
+
+
+     Options
+    #logger.add(log_file_name,level=level,format=format,
+    #    rotation="30 days", filter=None, colorize=None, serialize=False, backtrace=True, enqueue=False, catch=True)
+
+
+    """
+    try :
+        with open(log_config_path, "r") as fp:
+            cfg = yaml.safe_load(fp)
+
+    except Exception as e:
+         print("Using Default hardcooded")
+         cfg = {
+            'log_level' : 'INFO',
+            'handlers'  : {
+                'default' :[
+                    {'sink' : 'sys.stdout'}
+                ]
+            }
+
+        }
+
+    ########## Parse handlers  ######################################################
+    handlers  =  cfg["handlers"][template_name]
+
+    for i, hndl in enumerate( handlers) :
+        if hndl["sink"] == "sys.stdout":
+                hndl["sink"] = sys.stdout
+
+        elif hndl["sink"] == "sys.stderr":
+                hndl["sink"] = sys.stdout
+
+        handlers[i] = hndl
+
+
+    ########## Create loguru config  ##############################################
+    logger.configure(handlers= handlers )
+    logger.level("TIMEIT", no=22, color="<cyan>")
+
+    return logger
+
+
+##### Usage
+from loguru import logger
+logger_setup(log_level='INFO', log_template='template2', log_config_path='config_log.yaml')
+
+
+def log(*s):
+  logger.info(",".join([str(t) for t in s]))
+
+def log2(*s):
+  logger.debug(",".join([str(t) for t in s]))
+
+def logw(*s):
+  logger.warning(",".join([str(t) for t in s]))
+
+def logc(*s):
+  logger.critical(",".join([str(t) for t in s]))
+
+def loge(*s):
+   logger.error(",".join([str(t) for t in s]))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##################################################################################################
+##################################################################################################
+def logger_setup2(log_level:str=None, log_config_path:str=None, template_name:str=None,
     log_format:str=None, backtrace=True, diagnose=True):
     """ Generic Logging setup
-     logger.add(log_file_name,level=level,format=format, 
+     logger.add(log_file_name,level=level,format=format,
         rotation="30 days", filter=None, colorize=None, serialize=False, backtrace=True, enqueue=False, catch=True)
       Overried logging using loguru setup
       1) Default Config using log_level and log_format.
@@ -225,7 +320,7 @@ def logger_setup(log_level:str=None, log_config_path:str=None, template_name:str
               'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
               'format1': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
               'format2': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-              'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",     
+              'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
     """
 
     cfg = {}
@@ -247,7 +342,7 @@ def logger_setup(log_level:str=None, log_config_path:str=None, template_name:str
     LOGURU_FORMAT = format_dict[log_format]
 
     ########## Parse handlers  ###################################################
-    
+
     cfg["log_format"] = format_dict[log_format]
 
     if template_name:
@@ -255,7 +350,7 @@ def logger_setup(log_level:str=None, log_config_path:str=None, template_name:str
             for i, hndl in enumerate(cfg["handlers"][template_name]):
                 if hndl["format"] in format_dict:
                     cfg["handlers"][template_name][i]["format"] = format_dict[hndl["format"]]
-                
+
                 if hndl["sink"] == "sys.stdout":
                     print("Parsing sink: ", hndl["sink"])
                     hndl["sink"] = sys.stdout
@@ -353,34 +448,6 @@ def logger_setup(log_level:str=None, log_config_path:str=None, template_name:str
             logger.configure( handlers= handlers_default,  backtrace=backtrace, diagnose=diagnose  )
 
     return loguru_setup()
-
-
-
-##### Usage
-from loguru import logger
-logger_setup(log_level='INFO', log_template='template0', log_config_path=None)
-
-
-def log(*s):
-  logger.info(",".join([str(t) for t in s]))
-
-def log2(*s):
-  logger.debug(",".join([str(t) for t in s]))
-
-def logw(*s):
-  logger.warning(",".join([str(t) for t in s]))
-
-def logc(*s):
-  logger.critical(",".join([str(t) for t in s]))
-
-def loge(*s):
-   logger.error(",".join([str(t) for t in s]))
-
-
-
-
-
-
 
 
 
