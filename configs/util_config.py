@@ -12,18 +12,19 @@ import os
 def log(*s):
     print(*s, flush=True)
 
+
 def loge(*s):
     print(*s, flush=True)
 
 
-
 #########################################################################################################
-def config_load(config_path:str = None,
-                path_default:str=None,
-                config_default:dict=None,
-                save_default:bool=False,
-                to_dataclass:bool=True
-                ):
+def config_load(
+    config_path: str = None,
+    path_default: str = None,
+    config_default: dict = None,
+    save_default: bool = False,
+    to_dataclass: bool = True,
+):
     """Load Config file into a dict
     1) load config_path
     2) If not, load in USER/.myconfig/.config.yaml
@@ -38,51 +39,51 @@ def config_load(config_path:str = None,
     import json, yaml, pathlib
 
     #########Default value setup ###########################################
-    path_default        = pathlib.Path.home() / ".myconfig" if path_default is None else path_default
+    path_default = (
+        pathlib.Path.home() / ".myconfig" if path_default is None else path_default
+    )
     config_path_default = path_default / "config.yaml"
-    if config_default is None :
-        config_default = {
-            "field1": "",
-            "field2": {}
-        }
+    if config_default is None:
+        config_default = {"field1": "", "field2": {}}
 
     #########Config path setup #############################################
     if config_path is None or config_path == "default":
-        log(f"Config: Using {config_path_default}" )
+        log(f"Config: Using {config_path_default}")
         config_path = config_path_default
-    else :
+    else:
         config_path = pathlib.Path(config_path)
 
     ######### Load Config ##################################################
     try:
         log("Config: Loading ", config_path)
-        if config_path.endswith(".yaml") :
+        if config_path.endswith(".yaml"):
             cfg = yaml.safe_load(config_path.read_text())
-            dd  = {}
-            for x in cfg :   ### Map to dict
-                for key,val in x.items():
-                   dd[key] = val
+            dd = {}
+            for x in cfg:  ### Map to dict
+                for key, val in x.items():
+                    dd[key] = val
             return cfg
 
-        elif config_path.endswith(".json") :
-           cfg = json.loads(config_path.read_text())
+        elif config_path.endswith(".json"):
+            cfg = json.loads(config_path.read_text())
 
-        elif config_path.endswith(".properties") or config_path.endswith(".ini") :
-           from configparser import SafeConfigParser
-           cfg = SafeConfigParser()
-           cfg.read(str(config_path))
+        elif config_path.endswith(".properties") or config_path.endswith(".ini"):
+            from configparser import SafeConfigParser
 
-        elif config_path.endswith(".toml") :
-           import toml
-           cfg = toml.loads(config_path.read_text())
+            cfg = SafeConfigParser()
+            cfg.read(str(config_path))
 
-        else :
-           raise Exception( f'not supported file {config_path}')
+        elif config_path.endswith(".toml"):
+            import toml
 
-        if to_dataclass :   ### myconfig.val  , myconfig.val2
-            return  Box(cfg)
+            cfg = toml.loads(config_path.read_text())
+
+        else:
+            raise Exception(f"not supported file {config_path}")
+
+        if to_dataclass:  ### myconfig.val  , myconfig.val2
+            return Box(cfg)
         return cfg
-
 
     except Exception as e:
         log(f"Config: Cannot read file {config_path}", e)
@@ -98,9 +99,7 @@ def config_load(config_path:str = None,
     return config_default
 
 
-
-
-def dict_to_yamale(cfg_dict:dict=None):
+def dict_to_yamale(cfg_dict: dict = None):
     """
     from . import readers
     raw_data = readers.parse_yaml(path, parser, content=content)
@@ -111,10 +110,8 @@ def dict_to_yamale(cfg_dict:dict=None):
     return [(cfg_dict, "")]
 
 
-
-def config_isvalid(config_dict: dict, schema_path: str, silent: bool = False
-                    ) -> bool:
-    """  Validate using a  yaml file
+def config_isvalid(config_dict: dict, schema_path: str, silent: bool = False) -> bool:
+    """Validate using a  yaml file
     Args:
         config_dict:
         schema_path:
@@ -139,9 +136,9 @@ def config_isvalid(config_dict: dict, schema_path: str, silent: bool = False
         return False
 
 
-
-def config_validate(config_path: str, schema_path: str, silent: bool = False
-                    ) -> Union[Box, None]:
+def config_validate(
+    config_path: str, schema_path: str, silent: bool = False
+) -> Union[Box, None]:
 
     schema = yamale.make_schema(schema_path)
     data = yamale.make_data(config_path)
@@ -160,11 +157,11 @@ def config_validate(config_path: str, schema_path: str, silent: bool = False
             raise e
 
 
-
-
-def config_validate_pydantic(config_dict:dict = None,
-                    pydantic_file_path:str='config.validate.myclassname.py',):
-    #config_validate_path:=None,):
+def config_validate_pydantic(
+    config_dict: dict = None,
+    pydantic_file_path: str = "config.validate.myclassname.py",
+):
+    # config_validate_path:=None,):
     """Validate configuration based on template type validator
         wiht Pydantic
 
@@ -186,13 +183,10 @@ def test():
 
 
 def test2():
-    cfg_dict = config_load( "config.yaml"  )
-    isok = config_isvalid(cfg_dict, 'config_val.yaml')
+    cfg_dict = config_load("config.yaml")
+    isok = config_isvalid(cfg_dict, "config_val.yaml")
     log(isok)
-
 
 
 if __name__ == "__main__":
     fire.Fire()
-
-
