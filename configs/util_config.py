@@ -173,7 +173,7 @@ def convert_yaml_to_pydantic(config_dict: dict, schema_name: str):
         f"zz936.configs.{schema_name.split('.')[0]}"
     )
 
-    return pydantic_module.GeneratedSchema1(**config_dict)
+    return pydantic_module.MainSchema(**config_dict)
 
 
 #########################################################################################################
