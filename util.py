@@ -3,6 +3,7 @@
 
 ####################################################################################
 ####################################################################################
+
 def config_load(config_path:str = None,
                 path_default:str=None,
                 config_default:dict=None,
@@ -264,7 +265,7 @@ def logger_setup(log_level:str=None,
 
 ##### Usage
 from loguru import logger
-logger_setup(log_level='INFO', log_template='template2', log_config_path='config_log.yaml')
+logger_setup(log_template='template2', log_config_path='config_log.yaml')
 
 
 def log(*s):

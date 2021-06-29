@@ -1,14 +1,14 @@
-string: str()
-regex: regex('abcde')
-number: num(min=1, max=13.12)
-integer: int()
-boolean: bool()
-list: list()
-enum: enum('one', True, 1)
-map: map()
-null: null()
-date: day()
+string: ok
+regex:  abcd
+number: 6.7
+integer: 3
+boolean: True
+list: [1,2,3]
+enum: 'one'
+map:
+null:
+date:
 nest:
-    integer: int()
+    integer: 7
     nest:
-        string: str()
+        string: "ok"
