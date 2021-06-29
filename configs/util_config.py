@@ -8,12 +8,7 @@ from box import Box
 def validate_yaml_config(
     yaml_path: str, schema_path: str, silent: bool = False
 ) -> Union[Box, None]:
-    try:
-        schema = yamale.make_schema(schema_path)
-    except SyntaxError as e:
-        print(f"Syntax Error: {e.msg}")
-        raise e
-
+    schema = yamale.make_schema(schema_path)
     data = yamale.make_data(yaml_path)
 
     try:
@@ -24,12 +19,9 @@ def validate_yaml_config(
     except yamale.YamaleError as e:
         print("Validation failed!\n")
         for result in e.results:
-            print(
-                "Error validating data '%s' with '%s'\n\t"
-                % (result.data, result.schema)
-            )
+            print(f"Error validating data '{result.data}' with '{result.schema}'\n\t")
             for error in result.errors:
-                print("\t%s" % error)
+                print(f"\t{error}")
         if not silent:
             raise e
 

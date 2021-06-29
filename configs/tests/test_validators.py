@@ -35,8 +35,11 @@ class TestYaml(YamaleTestCase):
 
     def test_validate_yaml_syntax_error(self):
         self.schema = "fixtures/bad_schema.yaml"
-        with self.assertRaises(SyntaxError):
+        with self.assertRaises(SyntaxError) as exc:
             validate_yaml_config(self.yaml, self.schema)
+        self.assertIn(
+            "Invalid schema expression: 'enum('one, True, 1)'", exc.exception.msg
+        )
 
     def test_validate_yaml_types(self):
         self.yaml = "fixtures/types_good_data.yaml"
