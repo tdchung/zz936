@@ -62,7 +62,6 @@ def config_load(
             cfg = json.loads(config_path.read_text())
         elif config_path.suffix in [".properties", ".ini"]:
             from configparser import SafeConfigParser
-
             cfg = SafeConfigParser()
             cfg.read(str(config_path))
         elif config_path.suffix == ".toml":
@@ -88,6 +87,7 @@ def config_load(
         with open(config_path_default, mode="w") as fp:
             yaml.dump(config_default, fp)
     return config_default
+
 
 
 def dict_to_yamale(cfg_dict: dict = None):
@@ -177,6 +177,31 @@ def test2():
     cfg_dict = config_load("config.yaml")
     isok = config_isvalid(cfg_dict, "config_val.yaml")
     log(isok)
+
+
+
+
+def test_example():
+    ss = """
+string: ok
+regex:  abcd
+number: 6.7
+integer: 3
+boolean: True
+list: [1,2,3]
+enum: 'one'
+map:
+null:
+date:
+nest:
+    integer: 7
+    nest:
+        string: "ok"
+
+    """
+    return ss
+
+
 
 
 if __name__ == "__main__":
