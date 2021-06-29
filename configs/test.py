@@ -4,7 +4,7 @@ import pytest
 from box import Box
 from yamale import YamaleError
 
-from zz936.configs.util_config import validate_yaml_config
+from zz936.configs.util_config import config_validate
 
 
 # in order to run tests install required packages:
@@ -60,9 +60,9 @@ def create_fixtures_data(tmp_path):
 
 
 def test_validate_yaml_types(tmp_path):
-    schema = "config.yaml"
+    schema = "config_val.yaml"
     data = tmp_path / "config_good_data.yaml"
-    result = validate_yaml_config(data, schema)
+    result = config_validate(data, schema)
 
     assert isinstance(result, Box)
     assert result == {
@@ -81,7 +81,7 @@ def test_validate_yaml_types(tmp_path):
 
 
 def test_validate_yaml_types_failed(tmp_path):
-    schema = "config.yaml"
+    schema = "config_val.yaml"
     data = tmp_path / "config_bad_data.yaml"
 
     expected = [
@@ -97,13 +97,13 @@ def test_validate_yaml_types_failed(tmp_path):
     ]
 
     with pytest.raises(YamaleError) as exc:
-        validate_yaml_config(data, schema)
+        config_validate(data, schema)
     actual = exc.value.results[0].errors
     assert sorted(actual) == sorted(expected)
 
 
 def test_validate_yaml_failed_silent(tmp_path):
-    schema = "config.yaml"
+    schema = "config_val.yaml"
     data = tmp_path / "config_bad_data.yaml"
-    result = validate_yaml_config(data, schema, silent=True)
+    result = config_validate(data, schema, silent=True)
     assert result is None
