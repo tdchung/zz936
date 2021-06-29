@@ -1,6 +1,6 @@
 string: "hello"
 regex: 'abcde'
-number: 12.1
+number: 13.12
 integer: 2
 boolean: True
 list: ['hi']
@@ -9,3 +9,8 @@ map:
     hello: 1
     another: "hi"
 null: null
+date: 2015-01-01
+nest:
+    integer: 1
+    nest:
+        string: "nested"
