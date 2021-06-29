@@ -24,7 +24,7 @@ def config_load(
     config_default: dict = None,
     save_default: bool = False,
     to_dataclass: bool = True,
-):
+) -> Union[dict, Box]:
     """Load Config file into a dict
     1) load config_path
     2) If not, load in USER/.myconfig/.config.yaml
@@ -56,29 +56,18 @@ def config_load(
     ######### Load Config ##################################################
     try:
         log("Config: Loading ", config_path)
-        if str(config_path).endswith(".yaml"):
+        if config_path.suffix == ".yaml":
             cfg = yaml.safe_load(config_path.read_text())
-            return cfg 
-
-            #dd = {}
-            #for x in cfg:  ### Map to dict
-            #    for key, val in x.items():
-            #        dd[key] = val
-            #return cfg
-
-        elif str(config_path).endswith(".json"):
+        elif config_path.suffix == ".json":
             cfg = json.loads(config_path.read_text())
-
-        elif str(config_path).endswith(".properties") or config_path.endswith(".ini"):
+        elif config_path.suffix in [".properties", ".ini"]:
             from configparser import SafeConfigParser
             cfg = SafeConfigParser()
             cfg.read(str(config_path))
-
-        elif str(config_path).endswith(".toml"):
+        elif config_path.suffix == ".toml":
             import toml
 
             cfg = toml.loads(config_path.read_text())
-
         else:
             raise Exception(f"not supported file {config_path}")
 
@@ -93,7 +82,7 @@ def config_load(
     log("Config: Using default config")
     log(config_default)
     if save_default:
-        log(f"Config: Writingg config in {config_path_default}")
+        log(f"Config: Writing config in {config_path_default}")
         os.makedirs(path_default, exist_ok=True)
         with open(config_path_default, mode="w") as fp:
             yaml.dump(config_default, fp)
@@ -181,7 +170,7 @@ def _yaml_to_box(yaml_path: str) -> Box:
 
 #########################################################################################################
 def test():
-    config_validate("actual_data.yaml", "template.yaml", silent=True)
+    config_validate("config.yaml", "config_val.yaml", silent=True)
 
 
 def test2():
