@@ -1,14 +1,16 @@
-string: ok
-regex:  abcd
-number: 6.7
-integer: 3
+string: "hello"
+regex: 'abcde'
+number: 13.12
+integer: 2
 boolean: True
-list: [1,2,3]
-enum: 'one'
+list: ['hi']
+enum: 1
 map:
-null:
-date:
+    hello: 1
+    another: "hi"
+empty: null
+date: 2015-01-01
 nest:
-    integer: 7
+    integer: 1
     nest:
-        string: "ok"
+        string: "nested"

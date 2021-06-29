@@ -1,6 +1,7 @@
 #
 # python util_config.py test
 #
+import importlib
 from typing import Union
 import fire
 import yamale
@@ -9,6 +10,9 @@ from box import Box
 import os
 
 #########################################################################################################
+from pydantic import BaseModel
+
+
 def log(*s):
     print(*s, flush=True)
 
@@ -159,6 +163,21 @@ def _yaml_to_box(yaml_path: str) -> Box:
     return Box(data)
 
 
+def convert_yaml_to_pydantic(yaml_name: str):
+    # pip install pydantic-gen
+    from pydantic_gen import SchemaGen
+
+    pydantic_module_name = f"{yaml_name.split('.')[0]}.py"
+
+    generated = SchemaGen(yaml_name)
+    generated.to_file(pydantic_module_name)
+
+    import pydantic_config_val as gs
+
+    cfg_dict = config_load("config.yaml")
+    return gs.GeneratedSchema1(**cfg_dict)
+
+
 #########################################################################################################
 def test():
     config_validate("config.yaml", "config_val.yaml", silent=True)
@@ -170,6 +189,9 @@ def test2():
     log(isok)
 
 
+def test3():
+    pydantic_model = convert_yaml_to_pydantic("pydantic_config_val.yaml")
+    assert isinstance(pydantic_model, BaseModel)
 
 
 def test_example():
@@ -191,8 +213,6 @@ nest:
 
     """
     return ss
-
-
 
 
 if __name__ == "__main__":

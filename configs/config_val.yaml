@@ -6,7 +6,7 @@ boolean: bool()
 list: list()
 enum: enum('one', True, 1)
 map: map()
-null: null()
+empty: null()
 date: day()
 nest:
     integer: int()
