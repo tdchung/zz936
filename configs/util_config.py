@@ -2,6 +2,7 @@
 # python util_config.py test
 #
 # pip install pydantic-gen
+import importlib
 import os
 from typing import Union
 
@@ -164,16 +165,15 @@ def _yaml_to_box(yaml_path: str) -> Box:
     return Box(data)
 
 
-def convert_yaml_to_pydantic(yaml_name: str):
-    pydantic_module_name = f"{yaml_name.split('.')[0]}.py"
+def convert_yaml_to_pydantic(config_dict: dict, schema_name: str):
+    generated = SchemaGen(schema_name)
+    generated.to_file(f"{schema_name.split('.')[0]}.py")
 
-    generated = SchemaGen(yaml_name)
-    generated.to_file(pydantic_module_name)
+    pydantic_module = importlib.import_module(
+        f"zz936.configs.{schema_name.split('.')[0]}"
+    )
 
-    import pydantic_config_val as gs
-
-    cfg_dict = config_load("config.yaml")
-    return gs.GeneratedSchema1(**cfg_dict)
+    return pydantic_module.GeneratedSchema1(**config_dict)
 
 
 #########################################################################################################
@@ -188,7 +188,8 @@ def test2():
 
 
 def test3():
-    pydantic_model = convert_yaml_to_pydantic("pydantic_config_val.yaml")
+    cfg_dict = config_load("config.yaml")
+    pydantic_model = convert_yaml_to_pydantic(cfg_dict, "pydantic_config_val.yaml")
     assert isinstance(pydantic_model, BaseModel)
 
 
