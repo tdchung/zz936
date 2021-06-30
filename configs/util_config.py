@@ -186,7 +186,7 @@ def pydantic_model_generator(
     input_file_type: InputFileType,
     output_file: Path,
     **kwargs,
-):
+) -> None:
     # https://github.com/koxudaxi/datamodel-code-generator
     # pip install datamodel-code-generator
 
