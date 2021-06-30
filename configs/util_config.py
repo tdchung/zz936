@@ -195,10 +195,10 @@ def pydantic_model_generator(
             input_file, input_file_type=input_file_type, output=output_file, **kwargs
         )
     except Error as e:
-        print(f"\nError occurred while generating pydantic model: `{e.message}`")
+        loge(f"Error occurred while generating pydantic model: `{e.message}`")
     else:
-        print(
-            f"\nSuccessfully generated pydantic model from {input_file} to {output_file}"
+        log(
+            f"Successfully generated pydantic model from {input_file} to {output_file}"
         )
 
 
@@ -218,13 +218,13 @@ def test3():
     pydantic_model_generator(
         Path("config.json"), InputFileType.Yaml, Path("pydantic_model_json.py")
     )
-    assert Path("pydantic_model_json.py").exists()
+    assert Path("pydantic_model_json.py").exists(), "File does not exist"
 
     # generating from yaml file
     pydantic_model_generator(
         Path("config.yaml"), InputFileType.Yaml, Path("pydantic_model_yaml.py")
     )
-    assert Path("pydantic_model_yaml.py").exists()
+    assert Path("pydantic_model_yaml.py").exists(), "File does not exist"
 
 
 def test4():
