@@ -1,14 +1,21 @@
 #
 # python util_config.py test
 #
+# pip install pydantic-gen
+import importlib
+import os
 from typing import Union
+
 import fire
 import yamale
 import yaml
 from box import Box
-import os
+from pydantic import BaseModel
+from pydantic_gen import SchemaGen
 
 #########################################################################################################
+
+
 def log(*s):
     print(*s, flush=True)
 
@@ -149,7 +156,6 @@ def config_validate_pydantic(
 
     Returns: dict config
     """
-    import json, yaml, pathlib
 
 
 def _yaml_to_box(yaml_path: str) -> Box:
@@ -157,6 +163,17 @@ def _yaml_to_box(yaml_path: str) -> Box:
         data = yaml.load(f)
 
     return Box(data)
+
+
+def convert_yaml_to_pydantic(config_dict: dict, schema_name: str):
+    generated = SchemaGen(schema_name)
+    generated.to_file(f"{schema_name.split('.')[0]}.py")
+
+    pydantic_module = importlib.import_module(
+        f"zz936.configs.{schema_name.split('.')[0]}"
+    )
+
+    return pydantic_module.MainSchema(**config_dict)
 
 
 #########################################################################################################
@@ -170,6 +187,10 @@ def test2():
     log(isok)
 
 
+def test3():
+    cfg_dict = config_load("config.yaml")
+    pydantic_model = convert_yaml_to_pydantic(cfg_dict, "pydantic_config_val.yaml")
+    assert isinstance(pydantic_model, BaseModel)
 
 
 def test_example():
@@ -191,8 +212,6 @@ nest:
 
     """
     return ss
-
-
 
 
 if __name__ == "__main__":
