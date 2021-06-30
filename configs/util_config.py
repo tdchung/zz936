@@ -216,7 +216,7 @@ def test2():
 def test3():
     # generating from json file
     pydantic_model_generator(
-        Path("config.json"), InputFileType.Yaml, Path("pydantic_model_json.py")
+        Path("config.json"), InputFileType.Json, Path("pydantic_model_json.py")
     )
     assert Path("pydantic_model_json.py").exists(), "File does not exist"
 
