@@ -1,4 +1,5 @@
 from loguru import logger
+import sys
 
 def logger_setup(log_level:str=None,
                  log_config_path:str=None,
@@ -45,7 +46,7 @@ def logger_setup(log_level:str=None,
                 hndl["sink"] = sys.stdout
 
         elif hndl["sink"] == "sys.stderr":
-                hndl["sink"] = sys.stdout
+                hndl["sink"] = sys.stderr
 
         handlers[i] = hndl
 
@@ -183,9 +184,19 @@ def logger_setup2(log_level:str=None, log_config_path:str=None, template_name:st
     """
 
     cfg = {}
-    with open(log_config_path, "r") as lcp:
-        cfg = yaml.safe_load(lcp)
-
+    try :
+        with open(log_config_path, "r") as fp:
+            cfg = yaml.safe_load(fp)
+    except Exception as e:
+         print("Using Default hardcoded")
+         cfg = {
+            'log_level' : 'INFO',
+            'handlers'  : {
+                'default' : [
+                    {'sink' : 'sys.stdout'}
+                ]
+            }
+        }
     ########## Log: init variable  ################################################
     log_level  = log_level  if log_level  is not None else cfg.get('log_level', 'INFO')
     log_format = log_format if log_format is not None else cfg.get('log_format', 'format0')
@@ -197,22 +208,33 @@ def logger_setup2(log_level:str=None, log_config_path:str=None, template_name:st
       'format2': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
       'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
     }
+    
     format_dict   = cfg.get('format_dict', format_dict)
     LOGURU_FORMAT = format_dict[log_format]
 
     ########## Parse handlers  ###################################################
-
-    cfg["log_format"] = format_dict[log_format]
+    cfg["log_format"] = LOGURU_FORMAT
 
     if template_name:
-        for hndl in cfg["handlers"][template_name]:
-            for i, hndl in enumerate(cfg["handlers"][template_name]):
-                if hndl["format"] in format_dict:
-                    cfg["handlers"][template_name][i]["format"] = format_dict[hndl["format"]]
+        for i, hndl in enumerate(cfg["handlers"][template_name]):
+            if hndl.get("format") in format_dict:
+                cfg["handlers"][template_name][i]["format"] = format_dict[hndl.get("format")]
+            else:
+                print("Using default format for handler", i, "in template", template_name)
+                cfg["handlers"][template_name][i]["format"] = format_dict[log_format]
 
-                if hndl["sink"] == "sys.stdout":
-                    print("Parsing sink: ", hndl["sink"])
-                    hndl["sink"] = sys.stdout
+            sink = hndl.get("sink")
+
+            if sink == "sys.stdout":
+                print("Parsing sink: ", hndl["sink"])
+                cfg["handlers"][template_name][i]["sink"] = sys.stdout
+            elif sink == "sys.stderr":
+                print("Parsing sink: ", hndl["sink"])
+                cfg["handlers"][template_name][i]["sink"] = sys.stderr
+            else:
+                #Custom sink (file)
+                cfg["handlers"][template_name][i]["sink"] = sink     
+
 
     ########## Create loguru config  ##############################################
 
@@ -1025,7 +1047,7 @@ def logger_handler_file(isrotate=False, rotate_time="midnight", formatter=None, 
         fh.setFormatter(formatter)
         return fh
 
-
+'''
 def logger_setup2(name=__name__, level=None):
     _ = level
 
@@ -1038,7 +1060,7 @@ def logger_setup2(name=__name__, level=None):
     ch.setFormatter(formatter)
     logger.addHandler(ch)
     return logger
-
+'''
 
 
 
