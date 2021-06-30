@@ -1,17 +1,20 @@
 #
 # python util_config.py test
 #
-# pip install pydantic-gen
+
 import importlib
 import os
+from pathlib import Path
 from typing import Union
 
 import fire
 import yamale
 import yaml
 from box import Box
+from datamodel_code_generator import InputFileType, Error, generate
 from pydantic import BaseModel
 from pydantic_gen import SchemaGen
+
 
 #########################################################################################################
 
@@ -166,6 +169,8 @@ def _yaml_to_box(yaml_path: str) -> Box:
 
 
 def convert_yaml_to_pydantic(config_dict: dict, schema_name: str):
+    # pip install pydantic-gen
+
     generated = SchemaGen(schema_name)
     generated.to_file(f"{schema_name.split('.')[0]}.py")
 
@@ -174,6 +179,27 @@ def convert_yaml_to_pydantic(config_dict: dict, schema_name: str):
     )
 
     return pydantic_module.MainSchema(**config_dict)
+
+
+def pydantic_model_generator(
+    input_file: Union[Path, str],
+    input_file_type: InputFileType,
+    output_file: Path,
+    **kwargs,
+) -> None:
+    # https://github.com/koxudaxi/datamodel-code-generator
+    # pip install datamodel-code-generator
+
+    try:
+        generate(
+            input_file, input_file_type=input_file_type, output=output_file, **kwargs
+        )
+    except Error as e:
+        loge(f"Error occurred while generating pydantic model: `{e.message}`")
+    else:
+        log(
+            f"Successfully generated pydantic model from {input_file} to {output_file}"
+        )
 
 
 #########################################################################################################
@@ -188,6 +214,20 @@ def test2():
 
 
 def test3():
+    # generating from json file
+    pydantic_model_generator(
+        Path("config.json"), InputFileType.Json, Path("pydantic_model_json.py")
+    )
+    assert Path("pydantic_model_json.py").exists(), "File does not exist"
+
+    # generating from yaml file
+    pydantic_model_generator(
+        Path("config.yaml"), InputFileType.Yaml, Path("pydantic_model_yaml.py")
+    )
+    assert Path("pydantic_model_yaml.py").exists(), "File does not exist"
+
+
+def test4():
     cfg_dict = config_load("config.yaml")
     pydantic_model = convert_yaml_to_pydantic(cfg_dict, "pydantic_config_val.yaml")
     assert isinstance(pydantic_model, BaseModel)
