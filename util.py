@@ -30,12 +30,9 @@ def logger_setup(log_level:str=None,
          print("Using Default hardcooded")
          cfg = {
             'log_level' : 'INFO',
-            'handlers'  : {
-                'default' :[
-                    {'sink' : 'sys.stdout'}
-                ]
-            }
-
+            'handlers'  :
+                'default' :
+                    - {'sink' : 'sys.stdout'}
         }
 
     ########## Parse handlers  ####################################################
@@ -191,11 +188,9 @@ def logger_setup2(log_level:str=None, log_config_path:str=None, template_name:st
          print("Using Default hardcoded")
          cfg = {
             'log_level' : 'INFO',
-            'handlers'  : {
-                'default' : [
-                    {'sink' : 'sys.stdout'}
-                ]
-            }
+            'handlers'  :
+                'default' :
+                    - {'sink' : 'sys.stdout'}
         }
     ########## Log: init variable  ################################################
     log_level  = log_level  if log_level  is not None else cfg.get('log_level', 'INFO')
@@ -215,12 +210,12 @@ def logger_setup2(log_level:str=None, log_config_path:str=None, template_name:st
     ########## Parse handlers  ###################################################
     cfg["log_format"] = LOGURU_FORMAT
 
-    if template_name:
-        for i, hndl in enumerate(cfg["handlers"][template_name]):
+    if template_name in cfg.get("handlers"):
+        for i, hndl in enumerate(cfg.get("handlers").get(template_name)):
             if hndl.get("format") in format_dict:
                 cfg["handlers"][template_name][i]["format"] = format_dict[hndl.get("format")]
             else:
-                print("Using default format for handler", i, "in template", template_name)
+                print("Using format0 for handler", i, "in template", template_name)
                 cfg["handlers"][template_name][i]["format"] = format_dict[log_format]
 
             sink = hndl.get("sink")
@@ -240,8 +235,8 @@ def logger_setup2(log_level:str=None, log_config_path:str=None, template_name:st
 
     loguru_cfg = {}
 
-    if template_name:
-        loguru_cfg["handlers"] = cfg["handlers"][template_name]
+    if template_name in cfg.get("handlers"):
+        loguru_cfg["handlers"] = cfg.get("handlers").get(template_name)
 
     logger.configure(**loguru_cfg)
 
