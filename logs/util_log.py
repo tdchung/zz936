@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import sys
-
+import os
+from pathlib import Path
 import yaml
 from loguru import logger
 
 #####################################################################################
+root = os.path.abspath(__file__).replace("\\","/")
 LOG_TEMPLATE = "mytemplate2"
-LOG_CONFIG_PATH = "config_log.yaml"
+LOG_CONFIG_PATH = str(Path(root) / "config_log.yaml")
 
 
 #####################################################################################
@@ -35,7 +37,7 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
             cfg = yaml.safe_load(fp)
 
     except Exception as e:
-        print("Using Default logging setup")
+        print(f"Cannot load yaml file {log_config_path}, Using Default logging setup")
         cfg = {"log_level": "INFO", "handlers": {"default": [{"sink": "sys.stdout"}]}}
 
     ########## Parse handlers  ####################################################
