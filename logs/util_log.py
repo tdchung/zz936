@@ -10,12 +10,10 @@ LOG_CONFIG_PATH= 'config_log.yaml'
 
 
 #####################################################################################
-def logger_setup(log_level:str=None,
-                 log_config_path:str=None,
+def logger_setup(log_config_path:str='config_log.yaml',
                  template_name:str='default',
-                 backtrace=True, diagnose=True, **kwargs):
+                 **kwargs):
     """ Generic Logging setup
-
       Overide logging using loguru setup
       1) Default Config using log_level and log_format.
       2) Custom config from log_config_path .yaml file
@@ -25,6 +23,13 @@ def logger_setup(log_level:str=None,
     #logger.add(log_file_name,level=level,format=format,
     #    rotation="30 days", filter=None, colorize=None, serialize=False, backtrace=True, enqueue=False, catch=True)
 
+    Args:
+        log_level:
+        log_config_path:
+        template_name:
+        **kwargs:
+
+    Returns:
 
     """
     try :
@@ -32,13 +37,13 @@ def logger_setup(log_level:str=None,
             cfg = yaml.safe_load(fp)
 
     except Exception as e:
-         print("Using Default logging setup")
+         print("Cannot load config file, Using Default logging setup")
          cfg = {
             'log_level' : 'INFO',
             'handlers'  : {'default' : [{'sink' : 'sys.stdout'}]}
          }
 
-    ########## Parse handlers  ####################################################
+    ########## Parse handlers  ############################################
     handlers  =  cfg["handlers"][template_name]
 
     for i, hndl in enumerate( handlers) :
@@ -49,7 +54,6 @@ def logger_setup(log_level:str=None,
                 hndl["sink"] = sys.stderr
 
         handlers[i] = hndl
-
 
     ########## Addon config  ##############################################
     logger.configure(handlers= handlers )
