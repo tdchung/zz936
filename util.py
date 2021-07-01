@@ -30,9 +30,7 @@ def logger_setup(log_level:str=None,
          print("Using Default hardcooded")
          cfg = {
             'log_level' : 'INFO',
-            'handlers'  :
-                'default' :
-                    - {'sink' : 'sys.stdout'}
+            'handlers'  : {'default' : [{'sink' : 'sys.stdout'}]}
         }
 
     ########## Parse handlers  ####################################################
@@ -188,9 +186,7 @@ def logger_setup2(log_level:str=None, log_config_path:str=None, template_name:st
          print("Using Default hardcoded")
          cfg = {
             'log_level' : 'INFO',
-            'handlers'  :
-                'default' :
-                    - {'sink' : 'sys.stdout'}
+            'handlers'  : {'default' : [{'sink' : 'sys.stdout'}]}
         }
     ########## Log: init variable  ################################################
     log_level  = log_level  if log_level  is not None else cfg.get('log_level', 'INFO')
@@ -329,21 +325,12 @@ def logger_setup2(log_level:str=None, log_config_path:str=None, template_name:st
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def test_setup2():
+    args = [None, "config_log.yaml", "default", None, True, True] #logger config 
+    logger = util.logger_setup2(*args)
+    logger.info("Hello")
+    logger.debug("Hello")
+    logger.critical("Hello")
 
 
 
