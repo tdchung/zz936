@@ -12,7 +12,6 @@ LOG_CONFIG_PATH = "config_log.yaml"
 #####################################################################################
 def logger_setup(log_config_path: str = None, log_template: str = "default", **kwargs):
     """ Generic Logging setup
-
       Overide logging using loguru setup
       1) Default Config using log_level and log_format.
       2) Custom config from log_config_path .yaml file
@@ -22,6 +21,13 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     #logger.add(log_file_name,level=level,format=format,
     #    rotation="30 days", filter=None, colorize=None, serialize=False, backtrace=True, enqueue=False, catch=True)
 
+    Args:
+        log_level:
+        log_config_path:
+        template_name:
+        **kwargs:
+
+    Returns:
 
     """
     try:
