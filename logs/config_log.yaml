@@ -1,22 +1,29 @@
 log_level : INFO
+
 handlers :
+
     default:
         - sink: "sys.stdout"
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
+
         - sink: "sys.stderr"
           serialize: False
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
+
     mytemplate2:
         - sink: "sys.stdout"
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
         - sink: "sys.stderr"
           serialize: False
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
+
     mytemplate3:
         - sink: "sys.stdout"
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
         - sink: "file.log"
           serialize: False
+
+
 formats:
     'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
     'format1': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>"

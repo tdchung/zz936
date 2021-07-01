@@ -1,7 +1,6 @@
 #
 # python util_config.py test
 #
-
 import importlib
 import os
 from pathlib import Path
@@ -11,14 +10,12 @@ import fire
 import yamale
 import yaml
 from box import Box
-from datamodel_code_generator import InputFileType, Error, generate
+
 from pydantic import BaseModel
 from pydantic_gen import SchemaGen
 
 
 #########################################################################################################
-
-
 def log(*s):
     print(*s, flush=True)
 
@@ -189,6 +186,7 @@ def pydantic_model_generator(
 ) -> None:
     # https://github.com/koxudaxi/datamodel-code-generator
     # pip install datamodel-code-generator
+    from datamodel_code_generator import InputFileType, Error, generate
 
     try:
         generate(

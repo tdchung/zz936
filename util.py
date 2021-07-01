@@ -31,7 +31,7 @@ def logger_setup(log_level:str=None,
          cfg = {
             'log_level' : 'INFO',
             'handlers'  : {'default' : [{'sink' : 'sys.stdout'}]}
-        }
+         }
 
     ########## Parse handlers  ####################################################
     handlers  =  cfg["handlers"][template_name]
@@ -66,8 +66,8 @@ def log2(*s):
   logger.debug(",".join([str(t) for t in s]))
 
 
-def log3(*s):
-    logger.log("debug2", ",".join([str(t) for t in s]))
+def log3(*s):  ### Debuggine level 2
+  logger.log("debug2", ",".join([str(t) for t in s]))
 
 
 def logw(*s):
@@ -80,6 +80,9 @@ def logc(*s):
 
 def loge(*s):
    logger.error(",".join([str(t) for t in s]))
+
+
+
 
 
 ##########################################################################################
