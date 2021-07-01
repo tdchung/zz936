@@ -61,23 +61,25 @@ logger_setup(log_template='template2', log_config_path='config_log.yaml')
 def log(*s):
   logger.info(",".join([str(t) for t in s]))
 
+
 def log2(*s):
   logger.debug(",".join([str(t) for t in s]))
+
+
+def log3(*s):
+    logger.log("debug2", ",".join([str(t) for t in s]))
+
 
 def logw(*s):
   logger.warning(",".join([str(t) for t in s]))
 
+
 def logc(*s):
   logger.critical(",".join([str(t) for t in s]))
 
+
 def loge(*s):
    logger.error(",".join([str(t) for t in s]))
-
-
-
-
-
-
 
 
 ##########################################################################################
