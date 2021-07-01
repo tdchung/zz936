@@ -1,13 +1,13 @@
 # Used default values from loguru._defaults
-level: DEBUG
-format: "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
-filter:
-colorize: True
-serialize: False
-backtrace: True
-diagnose: True
-enqueue: False
-catch: True
+level     : DEBUG
+format    : "<level>{message}</level>"
+filter    :
+colorize  : True
+serialize : False
+backtrace : True
+diagnose  : True
+enqueue   : False
+catch     : True
 
 handlers :
 
@@ -33,8 +33,10 @@ handlers :
           serialize: False
 
 
+###### Template format for helpers
 #formats:
 #    'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
 #    'format1': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>"
 #    'format2': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
 #    'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
+# format: "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
