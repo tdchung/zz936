@@ -32,7 +32,7 @@ def logger_setup(log_level:str=None,
             cfg = yaml.safe_load(fp)
 
     except Exception as e:
-         print("Using Default hardcooded")
+         print("Using Default logging setup")
          cfg = {
             'log_level' : 'INFO',
             'handlers'  : {'default' : [{'sink' : 'sys.stdout'}]}
@@ -51,10 +51,9 @@ def logger_setup(log_level:str=None,
         handlers[i] = hndl
 
 
-    ########## Create loguru config  ##############################################
+    ########## Addon config  ##############################################
     logger.configure(handlers= handlers )
     logger.level("TIMEIT", no=22, color="<cyan>")
-
     return logger
 
 
@@ -85,6 +84,17 @@ def logc(*s):
 
 def loge(*s):
    logger.error(",".join([str(t) for t in s]))
+
+
+
+
+def test():
+   log('info')
+   log2('debug')
+
+
+if __name__ == "__main__":
+    test()
 
 
 
