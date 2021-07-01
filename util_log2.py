@@ -1,73 +1,33 @@
-import logging
-import traceback
-from datetime import datetime
-from logging.config import fileConfig
+from loguru import logger
+import yaml
+from yaml import YAMLError
+import sys
 
-
-def get_logger():
+def get_logger(config_path, template):
     """
     logger function creates a logging instance globally per process.
     """
-    fileConfig("config_log.ini")
-
-    return logging
-
-
-def add_handler(handler, level="info", format=None):
-    """
-    Adds a logging handler
-
-    Args:
-    handler:  Accepts a new handler class
-    level:    Accepts any level
-    format:   Accepts message format, None by default
-
-    example:  add_handler(logging.StreamHandler(), level='info')
-    """
-    logging.debug(
-        "Handler requested to add in logging instance -> {}".format(type(handler))
-    )
-    numeric_level = getattr(logging, level.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError("Invalid log level: %s" % loglevel)
-
     try:
-        handler.setLevel(numeric_level)
-        handler.setFormatter(format)
-        handler.flush()
-        logging.getLogger().addHandler(handler)
-    except Exception as e:
-        print(
-            "Exception occurred while adding a handler to logger instance -> ",
-            traceback.format_exc(),
-        )
-        raise Exception("Could not add handler. Exiting...")
+        with open(config_path, "r") as fp:
+            config = yaml.safe_load(fp)
+
+    except YAMLError as err:
+        config = {"log_level": "INFO", "handlers": {"default": [{"sink": "sys.stdout"}]}}
+        print("Exception : {} ".format(err))
 
 
-def remove_handler(handler):
-    """
-    Removes a logging handler
+    handlers = config['handlers'][template]
 
-    Args:
-    handler:  Accepts a handler class to remove
+    for i, handler in enumerate(handlers):
+        if handler["sink"] == "sys.stdout":
+            handler["sink"] = sys.stdout
+        elif handler["sink"] == "sys.stderr":
+            handler["sink"] = sys.stderr
 
-    example:  remove_handler(logging.StreamHandler()
-    """
-    logging.debug(
-        "Handler requested to remove from logging instance -> {}".format(type(handler))
-    )
-    try:
-        if logging.getLogger().hasHandlers():
-            for count, h in enumerate(logging.getLogger().handlers):
-                if type(h) == type(handler):
-                    logging.getLogger().removeHandler(
-                        logging.getLogger().handlers[count]
-                    )
-    except Exception as e:
-        print(
-            "Exception occurred while removing a handler from logger instance -> ",
-            traceback.format_exc(),
-        )
-        raise Exception("Could not remove a handler. Exiting...")
+        handlers[i] = handler
 
-    logging.debug("Remaining log handlers -> {}".format(logging.getLogger().handlers))
+
+    logger.configure(handlers=handlers)
+    logger.add(level=config['log_level'])
+
+    return logger
