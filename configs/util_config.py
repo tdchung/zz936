@@ -1,6 +1,13 @@
-#
+# -*- coding: utf-8 -*-
+"""
 # python util_config.py test
-#
+Deps
+
+
+
+
+
+"""
 import importlib
 import os
 from pathlib import Path
@@ -10,9 +17,7 @@ import fire
 import yamale
 import yaml
 from box import Box
-
 from pydantic import BaseModel
-from pydantic_gen import SchemaGen
 
 
 #########################################################################################################
@@ -65,16 +70,17 @@ def config_load(
         log("Config: Loading ", config_path)
         if config_path.suffix == ".yaml":
             cfg = yaml.safe_load(config_path.read_text())
+
         elif config_path.suffix == ".json":
             cfg = json.loads(config_path.read_text())
+
         elif config_path.suffix in [".properties", ".ini"]:
             from configparser import SafeConfigParser
-
             cfg = SafeConfigParser()
             cfg.read(str(config_path))
+
         elif config_path.suffix == ".toml":
             import toml
-
             cfg = toml.loads(config_path.read_text())
         else:
             raise Exception(f"not supported file {config_path}")
@@ -97,7 +103,7 @@ def config_load(
     return config_default
 
 
-def config_isvalid(config_dict: dict, schema_path: str, silent: bool = False) -> bool:
+def config_isvalid(config_dict: dict, schema_path: str='config_val.yaml', silent: bool = False) -> bool:
     """Validate using a  yaml file
     Args:
         config_dict:
@@ -105,15 +111,12 @@ def config_isvalid(config_dict: dict, schema_path: str, silent: bool = False) ->
         silent:
     Returns: True/False
     """
-
     schema = yamale.make_schema(schema_path)
 
     try:
         result = schema.validate(config_dict, data_name=schema_path, strict=True)
-
         if not result.isValid():
             raise yamale.YamaleError([result])
-
         return True
 
     except yamale.YamaleError as e:
@@ -121,52 +124,19 @@ def config_isvalid(config_dict: dict, schema_path: str, silent: bool = False) ->
             loge(f"Error validating data '{result.data}' with '{result.schema}'\n\t")
             for error in result.errors:
                 loge(f"\t{error}")
-
         return False
 
 
-def config_validate(
-    config_path: str, schema_path: str, silent: bool = False
-) -> Union[Box, None]:
 
-    schema = yamale.make_schema(schema_path)
-    data = yamale.make_data(config_path)
-
-    try:
-        yamale.validate(schema, data)
-        return _yaml_to_box(config_path)
-
-    except yamale.YamaleError as e:
-        print("Validation failed!\n")
-        for result in e.results:
-            print(f"Error validating data '{result.data}' with '{result.schema}'\n\t")
-            for error in result.errors:
-                print(f"\t{error}")
-        if not silent:
-            raise e
-
-
-def config_validate_pydantic(
-    config_dict: dict = None,
-    pydantic_file_path: str = "config.validate.myclassname.py",
-):
-    # config_validate_path:=None,):
-    """Validate configuration based on template type validator
-        wiht Pydantic
-
-    Returns: dict config
-    """
-
-
-def _yaml_to_box(yaml_path: str) -> Box:
+def convert_yaml_to_box(yaml_path: str) -> Box:
     with open(yaml_path) as f:
         data = yaml.load(f)
-
     return Box(data)
 
 
 def convert_yaml_to_pydantic(config_dict: dict, schema_name: str):
     # pip install pydantic-gen
+    from pydantic_gen import SchemaGen
 
     generated = SchemaGen(schema_name)
     generated.to_file(f"{schema_name.split('.')[0]}.py")
@@ -174,19 +144,29 @@ def convert_yaml_to_pydantic(config_dict: dict, schema_name: str):
     pydantic_module = importlib.import_module(
         f"zz936.configs.{schema_name.split('.')[0]}"
     )
-
     return pydantic_module.MainSchema(**config_dict)
+
 
 
 def pydantic_model_generator(
     input_file: Union[Path, str],
-    input_file_type: InputFileType,
+    input_file_type,
     output_file: Path,
     **kwargs,
 ) -> None:
+    """
+    Args:
+        input_file:
+        input_file_type:
+        output_file:
+        **kwargs:
+
+    Returns:
     # https://github.com/koxudaxi/datamodel-code-generator
     # pip install datamodel-code-generator
-    from datamodel_code_generator import InputFileType, Error, generate
+
+    """
+    from datamodel_code_generator import Error, generate
 
     try:
         generate(
@@ -200,11 +180,26 @@ def pydantic_model_generator(
         )
 
 
+
+def config_isvalid_pydantic(config_dict: dict,
+                            pydanctic_schema: str='config_py.yaml', silent: bool = False) -> bool:
+    """Validate using a pydantic files
+    Args:
+        config_dict:
+        pydanctic_schema:
+        silent:
+    Returns: True/False
+    """
+    try:
+        return True
+
+    except yamale.YamaleError as e:
+        return False
+
+
+
 #########################################################################################################
-def test():
-    config_validate("config.yaml", "config_val.yaml", silent=True)
-
-
+#########################################################################################################
 def test2():
     cfg_dict = config_load("config.yaml")
     isok = config_isvalid(cfg_dict, "config_val.yaml")
@@ -212,6 +207,7 @@ def test2():
 
 
 def test3():
+    from datamodel_code_generator import InputFileType
     # generating from json file
     pydantic_model_generator(
         Path("config.json"), InputFileType.Json, Path("pydantic_model_json.py")
@@ -254,3 +250,26 @@ nest:
 
 if __name__ == "__main__":
     fire.Fire()
+
+
+
+
+
+def zzz_config_load_validate(config_path: str, schema_path: str, silent: bool = False
+                         ) -> Union[Box, None]:
+
+    schema = yamale.make_schema(schema_path)
+    data = yamale.make_data(config_path)
+
+    try:
+        yamale.validate(schema, data)
+        return convert_yaml_to_box(config_path)
+
+    except yamale.YamaleError as e:
+        print("Validation failed!\n")
+        for result in e.results:
+            print(f"Error validating data '{result.data}' with '{result.schema}'\n\t")
+            for error in result.errors:
+                print(f"\t{error}")
+        if not silent:
+            raise e
