@@ -68,7 +68,7 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
 
     # new log levels go here
     logger.level("TIMEIT", no=22, color="<cyan>")
-    logger.level("debug2", no=22, color="<cyan>")
+    logger.level("debug2", no=9, color="<cyan>")
     return logger
 
 
