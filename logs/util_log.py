@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 import sys
-import os
 from pathlib import Path
+
 import yaml
 from loguru import logger
 
 #####################################################################################
-root = os.path.abspath(__file__).replace("\\","/")
+root = Path(__file__).resolve().parent
 LOG_TEMPLATE = "mytemplate2"
-LOG_CONFIG_PATH = str(Path(root) / "config_log.yaml")
+LOG_CONFIG_PATH = root / "config_log.yaml"
 
 
 #####################################################################################
