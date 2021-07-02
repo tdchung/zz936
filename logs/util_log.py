@@ -20,7 +20,7 @@ from loguru import logger
 root = Path(__file__).resolve().parent
 LOG_CONFIG_PATH = root / "config_log.yaml"
 
-LOG_TEMPLATE = "debug1"
+LOG_TEMPLATE = "debug0"
 
 # try :
 #    os.environ['config_log']
