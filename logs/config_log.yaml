@@ -85,6 +85,7 @@ handlers :
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green>|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
         - sink: "mytemplate4.log"
           serialize: True
+          enqueue: True
 
 ###### Template format for helpers
 #formats:
