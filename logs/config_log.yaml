@@ -84,6 +84,12 @@ handlers :
           rotation  : "10 days"
 
 
+    mytemplate4:
+        - sink: "sys.stdout"
+          format: "<green>{time:DD.MM.YY HH:mm:ss}</green>|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
+        - sink: "mytemplate4.log"
+          serialize: True
+
 ###### Template format for helpers
 #formats:
 #    'format0': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
