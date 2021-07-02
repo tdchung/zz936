@@ -1,4 +1,15 @@
 # -*- coding: utf-8 -*-
+"""
+# The severity levels
+# Level name	Severity value	Logger method
+# TRACE	        5	            logger.trace()
+# DEBUG	        10	            logger.debug()
+# INFO	        20	            logger.info()
+# SUCCESS	    25	            logger.success()
+# WARNING	    30	            logger.warning()
+# ERROR	        40	            logger.error()
+# CRITICAL	    50	            logger.critical()
+"""
 import sys, os
 from pathlib import Path
 
@@ -8,6 +19,7 @@ from loguru import logger
 #####################################################################################
 root = Path(__file__).resolve().parent
 LOG_CONFIG_PATH = root / "config_log.yaml"
+
 LOG_TEMPLATE = "debug1"
 
 # try :
@@ -26,6 +38,11 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
         template_name:
         **kwargs:
     Returns:None
+
+    TODO:
+        logger.add("somefile.log", enqueue=True)
+
+
     """
     try:
         with open(log_config_path, "r") as fp:

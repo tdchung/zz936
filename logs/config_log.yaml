@@ -22,7 +22,15 @@ backtrace : True
 diagnose  : True
 enqueue   : False
 catch     : True
-rotation  : "10 days"
+
+
+
+#1.log", rotation="500 MB")    # Automatically rotate too big file
+#2.log", rotation="12:00")     # New file is created each day at noon
+#3.log", rotation="1 week")    # Once the file is too old, it's rotated
+#X.log", retention="10 days")  # Cleanup after some time
+#Y.log", compression="zip")    # Save some loved space
+rotation  : "00:00"
 
 
 
