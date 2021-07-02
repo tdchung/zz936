@@ -85,6 +85,7 @@ def log2(*s):
 
 
 def log3(*s):  ### Debuggine level 2
+    # to enable debug2 logs set level: TRACE in config_log.yaml
     logger.log("debug2", ",".join([str(t) for t in s]))
 
 
@@ -101,9 +102,9 @@ def loge(*s):
 
 
 def test():
-    log("info")
-    log2("debug")
     log3("debug2")
+    log2("debug")
+    log("info")
     logw("warning")
     loge("error")
     logc("critical")

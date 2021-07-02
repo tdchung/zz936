@@ -1,5 +1,5 @@
 # Used default values from loguru._defaults
-level     : DEBUG
+level     : DEBUG # to see debug2 level logs set level to TRACE
 format    : "<level>{message}</level>"
 filter    :
 colorize  : True
