@@ -143,7 +143,7 @@ def get_list_class_methods(file_path):
         {"name": "Class2", "listMethods": ["method4", "method5", "method6"]},
     ]
     """
-    response = []
+    list_names = []
     all_lines = _get_and_clean_all_lines(file_path)
     for class_name in get_list_class_name(file_path):
         class_info = {}
@@ -155,8 +155,8 @@ def get_list_class_methods(file_path):
             re_response = re.match(re_check, line.rstrip())
             if re_response:
                 class_info["listMethods"].append(re_response.group(1))
-        response.append(class_info)
-    return response
+        list_names.append(class_info)
+    return list_names
 
 
 def get_list_variable_global(file_path):
@@ -183,7 +183,7 @@ def get_list_variable_global(file_path):
     return list(dict.fromkeys(list_var))
 
 
-def get_list_function_stats(file_path):
+def get_list_function_info(file_path):
     """The function use to get functions stars
 
     Args:
@@ -206,6 +206,67 @@ def get_list_function_stats(file_path):
         data["variables"] = _get_all_function_variables(lines, indent)
         output.append(data)
     return output
+
+
+
+def get_list_function_stats(file_path):
+    """The function use to get functions stars
+
+    Args:
+        IN: file_path         - the file path input
+        OUT: Array of functions, lines of the function, and variable in function
+    Example Output:
+        [
+            {"function": "function_name1", "lines": 20, "variables": ["a", "b", "c"]},
+            {"function": "function_name2", "lines": 30, "variables": []},
+        ]
+
+    pip install pandas
+    https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.from_records.html
+
+
+
+    """
+    #### Calcualte Stats:
+    """
+       uri:   path1/path2/filename.py:function1
+       name: function1
+       n_lines
+       n_words
+       n_words_unqiue
+       n_characters
+       avg_char_per_word = n_charaecter / n_words
+       n_loop  : nb of for, while loop
+       n_ifthen  : nb of if_then
+       
+       
+
+    
+    """
+    list_info = get_list_function_info(file_path)
+    import pandas as pd
+    df = pd.DataFrame.from_records(list_info)
+
+
+    df['n_words']        = df['code_source'].apply(lambda x : len( x.split(" ") ))
+    df['n_words_unique'] = df['code_source'].apply(lambda x : len(set( x.split(" ") )))
+
+
+    cols = [
+        'uri',
+        'n_words',
+        'n_words_unique'
+
+
+    ]
+
+    df = df[cols]
+    print(df)
+    df.to_csv('functions_stats.csv', index=False)
+
+
+
+
 
 
 def get_file_stats(file_path):
@@ -477,7 +538,7 @@ def _get_all_lines_in_class(class_name, array):
 # ====================================================================================
 # MAIN
 # ====================================================================================
-if __name__ == "__main__":
+def main():
     CUR_DIR = os.path.abspath(os.path.dirname(__file__))
 
     test_files = ['test.py', 'test2.py', 'test3.py',
@@ -532,3 +593,10 @@ if __name__ == "__main__":
         for i in functions_stats:
             f.write("{}, {}, {}, {}\n".format(
                 i['function'], i['lines'], len(i['variables']), i['variables']))
+
+
+
+if __name__ == "__main__":
+    ## python code_parser.py   main
+    import fire
+    fire.Fire()

@@ -10,7 +10,10 @@
 # ERROR	        40	            logger.error()
 # CRITICAL	    50	            logger.critical()
 
-level     : DEBUG # to see debug2 level logs set level to TRACE
+############################################################
+### TRACE : log3, DEBUG: log2, INFO: log, WARNING: log2,
+level     : DEBUG
+
 format    : "<level>{message}</level>"
 filter    :
 colorize  : True
@@ -21,8 +24,9 @@ enqueue   : False
 catch     : True
 rotation  : "10 days"
 
-handlers :
 
+
+handlers :
     default:
         - sink: "sys.stdout"
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
@@ -30,6 +34,8 @@ handlers :
         - sink: "sys.stderr"
           serialize: False
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
+
+
 
     mytemplate2:
         - sink: "sys.stdout"
@@ -54,3 +60,6 @@ handlers :
 #    'format2': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
 #    'format3': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
 # format: "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
+
+
+
