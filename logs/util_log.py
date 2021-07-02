@@ -18,22 +18,14 @@ LOG_TEMPLATE = "debug1"
 def logger_setup(log_config_path: str = None, log_template: str = "default", **kwargs):
     """ Generic Logging setup
       Overide logging using loguru setup
-      1) Default Config using log_level and log_format.
-      2) Custom config from log_config_path .yaml file
-      3) Use shortname log, log2, logw, loge for logging output
-
-    Options
-    #logger.add(log_file_name,level=level,format=format,
-    #    rotation="30 days", filter=None, colorize=None, serialize=False, backtrace=True, enqueue=False, catch=True)
+      1) Custom config from log_config_path .yaml file
+      2) Use shortname log, log2, logw, loge for logging output
 
     Args:
-        log_level:
         log_config_path:
         template_name:
         **kwargs:
-
-    Returns:
-
+    Returns:None
     """
     try:
         with open(log_config_path, "r") as fp:
@@ -138,8 +130,10 @@ def logc(*s):
 
 
 def loge(*s):
-    logger.opt(depth=1, lazy=True).error(",".join([str(t) for t in s]))
+    logger.opt(depth=1, lazy=True).exception(",".join([str(t) for t in s]))
 
+def logr(*s):
+    logger.opt(depth=1, lazy=True).error(",".join([str(t) for t in s]))
 
 
 ############################################################################
@@ -155,6 +149,7 @@ def test():
         a = 1 / 0
     except Exception as e:
         loge("error", e)
+        loge("Catcch"), e
 
 
 
