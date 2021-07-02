@@ -82,28 +82,28 @@ logger_setup(log_config_path=LOG_CONFIG_PATH, log_template=LOG_TEMPLATE)
 
 
 def log(*s):
-    logger.info(",".join([str(t) for t in s]))
+    logger.opt(depth=1).info(",".join([str(t) for t in s]))
 
 
 def log2(*s):
-    logger.debug(",".join([str(t) for t in s]))
+    logger.opt(depth=1).debug(",".join([str(t) for t in s]))
 
 
 def log3(*s):  ### Debuggine level 2
     # to enable debug2 logs set level: TRACE in config_log.yaml
-    logger.log("debug2", ",".join([str(t) for t in s]))
+    logger.opt(depth=1).log("debug2", ",".join([str(t) for t in s]))
 
 
 def logw(*s):
-    logger.warning(",".join([str(t) for t in s]))
+    logger.opt(depth=1).warning(",".join([str(t) for t in s]))
 
 
 def logc(*s):
-    logger.critical(",".join([str(t) for t in s]))
+    logger.opt(depth=1).critical(",".join([str(t) for t in s]))
 
 
 def loge(*s):
-    logger.error(",".join([str(t) for t in s]))
+    logger.opt(depth=1).error(",".join([str(t) for t in s]))
 
 
 def test():
