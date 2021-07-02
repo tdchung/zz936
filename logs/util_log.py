@@ -7,8 +7,8 @@ from loguru import logger
 
 #####################################################################################
 root = Path(__file__).resolve().parent
-LOG_TEMPLATE = "mytemplate2"
 LOG_CONFIG_PATH = root / "config_log.yaml"
+LOG_TEMPLATE = "debug1"
 
 # try :
 #    os.environ['config_log']
@@ -51,9 +51,11 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     for handler in handlers:
         if handler["sink"] == "sys.stdout":
             handler["sink"] = sys.stdout
+
         elif handler["sink"] == "sys.stderr":
             handler["sink"] = sys.stderr
-        elif handler["sink"].endswith(".log"):
+
+        elif  ".log" in handler["sink"] or ".txt" in handler["sink"]   :
             handler["rotation"] = handler.get("rotation", rotation)
 
         # override globals values
@@ -66,44 +68,85 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     ########## Addon config  ##############################################
     logger.configure(handlers=handlers)
 
-    # new log levels go here
-    logger.level("TIMEIT", no=22, color="<cyan>")
-    logger.level("debug2", no=22, color="<cyan>")
+    ########## Custom log levels  #########################################
+    # configure log level in config_log.yaml to be able to use logs depends on severity value
+    # if no=9 it means that you should set log level below DEBUG to see logs,
+    # severity levels table attached in config_log.yaml
+    # logger.level("TIMEIT", no=22, color="<cyan>")
+    logger.level("debug2", no=9, color="<cyan>")
     return logger
 
 
-##### Initialization ####################################################
+
+
+def logger_override():
+    """
+      stdout --> logger
+    Returns:
+
+    """
+    import contextlib
+    import sys
+
+    class StreamToLogger:
+        def __init__(self, level="INFO"):
+            self._level = level
+
+        def write(self, buffer):
+            for line in buffer.rstrip().splitlines():
+                logger.opt(depth=1).log(self._level, line.rstrip())
+
+        def flush(self):
+            pass
+
+    logger.remove()
+    logger.add(sys.__stdout__)
+
+    stream = StreamToLogger()
+    with contextlib.redirect_stdout(stream):
+        print("Standard output is sent to added handlers.")
+
+
+
+
+
+##### Initialization #######################################################
 logger_setup(log_config_path=LOG_CONFIG_PATH, log_template=LOG_TEMPLATE)
 
 
+
+############################################################################
 def log(*s):
-    logger.info(",".join([str(t) for t in s]))
+    logger.opt(depth=1, lazy=True).info(",".join([str(t) for t in s]))
 
 
 def log2(*s):
-    logger.debug(",".join([str(t) for t in s]))
+    logger.opt(depth=1, lazy=True).debug(",".join([str(t) for t in s]))
 
 
 def log3(*s):  ### Debuggine level 2
-    logger.log("debug2", ",".join([str(t) for t in s]))
+    # to enable debug2 logs set level: TRACE in config_log.yaml
+    logger.opt(depth=1, lazy=True).log("debug2", ",".join([str(t) for t in s]))
 
 
 def logw(*s):
-    logger.warning(",".join([str(t) for t in s]))
+    logger.opt(depth=1, lazy=True).warning(",".join([str(t) for t in s]))
 
 
 def logc(*s):
-    logger.critical(",".join([str(t) for t in s]))
+    logger.opt(depth=1, lazy=True).critical(",".join([str(t) for t in s]))
 
 
 def loge(*s):
-    logger.error(",".join([str(t) for t in s]))
+    logger.opt(depth=1, lazy=True).error(",".join([str(t) for t in s]))
 
 
+
+############################################################################
 def test():
-    log("info")
-    log2("debug")
     log3("debug2")
+    log2("debug")
+    log("info")
     logw("warning")
     loge("error")
     logc("critical")
@@ -114,5 +157,7 @@ def test():
         loge("error", e)
 
 
+
+############################################################################
 if __name__ == "__main__":
     test()
