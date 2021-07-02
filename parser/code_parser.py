@@ -78,7 +78,7 @@ List functions:
 """
 
 import os
-from posixpath import dirname
+from posixpath import dirname, split
 import re
 
 
@@ -371,16 +371,68 @@ def _get_all_function_variables(array, indent):
         IN: array         - list all lines of function to get variables
         OUT: list_var     - Array of all variables
     """
-    re_check1 = r'{}(\w+)\s+='.format(indent)
-    re_check2 = r'{}(\w+)='.format(indent)
+    list_python_kwd = ["if", "elif", "else", "True", "False", "for", "while", "not", "None", "global", "self",
+                       "try", "except", "Exception", "as", "e", "in", "def", "class", "assert",
+                       "int", "float", "list", "set", "dict", "len", "yield", "is"]
+    check_array = array.copy()
     list_var = []
-    for line in array:
-        re_response = re.match(re_check1, line.rstrip())
-        if re_response:
-            list_var.append(re_response.group(1))
-        re_response2 = re.match(re_check2, line.rstrip())
-        if re_response2:
-            list_var.append(re_response2.group(1))
+
+    is_detect = False
+    for line in check_array.copy():
+        # clear multi line function
+        if not is_detect:
+            if line.rstrip().find('(') > 0:
+                if line.rstrip().find(')') < 0:
+                    is_detect = True
+                line = line.rstrip()[:line.rstrip().find('(')]
+            else:
+                line = line.rstrip()
+        else:
+            check_array.remove(line)
+            if line.rstrip().find(')') > 0:
+                is_detect = False
+
+    is_detect = False
+    for line in check_array.copy():
+        # clear multi line function
+        if not is_detect:
+            if line.rstrip().find('[') > 0:
+                if line.rstrip().find(']') < 0:
+                    is_detect = True
+                line = line.rstrip()[:line.rstrip().find('[')]
+            else:
+                line = line.rstrip()
+        else:
+            check_array.remove(line)
+            if line.rstrip().find(']') > 0:
+                is_detect = False
+
+    for line in check_array.copy():
+        # clear string
+        if line.rstrip().find('(') >= 0:
+            line = line.rstrip()[:line.rstrip().find('(')]
+        elif line.rstrip().find('r"') >= 0:
+            line = line.rstrip()[:line.rstrip().find('r"')]
+        elif line.rstrip().find('b"') >= 0:
+            line = line.rstrip()[:line.rstrip().find('b"')]
+        elif line.rstrip().find('"') >= 0:
+            line = line.rstrip()[:line.rstrip().find('"')]
+        elif line.rstrip().find("r'") >= 0:
+            line = line.rstrip()[:line.rstrip().find("r'")]
+        elif line.rstrip().find("b'") >= 0:
+            line = line.rstrip()[:line.rstrip().find("b'")]
+        elif line.rstrip().find("'") >= 0:
+            line = line.rstrip()[:line.rstrip().find("'")]
+        else:
+            line = line.rstrip()
+
+        keywords = [work.replace(':', '').replace(',', ' ')
+                    for work in line.split()]
+        for work in keywords:
+            if (re.match(r'\w+', work) or re.match(r'\w+.\w+', work)) and \
+                    re.match(r'\d+', work) == None and work not in list_python_kwd:
+                list_var.append(work)
+    # return list_var
     return list(dict.fromkeys(list_var))
 
 
@@ -431,43 +483,52 @@ if __name__ == "__main__":
     test_files = ['test.py', 'test2.py', 'test3.py',
                   "model_gefs.py", "model_sklearn.py"]
 
-    for file in test_files:
-        print('----------------------------------------')
-        print("Start test with file: {}".format(file))
-        file = "{}/test/{}".format(CUR_DIR, file)
+    # for file in test_files:
+    #     print('----------------------------------------')
+    #     print("Start test with file: {}".format(file))
+    #     file = "{}/test/{}".format(CUR_DIR, file)
 
-        # get all functions
-        functions = get_list_function_name(file)
-        print("     List functions:")
-        for i in functions:
-            print("         - {}".format(i))
+    #     # get all functions
+    #     functions = get_list_function_name(file)
+    #     print("     List functions:")
+    #     for i in functions:
+    #         print("         - {}".format(i))
 
-        # get all class
-        classes = get_list_class_name(file)
-        print("     List classes:")
-        for i in classes:
-            print("         - {}".format(i))
+    #     # get all class
+    #     classes = get_list_class_name(file)
+    #     print("     List classes:")
+    #     for i in classes:
+    #         print("         - {}".format(i))
 
-        # get all variable
-        variables = get_list_variable_global(file)
-        print("     List variables:")
-        for i in variables:
-            print("         - {}".format(i))
+    #     # get all variable
+    #     variables = get_list_variable_global(file)
+    #     print("     List variables:")
+    #     for i in variables:
+    #         print("         - {}".format(i))
 
-        # get all class methods
-        class_methods = get_list_class_methods(file)
-        print("     List class methods:")
-        for i in class_methods:
-            print("         {} - {}".format(i['name'], i['listMethods']))
+    #     # get all class methods
+    #     class_methods = get_list_class_methods(file)
+    #     print("     List class methods:")
+    #     for i in class_methods:
+    #         print("         {} - {}".format(i['name'], i['listMethods']))
 
-        # get function stats
-        functions_stats = get_list_function_stats(file)
-        print("     List functions_stats:")
+    #     # get function stats
+    #     functions_stats = get_list_function_stats(file)
+    #     print("     List functions_stats:")
+    #     for i in functions_stats:
+    #         print("       Name: {} - Lines: {} - Var: {}".format(
+    #             i['function'], i['lines'], i['variables']))
+
+    #     # get file stats
+    #     file_stats = get_file_stats(file)
+    #     print("     File_stats:")
+    #     print("       {} ".format(file_stats))
+
+    # Example save in csv format
+    file = "{}/test/{}".format(CUR_DIR, "test2.py")
+    functions_stats = get_list_function_stats(file)
+    with open("output.csv", "w+") as f:
+        f.write("function_name, nlines, nvars, listVars\n")
         for i in functions_stats:
-            print("       Name: {} - Lines: {} - Var: {}".format(
-                i['function'], i['lines'], i['variables']))
-
-        # get file stats
-        file_stats = get_file_stats(file)
-        print("     File_stats:")
-        print("       {} ".format(file_stats))
+            f.write("{}, {}, {}, {}\n".format(
+                i['function'], i['lines'], len(i['variables']), i['variables']))
