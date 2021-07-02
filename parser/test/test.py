@@ -81,156 +81,6 @@ import os
 from posixpath import dirname
 import re
 
-
-# ====================================================================================
-# Functions
-# ====================================================================================
-def get_list_function_name(file_path):
-    """The function use to get all functions of the python file
-
-    Args:
-        IN: file_path         - the file path input
-        OUT: list_functions   - List all python functions in the input file
-
-    Example Output:
-        ['func1', 'func2']
-    """
-    all_lines = _get_and_clean_all_lines(file_path)
-    re_check = r"def (\w+)"
-    list_functions = list()
-    for line in all_lines:
-        re_response = re.match(re_check, line.rstrip())
-        if re_response:
-            list_functions.append(re_response.group(1))
-    return list_functions
-
-
-def get_list_class_name(file_path):
-    """The function use to get all classes of the python file
-
-    Args:
-        IN: file_path         - the file path input
-        OUT: list_classes     - List all python classes in the input file
-
-    Example Output:
-        ['Class1', 'Class1']
-    """
-    all_lines = _get_and_clean_all_lines(file_path)
-    re_check1 = r'class (\w+)*\(.+\)*:'
-    re_check2 = r'class (\w+)*:'
-
-    list_classes = list()
-    for line in all_lines:
-        re_response = re.match(re_check1, line.rstrip())
-        if re_response:
-            list_classes.append(re_response.group(1))
-        re_response2 = re.match(re_check2, line.rstrip())
-        if re_response2:
-            list_classes.append(re_response2.group(1))
-    return list_classes
-
-
-def get_list_class_methods(file_path):
-    """The function use to get all classes and all methods in this class of the python file
-
-    Args:
-        IN: file_path         - the file path input
-        OUT: An array of class info [{dict}, {dict}, ...]
-
-    Example Output:
-    [
-        {"name": "Class1", "listMethods": ["method1", "method2", "method3"]},
-        {"name": "Class2", "listMethods": ["method4", "method5", "method6"]},
-    ]
-    """
-    response = []
-    all_lines = _get_and_clean_all_lines(file_path)
-    for class_name in get_list_class_name(file_path):
-        class_info = {}
-        class_info["name"] = class_name
-        class_lines = _get_all_lines_in_class(class_name, all_lines)
-        re_check = r"def (\w+)\(.+\):"
-        class_info["listMethods"] = []
-        for line in class_lines:
-            re_response = re.match(re_check, line.rstrip())
-            if re_response:
-                class_info["listMethods"].append(re_response.group(1))
-        response.append(class_info)
-    return response
-
-
-def get_list_variable_global(file_path):
-    """The function use to get all global variable of the python file
-
-    Args:
-        IN: file_path         - the file path input
-        OUT: list_var         - Array of all global variable
-
-    Example Output:
-        ['Var1', 'Var2']
-    """
-    all_lines = _get_and_clean_all_lines(file_path)
-    re_check1 = r'(\w+)\s+='
-    re_check2 = r'(\w+)='
-    list_var = []
-    for line in all_lines:
-        re_response = re.match(re_check1, line.rstrip())
-        if re_response:
-            list_var.append(re_response.group(1))
-        re_response2 = re.match(re_check2, line.rstrip())
-        if re_response2:
-            list_var.append(re_response2.group(1))
-    return list(dict.fromkeys(list_var))
-
-
-def get_list_function_stats(file_path):
-    """The function use to get functions stars
-
-    Args:
-        IN: file_path         - the file path input
-        OUT: Array of functions, lines of the function, and variable in function
-    Example Output:
-        [
-            {"function": "function_name1", "lines": 20, "variables": ["a", "b", "c"]},
-            {"function": "function_name2", "lines": 30, "variables": []},
-        ]
-    """
-    all_lines = _get_and_clean_all_lines(file_path)
-    all_functions = get_list_function_name(file_path)
-    output = []
-    for function in all_functions:
-        data = {}
-        data["function"] = function
-        lines, indent = _get_all_lines_in_function(function, all_lines)
-        data["lines"] = len(lines)
-        data["variables"] = _get_all_function_variables(lines, indent)
-        output.append(data)
-    return output
-
-
-def get_file_stats(file_path):
-    """The function use to get file stars
-
-    Args:
-        IN: file_path         - the file path input
-        OUT: Dict of file stars
-    Example Output:
-        {
-            "total_functions": 22,
-            "avg_lines" : 110.2,
-            "total_class": 3
-        }
-    """
-    output = {}
-    res = get_list_function_stats(file_path)
-    output["total_functions"] = len(res)
-    avg_lines = 0
-    for data in res:
-        avg_lines += data["lines"]
-    output["avg_lines"] = avg_lines/len(res)
-    output["total_class"] = len(get_list_class_name(file_path))
-    return output
-
 # ====================================================================================
 # internal Functions
 # ====================================================================================
@@ -239,7 +89,7 @@ def get_file_stats(file_path):
 def _validate_file(file_path):
     """Check if the file is existed and it's a python file
     """
-    # print("Validate: {}".format(file_path))
+    print("Validate: {}".format(file_path))
     if not os.path.exists(file_path):
         print("Input file is not exists")
         return False
@@ -404,7 +254,7 @@ def _get_all_lines_in_class(class_name, array):
         if re_response1 == None and re_response2 == None:
             response.remove(line)
         else:
-            # print("Debug: _get_all_lines_in_class. {}".format(line))
+            print("Debug: _get_all_lines_in_class. {}".format(line))
             break
 
     # 2. get indent
@@ -423,51 +273,157 @@ def _get_all_lines_in_class(class_name, array):
 
 
 # ====================================================================================
+# Functions
+# ====================================================================================
+def get_list_function_name(file_path):
+    """The function use to get all functions of the python file
+
+    Args:
+        IN: file_path         - the file path input
+        OUT: list_functions   - List all python functions in the input file
+
+    Example Output:
+        ['func1', 'func2']
+    """
+    all_lines = _get_and_clean_all_lines(file_path)
+    re_check = r"def (\w+)"
+    list_functions = list()
+    for line in all_lines:
+        re_response = re.match(re_check, line.rstrip())
+        if re_response:
+            list_functions.append(re_response.group(1))
+    return list_functions
+
+
+def get_list_class_name(file_path):
+    """The function use to get all classes of the python file
+
+    Args:
+        IN: file_path         - the file path input
+        OUT: list_classes     - List all python classes in the input file
+
+    Example Output:
+        ['Class1', 'Class1']
+    """
+    all_lines = _get_and_clean_all_lines(file_path)
+    re_check1 = r'class (\w+)*\(.+\)*:'
+    re_check2 = r'class (\w+)*:'
+
+    list_classes = list()
+    for line in all_lines:
+        re_response = re.match(re_check1, line.rstrip())
+        if re_response:
+            list_classes.append(re_response.group(1))
+        re_response2 = re.match(re_check2, line.rstrip())
+        if re_response2:
+            list_classes.append(re_response2.group(1))
+    return list_classes
+
+
+def get_list_class_methods(file_path):
+    """The function use to get all classes and all methods in this class of the python file
+
+    Args:
+        IN: file_path         - the file path input
+        OUT: An array of class info [{dict}, {dict}, ...]
+    
+    Example Output:
+    [
+        {"name": "Class1", "listMethods": ["method1", "method2", "method3"]},
+        {"name": "Class2", "listMethods": ["method4", "method5", "method6"]},
+    ]
+    """
+    response = []
+    all_lines = _get_and_clean_all_lines(file_path)
+    for class_name in get_list_class_name(file_path):
+        class_info = {}
+        class_info["name"] = class_name
+        class_lines = _get_all_lines_in_class(class_name, all_lines)
+        re_check = r"def (\w+)\(.+\):"
+        class_info["listMethods"] = []
+        for line in class_lines:
+            re_response = re.match(re_check, line.rstrip())
+            if re_response:
+                class_info["listMethods"].append(re_response.group(1))
+        response.append(class_info)
+    return response
+
+
+def get_list_variable_global(file_path):
+    """The function use to get all global variable of the python file
+
+    Args:
+        IN: file_path         - the file path input
+        OUT: list_var         - Array of all global variable
+
+    Example Output:
+        ['Var1', 'Var2']
+    """
+    all_lines = _get_and_clean_all_lines(file_path)
+    re_check1 = r'(\w+)\s+='
+    re_check2 = r'(\w+)='
+    list_var = []
+    for line in all_lines:
+        re_response = re.match(re_check1, line.rstrip())
+        if re_response:
+            list_var.append(re_response.group(1))
+        re_response2 = re.match(re_check2, line.rstrip())
+        if re_response2:
+            list_var.append(re_response2.group(1))
+    return list(dict.fromkeys(list_var))
+
+
+def get_list_function_stats(file_path):
+    """The function use to get functions stars
+
+    Args:
+        IN: file_path         - the file path input
+        OUT: Array of functions, lines of the function, and variable in function
+    Example Output:
+        [
+            {"function": "function_name1", "lines": 20, "variables": ["a", "b", "c"]},
+            {"function": "function_name2", "lines": 30, "variables": []},
+        ]
+    """
+    all_lines = _get_and_clean_all_lines(file_path)
+    all_functions = get_list_function_name(file_path)
+    output = []
+    for function in all_functions:
+        data = {}
+        data["function"] = function
+        lines, indent = _get_all_lines_in_function(function, all_lines)
+        data["lines"] = len(lines)
+        data["variables"] = _get_all_function_variables(lines, indent)
+        output.append(data)
+    return output
+
+
+def get_file_stats(file_path):
+    """The function use to get file stars
+
+    Args:
+        IN: file_path         - the file path input
+        OUT: Dict of file stars
+    Example Output:
+        {
+            "total_functions": 22,
+            "avg_lines" : 110.2,
+            "total_class": 3
+        }
+    """
+    output = {}
+    res = get_list_function_stats(file_path)
+    output["total_functions"] = len(res)
+    avg_lines = 0
+    for data in res:
+        avg_lines += data["lines"]
+    output["avg_lines"] = avg_lines/len(res)
+    output["total_class"] = len(get_list_class_name(file_path))
+
+
+# ====================================================================================
 # MAIN
 # ====================================================================================
 if __name__ == "__main__":
     CUR_DIR = os.path.abspath(os.path.dirname(__file__))
 
-    test_files = ['test.py', 'test2.py', 'test3.py',
-                  "model_gefs.py", "model_sklearn.py"]
-
-    for file in test_files:
-        print('----------------------------------------')
-        print("Start test with file: {}".format(file))
-        file = "{}/test/{}".format(CUR_DIR, file)
-
-        # get all functions
-        functions = get_list_function_name(file)
-        print("     List functions:")
-        for i in functions:
-            print("         - {}".format(i))
-
-        # get all class
-        classes = get_list_class_name(file)
-        print("     List classes:")
-        for i in classes:
-            print("         - {}".format(i))
-
-        # get all variable
-        variables = get_list_variable_global(file)
-        print("     List variables:")
-        for i in variables:
-            print("         - {}".format(i))
-
-        # get all class methods
-        class_methods = get_list_class_methods(file)
-        print("     List class methods:")
-        for i in class_methods:
-            print("         {} - {}".format(i['name'], i['listMethods']))
-
-        # get function stats
-        functions_stats = get_list_function_stats(file)
-        print("     List functions_stats:")
-        for i in functions_stats:
-            print("       Name: {} - Lines: {} - Var: {}".format(
-                i['function'], i['lines'], i['variables']))
-
-        # get file stats
-        file_stats = get_file_stats(file)
-        print("     File_stats:")
-        print("       {} ".format(file_stats))
