@@ -10,9 +10,8 @@ root = Path(__file__).resolve().parent
 LOG_TEMPLATE = "mytemplate2"
 LOG_CONFIG_PATH = root / "config_log.yaml"
 
-#try :
+# try :
 #    os.environ['config_log']
-
 
 
 #####################################################################################
@@ -66,7 +65,10 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
 
     ########## Addon config  ##############################################
     logger.configure(handlers=handlers)
+
+    # new log levels go here
     logger.level("TIMEIT", no=22, color="<cyan>")
+    logger.level("debug2", no=22, color="<cyan>")
     return logger
 
 
@@ -101,18 +103,15 @@ def loge(*s):
 def test():
     log("info")
     log2("debug")
-    log3('debug2')
-    logw('warning')
-    loge('error')
-    logc('critical')
+    log3("debug2")
+    logw("warning")
+    loge("error")
+    logc("critical")
 
-    try :
-         a = 1/0
-    except Exception as e :
-        loge('error', e)
-
-
-
+    try:
+        a = 1 / 0
+    except Exception as e:
+        loge("error", e)
 
 
 if __name__ == "__main__":
