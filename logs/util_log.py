@@ -16,11 +16,14 @@ from pathlib import Path
 import yaml
 from loguru import logger
 
+import socket
+from logging.handlers import SocketHandler
+
 #####################################################################################
 root = Path(__file__).resolve().parent
 LOG_CONFIG_PATH = root / "config_log.yaml"
 
-LOG_TEMPLATE = "debug0"
+LOG_TEMPLATE = "socket_test"
 
 # try :
 #    os.environ['config_log']
@@ -63,6 +66,12 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
 
         elif handler["sink"] == "sys.stderr":
             handler["sink"] = sys.stderr
+        
+        elif handler["sink"].startswith("socket"):
+            sink_data = handler["sink"].split(",")
+            ip = sink_data[1]
+            port = int(sink_data[2])
+            handler["sink"] = SocketHandler(ip, port)
 
         elif  ".log" in handler["sink"] or ".txt" in handler["sink"]   :
             handler["rotation"] = handler.get("rotation", rotation)
@@ -82,7 +91,7 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     # if no=9 it means that you should set log level below DEBUG to see logs,
     # severity levels table attached in config_log.yaml
     # logger.level("TIMEIT", no=22, color="<cyan>")
-    logger.level("debug2", no=9, color="<cyan>")
+    logger.level("DEBUG_2", no=9, color="<cyan>")
     return logger
 
 
@@ -135,7 +144,7 @@ def log2(*s):
 
 def log3(*s):  ### Debuggine level 2
     # to enable debug2 logs set level: TRACE in config_log.yaml
-    logger.opt(depth=1, lazy=True).log("debug2", ",".join([str(t) for t in s]))
+    logger.opt(depth=1, lazy=True).log("DEBUG_2", ",".join([str(t) for t in s]))
 
 
 def logw(*s):
