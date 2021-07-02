@@ -57,6 +57,10 @@ handlers :
         - sink: "sys.stdout"
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green>|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
 
+        - sink: "debug0.log"
+          serialize: False
+          colorize: True
+          enqueue: True
 
     debug1:
         - sink: "sys.stdout"

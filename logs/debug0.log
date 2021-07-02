@@ -1,0 +1,18 @@
+[32m03.07.21 00:24:21[0m|[34m[1mDEBUG   [0m|   __main__    |    mytest     |  5|[34m[1mdebug[0m
+[32m03.07.21 00:24:21[0m|[1mINFO    [0m|   __main__    |    mytest     |  6|[1minfo[0m
+[32m03.07.21 00:24:21[0m|[33m[1mWARNING [0m|   __main__    |    mytest     |  7|[33m[1mwarning[0m
+[32m03.07.21 00:24:21[0m|[31m[1mERROR   [0m|   __main__    |    mytest     |  8|[31m[1merror[0m
+[31m[1mNoneType[0m:[1m None[0m
+[32m03.07.21 00:24:21[0m|[41m[1mCRITICAL[0m|   __main__    |    mytest     |  9|[41m[1mcritical[0m
+[32m03.07.21 00:24:21[0m|[31m[1mERROR   [0m|   __main__    |    mytest     | 14|[31m[1merror,division by zero[0m
+[32m03.07.21 00:24:21[0m|[31m[1mERROR   [0m|   __main__    |    mytest     | 15|[31m[1mCatcch[0m
+[33m[1mTraceback (most recent call last):[0m
+
+  File "[32mD:/_devs/Python01/gitdev/arepo/zz936/logs\[0m[32m[1mtest.py[0m", line [33m21[0m, in [35m<module>[0m
+    [1mmytest[0m[1m([0m[1m)[0m
+    [36m-> [0m[36m[1m<function mytest at 0x0000017B1E6D2EA0>[0m
+
+> File "[32mD:/_devs/Python01/gitdev/arepo/zz936/logs\[0m[32m[1mtest.py[0m", line [33m12[0m, in [35mmytest[0m
+    [1ma[0m [35m[1m=[0m [34m[1m1[0m [35m[1m/[0m [34m[1m0[0m
+
+[31m[1mZeroDivisionError[0m:[1m division by zero[0m
