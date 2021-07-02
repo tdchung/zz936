@@ -176,6 +176,7 @@ def get_list_function_info(file_path):
         lines, indent = _get_all_lines_in_function(function, all_lines)
         data["n_lines"] = len(lines)
         data["variables"], data["n_loop"], data['n_ifthen'] = _get_function_stats(lines, indent)
+        data["type"] = "function"
 
         # calculate code_source
         data["code_source"] = ""
@@ -237,6 +238,7 @@ def get_list_function_stats(file_path):
     cols = [
         'uri',
         'name',
+        'type',
         'n_variable',
         'n_words',
         'n_words_unique',
