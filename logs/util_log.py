@@ -47,11 +47,15 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     ########## Parse handlers  ####################################################
     globals_, handlers = cfg, cfg.pop("handlers")[log_template]
 
+    rotation = globals_.pop("rotation")
+
     for handler in handlers:
         if handler["sink"] == "sys.stdout":
             handler["sink"] = sys.stdout
         elif handler["sink"] == "sys.stderr":
             handler["sink"] = sys.stderr
+        elif handler["sink"].endswith(".log"):
+            handler["rotation"] = handler.get("rotation", rotation)
 
         # override globals values
         for key, value in handler.items():

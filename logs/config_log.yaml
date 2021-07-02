@@ -8,7 +8,7 @@ backtrace : True
 diagnose  : True
 enqueue   : False
 catch     : True
-
+rotation  : "10 days"
 handlers :
 
     default:
