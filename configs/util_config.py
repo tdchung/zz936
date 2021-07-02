@@ -128,6 +128,26 @@ def config_isvalid(config_dict: dict, schema_path: str='config_val.yaml', silent
 
 
 
+def config_isvalid_pydantic(config_dict: dict,
+                            pydanctic_schema: str='config_py.yaml', silent: bool = False) -> bool:
+    """Validate using a pydantic files
+    Args:
+        config_dict:
+        pydanctic_schema:
+        silent:
+    Returns: True/False
+    """
+    try:
+        return True
+
+    except yamale.YamaleError as e:
+        return False
+
+
+
+
+##################################################################################################
+##################################################################################################
 def convert_yaml_to_box(yaml_path: str) -> Box:
     with open(yaml_path) as f:
         data = yaml.load(f)
@@ -180,21 +200,6 @@ def pydantic_model_generator(
         )
 
 
-
-def config_isvalid_pydantic(config_dict: dict,
-                            pydanctic_schema: str='config_py.yaml', silent: bool = False) -> bool:
-    """Validate using a pydantic files
-    Args:
-        config_dict:
-        pydanctic_schema:
-        silent:
-    Returns: True/False
-    """
-    try:
-        return True
-
-    except yamale.YamaleError as e:
-        return False
 
 
 
@@ -250,6 +255,32 @@ nest:
 
 if __name__ == "__main__":
     fire.Fire()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
