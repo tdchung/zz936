@@ -1,7 +1,7 @@
-## CODE PARSER
+### CODE PARSER
 code_parser.py
 
-## List functions
+### List functions
 
 - get_list_function_name(file_path)
 - get_list_class_name(file_path)
@@ -10,7 +10,7 @@ code_parser.py
 - get_list_function_stats(file_path)
 - get_file_stats(file_path)
 
-## Detail
+### Detail
 
 List functions:
 - get_list_function_name(file_path)
@@ -92,7 +92,7 @@ List functions:
         }
     ```
 
-## Example code
+### Example code
 
 ```
     CUR_DIR = os.path.abspath(os.path.dirname(__file__))
