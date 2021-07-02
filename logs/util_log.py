@@ -10,9 +10,8 @@ root = Path(__file__).resolve().parent
 LOG_TEMPLATE = "mytemplate2"
 LOG_CONFIG_PATH = root / "config_log.yaml"
 
-#try :
+# try :
 #    os.environ['config_log']
-
 
 
 #####################################################################################
@@ -68,7 +67,13 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
 
     ########## Addon config  ##############################################
     logger.configure(handlers=handlers)
+
+    ########## Custom log levels  #########################################
+    # configure log level in config_log.yaml to be able to use logs depends on severity value
+    # if no=9 it means that you should set log level below DEBUG to see logs,
+    # severity levels table attached in config_log.yaml
     logger.level("TIMEIT", no=22, color="<cyan>")
+    logger.level("debug2", no=9, color="<cyan>")
     return logger
 
 
@@ -85,6 +90,7 @@ def log2(*s):
 
 
 def log3(*s):  ### Debuggine level 2
+    # to enable debug2 logs set level: TRACE in config_log.yaml
     logger.log("debug2", ",".join([str(t) for t in s]))
 
 
@@ -101,20 +107,17 @@ def loge(*s):
 
 
 def test():
-    log("info")
+    log3("debug2")
     log2("debug")
-    log3('debug2')
-    logw('warning')
-    loge('error')
-    logc('critical')
+    log("info")
+    logw("warning")
+    loge("error")
+    logc("critical")
 
-    try :
-         a = 1/0
-    except Exception as e :
-        loge('error', e)
-
-
-
+    try:
+        a = 1 / 0
+    except Exception as e:
+        loge("error", e)
 
 
 if __name__ == "__main__":
