@@ -7,8 +7,8 @@ from loguru import logger
 
 #####################################################################################
 root = Path(__file__).resolve().parent
-LOG_TEMPLATE = "mytemplate2"
 LOG_CONFIG_PATH = root / "config_log.yaml"
+LOG_TEMPLATE = "debug1"
 
 # try :
 #    os.environ['config_log']
@@ -77,10 +77,45 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     return logger
 
 
-##### Initialization ####################################################
+
+
+def logger_override():
+    """
+      stdout --> logger
+    Returns:
+
+    """
+    import contextlib
+    import sys
+
+    class StreamToLogger:
+        def __init__(self, level="INFO"):
+            self._level = level
+
+        def write(self, buffer):
+            for line in buffer.rstrip().splitlines():
+                logger.opt(depth=1).log(self._level, line.rstrip())
+
+        def flush(self):
+            pass
+
+    logger.remove()
+    logger.add(sys.__stdout__)
+
+    stream = StreamToLogger()
+    with contextlib.redirect_stdout(stream):
+        print("Standard output is sent to added handlers.")
+
+
+
+
+
+##### Initialization #######################################################
 logger_setup(log_config_path=LOG_CONFIG_PATH, log_template=LOG_TEMPLATE)
 
 
+
+############################################################################
 def log(*s):
     logger.opt(depth=1).info(",".join([str(t) for t in s]))
 
@@ -106,6 +141,8 @@ def loge(*s):
     logger.opt(depth=1).error(",".join([str(t) for t in s]))
 
 
+
+############################################################################
 def test():
     log3("debug2")
     log2("debug")
@@ -120,5 +157,7 @@ def test():
         loge("error", e)
 
 
+
+############################################################################
 if __name__ == "__main__":
     test()
