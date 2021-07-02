@@ -1,4 +1,5 @@
 # Used default values from loguru._defaults
+############################################################
 
 # The severity levels
 # Level name	Severity value	Logger method
@@ -9,10 +10,9 @@
 # WARNING	    30	            logger.warning()
 # ERROR	        40	            logger.error()
 # CRITICAL	    50	            logger.critical()
-
-############################################################
 ### TRACE : log3, DEBUG: log2, INFO: log, WARNING: log2,
 level     : DEBUG
+
 
 format    : "<level>{message}</level>"
 filter    :
@@ -62,19 +62,15 @@ handlers :
         - sink: "sys.stdout"
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green>|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
 
-        - sink: "sys.stderr"
-          serialize: False
-          format: "<green>{time:DD.MM.YY HH:mm:ss}</green>|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
-
+        - sink: "mydebug2.log"
+          serialize: True
 
     debug2:
         - sink: "sys.stdout"
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green>|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
 
-        - sink: "sys.stderr"
-          serialize: False
-          format: "<green>{time:DD.MM.YY HH:mm:ss}</green>|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
-
+        - sink: "mydebug2.log"
+          serialize: True
 
     mytemplate3:
         - sink: "sys.stdout"
