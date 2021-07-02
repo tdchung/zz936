@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import sys
+import sys, os
 from pathlib import Path
 
 import yaml
@@ -9,6 +9,10 @@ from loguru import logger
 root = Path(__file__).resolve().parent
 LOG_TEMPLATE = "mytemplate2"
 LOG_CONFIG_PATH = root / "config_log.yaml"
+
+#try :
+#    os.environ['config_log']
+
 
 
 #####################################################################################
@@ -93,6 +97,18 @@ def loge(*s):
 def test():
     log("info")
     log2("debug")
+    log3('debug2')
+    logw('warning')
+    loge('error')
+    logc('critical')
+
+    try :
+         a = 1/0
+    except Exception as e :
+        loge('error', e)
+
+
+
 
 
 if __name__ == "__main__":

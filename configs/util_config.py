@@ -103,7 +103,7 @@ def config_load(
     return config_default
 
 
-def config_isvalid(config_dict: dict, schema_path: str='config_val.yaml', silent: bool = False) -> bool:
+def config_isvalid_yamlschema(config_dict: dict, schema_path: str= 'config_val.yaml', silent: bool = False) -> bool:
     """Validate using a  yaml file
     Args:
         config_dict:
@@ -154,7 +154,7 @@ def convert_yaml_to_box(yaml_path: str) -> Box:
     return Box(data)
 
 
-def convert_yaml_to_pydantic(config_dict: dict, schema_name: str):
+def convert_dict_to_pydantic(config_dict: dict, schema_name: str):
     # pip install pydantic-gen
     from pydantic_gen import SchemaGen
 
@@ -165,7 +165,6 @@ def convert_yaml_to_pydantic(config_dict: dict, schema_name: str):
         f"zz936.configs.{schema_name.split('.')[0]}"
     )
     return pydantic_module.MainSchema(**config_dict)
-
 
 
 def pydantic_model_generator(
@@ -207,7 +206,7 @@ def pydantic_model_generator(
 #########################################################################################################
 def test2():
     cfg_dict = config_load("config.yaml")
-    isok = config_isvalid(cfg_dict, "config_val.yaml")
+    isok = config_isvalid_yamlschema(cfg_dict, "config_val.yaml")
     log(isok)
 
 
@@ -228,7 +227,7 @@ def test3():
 
 def test4():
     cfg_dict = config_load("config.yaml")
-    pydantic_model = convert_yaml_to_pydantic(cfg_dict, "pydantic_config_val.yaml")
+    pydantic_model = convert_dict_to_pydantic(cfg_dict, "pydantic_config_val.yaml")
     assert isinstance(pydantic_model, BaseModel)
 
 
