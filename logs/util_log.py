@@ -52,9 +52,11 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     for handler in handlers:
         if handler["sink"] == "sys.stdout":
             handler["sink"] = sys.stdout
+
         elif handler["sink"] == "sys.stderr":
             handler["sink"] = sys.stderr
-        elif handler["sink"].endswith(".log"):
+
+        elif  ".log" in handler["sink"] or ".txt" in handler["sink"]   :
             handler["rotation"] = handler.get("rotation", rotation)
 
         # override globals values
