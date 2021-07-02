@@ -1,33 +1,23 @@
 # -*- coding: utf-8 -*-
 """
 python code_parse.py
-
 List functions:
 - get_list_function_name(file_path)
     The function use to get all functions of the python file
-
     Args:
         IN: file_path         - the file path input
         OUT: list_functions   - List all python functions in the input file
-
     Example Output:
         ['func1', 'func2']
-
-
 - get_list_class_name(file_path):
     The function use to get all classes of the python file
-
     Args:
         IN: file_path         - the file path input
         OUT: list_classes     - List all python classes in the input file
-
     Example Output:
         ['Class1', 'Class1']
-
-
 - get_list_class_methods(file_path):
     The function use to get all classes and all methods in this class of the python file
-
     Args:
         IN: file_path         - the file path input
         OUT: An array of class info [{dict}, {dict}, ...]
@@ -37,22 +27,15 @@ List functions:
         {"name": "Class1", "listMethods": ["method1", "method2", "method3"]},
         {"name": "Class2", "listMethods": ["method4", "method5", "method6"]},
     ]
-
-
 - get_list_variable_global(file_path):
     The function use to get all global variable of the python file
-
     Args:
         IN: file_path         - the file path input
         OUT: list_var         - Array of all global variable
-
     Example Output:
         ['Var1', 'Var2']
-
-
 - get_list_function_stats(file_path):
     The function use to get functions stars
-
     Args:
         IN: file_path         - the file path input
         OUT: Array of functions, lines of the function, and variable in function
@@ -61,11 +44,8 @@ List functions:
             {"function": "function_name1", "lines": 20, "variables": ["a", "b", "c"]},
             {"function": "function_name2", "lines": 30, "variables": []},
         ]
-
-
 - get_file_stats(file_path):
     The function use to get file stars
-
     Args:
         IN: file_path         - the file path input
         OUT: Dict of file stars
@@ -80,6 +60,7 @@ List functions:
 import os
 from posixpath import dirname, split
 import re
+import pandas as pd
 
 
 # ====================================================================================
@@ -87,11 +68,9 @@ import re
 # ====================================================================================
 def get_list_function_name(file_path):
     """The function use to get all functions of the python file
-
     Args:
         IN: file_path         - the file path input
         OUT: list_functions   - List all python functions in the input file
-
     Example Output:
         ['func1', 'func2']
     """
@@ -107,11 +86,9 @@ def get_list_function_name(file_path):
 
 def get_list_class_name(file_path):
     """The function use to get all classes of the python file
-
     Args:
         IN: file_path         - the file path input
         OUT: list_classes     - List all python classes in the input file
-
     Example Output:
         ['Class1', 'Class1']
     """
@@ -132,11 +109,9 @@ def get_list_class_name(file_path):
 
 def get_list_class_methods(file_path):
     """The function use to get all classes and all methods in this class of the python file
-
     Args:
         IN: file_path         - the file path input
         OUT: An array of class info [{dict}, {dict}, ...]
-
     Example Output:
     [
         {"name": "Class1", "listMethods": ["method1", "method2", "method3"]},
@@ -161,11 +136,9 @@ def get_list_class_methods(file_path):
 
 def get_list_variable_global(file_path):
     """The function use to get all global variable of the python file
-
     Args:
         IN: file_path         - the file path input
         OUT: list_var         - Array of all global variable
-
     Example Output:
         ['Var1', 'Var2']
     """
@@ -185,7 +158,6 @@ def get_list_variable_global(file_path):
 
 def get_list_function_info(file_path):
     """The function use to get functions stars
-
     Args:
         IN: file_path         - the file path input
         OUT: Array of functions, lines of the function, and variable in function
@@ -200,78 +172,88 @@ def get_list_function_info(file_path):
     output = []
     for function in all_functions:
         data = {}
-        data["function"] = function
+        data["name"] = function
         lines, indent = _get_all_lines_in_function(function, all_lines)
-        data["lines"] = len(lines)
-        data["variables"] = _get_all_function_variables(lines, indent)
+        data["n_lines"] = len(lines)
+        data["variables"], data["n_loop"], data['n_ifthen'] = _get_function_stats(lines, indent)
+
+        # calculate code_source
+        data["code_source"] = ""
+        for line in lines:
+            data["code_source"] += line
+
         output.append(data)
     return output
 
 
-
 def get_list_function_stats(file_path):
     """The function use to get functions stars
-
     Args:
         IN: file_path         - the file path input
-        OUT: Array of functions, lines of the function, and variable in function
+        OUT: Dataframe with bellow fields
+            uri:   path1/path2/filename.py:function1
+            name: function1
+            n_lines
+            n_words
+            n_words_unqiue
+            n_characters
+            avg_char_per_word = n_charaecter / n_words
+            n_loop  : nb of for, while loop
+            n_ifthen  : nb of if_then
     Example Output:
-        [
-            {"function": "function_name1", "lines": 20, "variables": ["a", "b", "c"]},
-            {"function": "function_name2", "lines": 30, "variables": []},
-        ]
-
-    pip install pandas
-    https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.from_records.html
-
-
-
+            uri                                 name  n_variable  n_words  n_words_unique  n_characters  avg_char_per_word  n_loop  n_ifthen
+        0   d:\Project\job\test2\zz936\parser/test/test2.p...     prepare_target_and_clean_up_test           8       92              32           535           5.815217       0         0
+        1   d:\Project\job\test2\zz936\parser/test/test2.p...                 clean_up_config_test           6       55              19           241           4.381818       0         1
+        2   d:\Project\job\test2\zz936\parser/test/test2.p...         check_default_network_config          22      388              74           955           2.461340       1         5
+        3   d:\Project\job\test2\zz936\parser/test/test2.p...                     check_module_env           9      250              54           553           2.212000       1         1
+        4   d:\Project\job\test2\zz936\parser/test/test2.p...     provision_certificates_to_target           7      101              29           384           3.801980       0         3
+        5   d:\Project\job\test2\zz936\parser/test/test2.p...            config_session_connection           2       14               8            97           6.928571       0         0
+        6   d:\Project\job\test2\zz936\parser/test/test2.p...  config_cipher_suite_and_tcps_action           8      101              30           335           3.316832       0         3
     """
     #### Calcualte Stats:
     """
-       uri:   path1/path2/filename.py:function1
-       name: function1
-       n_lines
-       n_words
-       n_words_unqiue
-       n_characters
-       avg_char_per_word = n_charaecter / n_words
-       n_loop  : nb of for, while loop
-       n_ifthen  : nb of if_then
-       
-       
-
-    
+        uri:   path1/path2/filename.py:function1
+        name: function1
+        n_lines
+        n_words
+        n_words_unqiue
+        n_characters
+        avg_char_per_word = n_charaecter / n_words
+        n_loop  : nb of for, while loop
+        n_ifthen  : nb of if_then
     """
     list_info = get_list_function_info(file_path)
-    import pandas as pd
     df = pd.DataFrame.from_records(list_info)
+    # print(df)
 
-
+    df['uri']            = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
+    df['n_variable']     = df['variables'].apply(lambda x : len( x ))
     df['n_words']        = df['code_source'].apply(lambda x : len( x.split(" ") ))
     df['n_words_unique'] = df['code_source'].apply(lambda x : len(set( x.split(" ") )))
-
+    df['n_characters']   = df['code_source'].apply(lambda x : len(x.strip().replace(" ","") ))
+    df['avg_char_per_word']   = df['code_source'].apply(lambda x : len(x.strip().replace(" ",""))/len( x.split(" ")))
+    # print(df)
 
     cols = [
         'uri',
+        'name',
+        'n_variable',
         'n_words',
-        'n_words_unique'
-
-
+        'n_words_unique',
+        'n_characters',
+        'avg_char_per_word',
+        'n_loop',
+        'n_ifthen',
     ]
 
     df = df[cols]
-    print(df)
-    df.to_csv('functions_stats.csv', index=False)
-
-
-
-
+    # print(df)
+    # df.to_csv('functions_stats.csv', index=False)
+    return df
 
 
 def get_file_stats(file_path):
     """The function use to get file stars
-
     Args:
         IN: file_path         - the file path input
         OUT: Dict of file stars
@@ -380,7 +362,6 @@ def _get_and_clean_all_lines(file_path):
 
 def _get_all_lines_in_function(function_name, array):
     """The function use to get all lines of the function
-
     Args:
         IN: function_name - name of the function will be used to get all line
         IN: array         - list all lines of the file have this input function
@@ -424,9 +405,8 @@ def _get_all_lines_in_function(function_name, array):
     return list_lines, indent
 
 
-def _get_all_function_variables(array, indent):
+def _get_function_stats(array, indent):
     """The function use to get all lines of the function
-
     Args:
         IN: indent        - indent string
         IN: array         - list all lines of function to get variables
@@ -434,9 +414,12 @@ def _get_all_function_variables(array, indent):
     """
     list_python_kwd = ["if", "elif", "else", "True", "False", "for", "while", "not", "None", "global", "self",
                        "try", "except", "Exception", "as", "e", "in", "def", "class", "assert",
-                       "int", "float", "list", "set", "dict", "len", "yield", "is"]
+                       "int", "float", "list", "set", "dict", "len", "yield", "is", "then"]
     check_array = array.copy()
+
     list_var = []
+    n_loops = 0
+    n_ifthen = 0
 
     is_detect = False
     for line in check_array.copy():
@@ -493,13 +476,19 @@ def _get_all_function_variables(array, indent):
             if (re.match(r'\w+', work) or re.match(r'\w+.\w+', work)) and \
                     re.match(r'\d+', work) == None and work not in list_python_kwd:
                 list_var.append(work)
+            
+            # get for while loops
+            if work  in ["for", "while"]:
+                n_loops += 1
+            if work  in ["if", "then"]:
+                n_ifthen += 1
+
     # return list_var
-    return list(dict.fromkeys(list_var))
+    return list(dict.fromkeys(list_var)), n_loops, n_ifthen
 
 
 def _get_all_lines_in_class(class_name, array):
     """The function use to get all lines of the class
-
     Args:
         IN: class_name    - name of the class will be used to get all line
         IN: array         - list all lines of the file have this input class
@@ -587,16 +576,14 @@ def main():
 
     # Example save in csv format
     file = "{}/test/{}".format(CUR_DIR, "test2.py")
-    functions_stats = get_list_function_stats(file)
-    with open("output.csv", "w+") as f:
-        f.write("function_name, nlines, nvars, listVars\n")
-        for i in functions_stats:
-            f.write("{}, {}, {}, {}\n".format(
-                i['function'], i['lines'], len(i['variables']), i['variables']))
+    df = get_list_function_stats(file)
+    print(df)
+    df.to_csv('functions_stats.csv', index=False)
 
 
 
 if __name__ == "__main__":
     ## python code_parser.py   main
-    import fire
-    fire.Fire()
+    # import fire
+    # fire.Fire()
+    main()

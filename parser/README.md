@@ -142,12 +142,10 @@ List functions:
 
 Example2:
 ```
-# Example save in csv format
-file = "{}/test/{}".format(CUR_DIR, "test2.py")
-functions_stats = get_list_function_stats(file)
-with open("output.csv", "w+") as f:
-    f.write("function_name, nlines, nvars, listVars\n")
-    for i in functions_stats:
-        f.write("{}, {}, {}, {}\n".format(
-            i['function'], i['lines'], len(i['variables']), i['variables']))
+    # Example save in csv format
+    file = "{}/test/{}".format(CUR_DIR, "test2.py")
+    df = get_list_function_stats(file)
+    print(df)
+    df.to_csv('functions_stats.csv', index=False)
+
 ```
