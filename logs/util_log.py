@@ -148,7 +148,7 @@ def test():
     try:
         a = 1 / 0
     except Exception as e:
-        loge("error", e)
+        logr("error", e)
         loge("Catcch"), e
 
 

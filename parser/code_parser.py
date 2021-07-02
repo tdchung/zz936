@@ -211,17 +211,6 @@ def get_list_function_stats(file_path):
         6   d:\Project\job\test2\zz936\parser/test/test2.p...  config_cipher_suite_and_tcps_action           8      101              30           335           3.316832       0         3
     """
     #### Calcualte Stats:
-    """
-        uri:   path1/path2/filename.py:function1
-        name: function1
-        n_lines
-        n_words
-        n_words_unqiue
-        n_characters
-        avg_char_per_word = n_charaecter / n_words
-        n_loop  : nb of for, while loop
-        n_ifthen  : nb of if_then
-    """
     list_info = get_list_function_info(file_path)
     df = pd.DataFrame.from_records(list_info)
     # print(df)
