@@ -22,8 +22,6 @@ LOG_CONFIG_PATH = root / "config_log.yaml"
 
 LOG_TEMPLATE = "debug0"
 
-# try :
-#    os.environ['config_log']
 
 
 #####################################################################################
@@ -77,12 +75,15 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     ########## Addon config  ##############################################
     logger.configure(handlers=handlers)
 
+
     ########## Custom log levels  #########################################
     # configure log level in config_log.yaml to be able to use logs depends on severity value
     # if no=9 it means that you should set log level below DEBUG to see logs,
-    # severity levels table attached in config_log.yaml
-    # logger.level("TIMEIT", no=22, color="<cyan>")
+
     logger.level("debug2", no=9, color="<cyan>")
+
+
+
     return logger
 
 
@@ -128,23 +129,18 @@ logger_setup(log_config_path=LOG_CONFIG_PATH, log_template=LOG_TEMPLATE)
 def log(*s):
     logger.opt(depth=1, lazy=True).info(",".join([str(t) for t in s]))
 
-
 def log2(*s):
     logger.opt(depth=1, lazy=True).debug(",".join([str(t) for t in s]))
-
 
 def log3(*s):  ### Debuggine level 2
     # to enable debug2 logs set level: TRACE in config_log.yaml
     logger.opt(depth=1, lazy=True).log("debug2", ",".join([str(t) for t in s]))
 
-
 def logw(*s):
     logger.opt(depth=1, lazy=True).warning(",".join([str(t) for t in s]))
 
-
 def logc(*s):
     logger.opt(depth=1, lazy=True).critical(",".join([str(t) for t in s]))
-
 
 def loge(*s):
     logger.opt(depth=1, lazy=True).exception(",".join([str(t) for t in s]))
