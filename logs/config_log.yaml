@@ -26,11 +26,11 @@ catch     : True
 
 
 
-#1.log", rotation="500 MB")    # Automatically rotate too big file
-#2.log", rotation="12:00")     # New file is created each day at noon
-#3.log", rotation="1 week")    # Once the file is too old, it's rotated
-#X.log", retention="10 days")  # Cleanup after some time
-#Y.log", compression="zip")    # Save some loved space
+#1 rotation="500 MB")    # Automatically rotate too big file
+#2 rotation="12:00")     # New file is created each day at noon
+#3 rotation="1 week")    # Once the file is too old, it's rotated
+#X retention="10 days")  # Cleanup after some time
+#Y compression="zip")    # Save some loved space
 rotation  : "00:00"
 
 
@@ -50,10 +50,10 @@ handlers :
           format: "<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
 
         - sink: "debug0.log"
-          serialize: False   ## into json format
-          colorize:  False
-          enqueue:   True    ### Thread Safe
-          format:    "{time:DD.MM.YY HH:mm:ss}|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
+          serialize : False   ## into json format
+          colorize  : False
+          enqueue   : True    ### Thread Safe
+          format    : "{time:DD.MM.YY HH:mm:ss}|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
           rotation  : "5 min"
 
 

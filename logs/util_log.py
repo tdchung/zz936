@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 """
+Usage :
+  from util_log import log
+
+
 # The severity levels
-# Level name	Severity value	Logger method
-# TRACE	        5	            logger.trace()
-# DEBUG	        10	            logger.debug()
-# INFO	        20	            logger.info()
-# SUCCESS	    25	            logger.success()
-# WARNING	    30	            logger.warning()
-# ERROR	        40	            logger.error()
-# CRITICAL	    50	            logger.critical()
+# Level name    Severity value  Logger method
+# TRACE         5               logger.trace()
+# DEBUG         10              logger.debug()
+# INFO          20              logger.info()
+# SUCCESS       25              logger.success()
+# WARNING       30              logger.warning()
+# ERROR         40              logger.error()
+# CRITICAL      50              logger.critical()
 """
 import sys
 from logging.handlers import SocketHandler
@@ -40,7 +44,6 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     Returns:None
 
     TODO:
-
 
 
     """
@@ -102,6 +105,8 @@ logger_setup(log_config_path=LOG_CONFIG_PATH, log_template=LOG_TEMPLATE)
 
 
 #######################################################################################
+##### Alias ###########################################################################
+
 def log(*s):
     logger.opt(depth=1, lazy=True).info(",".join([str(t) for t in s]))
 
