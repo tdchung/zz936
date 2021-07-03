@@ -87,9 +87,9 @@ handlers :
         - sink: "sys.stdout"
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green>|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
         - sink: "mytemplate4.log"
-          serialize: True
           enqueue: True
-        
+          backtrace: False
+          colorize: False
 
     socket_test:
       - sink: "socket,localhost,5000"
