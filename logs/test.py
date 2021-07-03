@@ -1,24 +1,58 @@
 
 def mytest():
+    import util_log
+
+
     from util_log import log3, log2, log, logw, loge, logc, logr
     log3("debug2")
     log2("debug")
     log("info")
     logw("warning")
-    loge("error")
     logc("critical")
 
     try:
         a = 1 / 0
     except Exception as e:
         logr("error", e)
-        loge("Catcch"), e
+        loge("Exception"), e
+
+    log("finish")
+
+
+
+
+def mytest2():
+
+    print("\n\n\n########## Test 2############################")
+    import util_log
+
+
+    from util_log import log3, log2, log, logw, loge, logc, logr
+
+    ### Redefine new template
+    util_log.logger_setup('config_log.yaml', 'default')
+
+    log3("debug2")
+    log2("debug")
+    log("info")
+    logw("warning")
+    logc("critical")
+
+    try:
+        a = 1 / 0
+    except Exception as e:
+        logr("error", e)
+        loge("Exception"), e
+
+    log("finish")
 
 
 
 ############################################################################
 if __name__ == "__main__":
     mytest()
+
+    mytest2()
 
 
 """

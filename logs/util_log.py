@@ -15,15 +15,17 @@ from pathlib import Path
 
 import yaml
 from loguru import logger
-
-import socket
 from logging.handlers import SocketHandler
+
 
 #####################################################################################
 root = Path(__file__).resolve().parent
 LOG_CONFIG_PATH = root / "config_log.yaml"
 
-LOG_TEMPLATE = "socket_test"
+# "socket_test", 'default'
+#
+#
+LOG_TEMPLATE = "debug0"
 
 
 
@@ -41,7 +43,7 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     Returns:None
 
     TODO:
-        logger.add("somefile.log", enqueue=True)
+
 
 
     """
@@ -51,7 +53,7 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
 
     except Exception as e:
         print(f"Cannot load yaml file {log_config_path}, Using Default logging setup")
-        cfg = {"log_level": "INFO", "handlers": {"default": [{"sink": "sys.stdout"}]}}
+        cfg = {"log_level": "DEBUG", "handlers": {"default": [{"sink": "sys.stdout"}]}}
 
     ########## Parse handlers  ####################################################
     globals_, handlers = cfg, cfg.pop("handlers")[log_template]
@@ -88,9 +90,12 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     ########## Custom log levels  #########################################
     # configure log level in config_log.yaml to be able to use logs depends on severity value
     # if no=9 it means that you should set log level below DEBUG to see logs,
+    try :
+       logger.level("DEBUG_2", no=9, color="<cyan>")
 
-    logger.level("DEBUG_2", no=9, color="<cyan>")
-
+    except Exception as e:
+       ### Error when re=-defining
+       print('warning', e)
 
 
     return logger
@@ -98,15 +103,12 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
 
 
 
-def logger_override():
-    """
-      stdout --> logger
+def logger_stdout_override():
+    """ Redirect stdout --> logger
     Returns:
-
     """
     import contextlib
     import sys
-
     class StreamToLogger:
         def __init__(self, level="INFO"):
             self._level = level
@@ -128,7 +130,7 @@ def logger_override():
 
 
 
-
+############################################################################
 ##### Initialization #######################################################
 logger_setup(log_config_path=LOG_CONFIG_PATH, log_template=LOG_TEMPLATE)
 

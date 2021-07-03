@@ -1,18 +1,90 @@
-[32m03.07.21 00:24:21[0m|[34m[1mDEBUG   [0m|   __main__    |    mytest     |  5|[34m[1mdebug[0m
-[32m03.07.21 00:24:21[0m|[1mINFO    [0m|   __main__    |    mytest     |  6|[1minfo[0m
-[32m03.07.21 00:24:21[0m|[33m[1mWARNING [0m|   __main__    |    mytest     |  7|[33m[1mwarning[0m
-[32m03.07.21 00:24:21[0m|[31m[1mERROR   [0m|   __main__    |    mytest     |  8|[31m[1merror[0m
-[31m[1mNoneType[0m:[1m None[0m
-[32m03.07.21 00:24:21[0m|[41m[1mCRITICAL[0m|   __main__    |    mytest     |  9|[41m[1mcritical[0m
-[32m03.07.21 00:24:21[0m|[31m[1mERROR   [0m|   __main__    |    mytest     | 14|[31m[1merror,division by zero[0m
-[32m03.07.21 00:24:21[0m|[31m[1mERROR   [0m|   __main__    |    mytest     | 15|[31m[1mCatcch[0m
-[33m[1mTraceback (most recent call last):[0m
+03.07.21 17:26:44|DEBUG_2 |   __main__    |    mytest     |  7|debug2
+03.07.21 17:26:44|DEBUG   |   __main__    |    mytest     |  8|debug
+03.07.21 17:26:44|INFO    |   __main__    |    mytest     |  9|info
+03.07.21 17:26:44|WARNING |   __main__    |    mytest     | 10|warning
+03.07.21 17:26:44|CRITICAL|   __main__    |    mytest     | 11|critical
+03.07.21 17:26:44|ERROR   |   __main__    |    mytest     | 16|error,division by zero
+03.07.21 17:26:44|ERROR   |   __main__    |    mytest     | 17|Exception
+Traceback (most recent call last):
 
-  File "[32mD:/_devs/Python01/gitdev/arepo/zz936/logs\[0m[32m[1mtest.py[0m", line [33m21[0m, in [35m<module>[0m
-    [1mmytest[0m[1m([0m[1m)[0m
-    [36m-> [0m[36m[1m<function mytest at 0x0000017B1E6D2EA0>[0m
+  File "D:/_devs/Python01/gitdev/arepo/zz936/logs/test.py", line 24, in <module>
+    mytest()
+    -> <function mytest at 0x00000200A0012EA0>
 
-> File "[32mD:/_devs/Python01/gitdev/arepo/zz936/logs\[0m[32m[1mtest.py[0m", line [33m12[0m, in [35mmytest[0m
-    [1ma[0m [35m[1m=[0m [34m[1m1[0m [35m[1m/[0m [34m[1m0[0m
+> File "D:/_devs/Python01/gitdev/arepo/zz936/logs/test.py", line 14, in mytest
+    a = 1 / 0
 
-[31m[1mZeroDivisionError[0m:[1m division by zero[0m
+ZeroDivisionError: division by zero
+03.07.21 17:26:44|INFO    |   __main__    |    mytest     | 19|finish
+03.07.21 17:28:04|DEBUG_2 |   __main__    |    mytest     |  7|debug2
+03.07.21 17:28:04|DEBUG   |   __main__    |    mytest     |  8|debug
+03.07.21 17:28:04|INFO    |   __main__    |    mytest     |  9|info
+03.07.21 17:28:04|WARNING |   __main__    |    mytest     | 10|warning
+03.07.21 17:28:04|CRITICAL|   __main__    |    mytest     | 11|critical
+03.07.21 17:28:04|ERROR   |   __main__    |    mytest     | 16|error,division by zero
+03.07.21 17:28:04|ERROR   |   __main__    |    mytest     | 17|Exception
+Traceback (most recent call last):
+
+  File "D:/_devs/Python01/gitdev/arepo/zz936/logs/test.py", line 49, in <module>
+    mytest()
+    -> <function mytest at 0x000001BC0D2E2EA0>
+
+> File "D:/_devs/Python01/gitdev/arepo/zz936/logs/test.py", line 14, in mytest
+    a = 1 / 0
+
+ZeroDivisionError: division by zero
+03.07.21 17:28:04|INFO    |   __main__    |    mytest     | 19|finish
+03.07.21 17:28:58|DEBUG_2 |   __main__    |    mytest     |  7|debug2
+03.07.21 17:28:58|DEBUG   |   __main__    |    mytest     |  8|debug
+03.07.21 17:28:58|INFO    |   __main__    |    mytest     |  9|info
+03.07.21 17:28:58|WARNING |   __main__    |    mytest     | 10|warning
+03.07.21 17:28:58|CRITICAL|   __main__    |    mytest     | 11|critical
+03.07.21 17:28:58|ERROR   |   __main__    |    mytest     | 16|error,division by zero
+03.07.21 17:28:58|ERROR   |   __main__    |    mytest     | 17|Exception
+Traceback (most recent call last):
+
+  File "D:/_devs/Python01/gitdev/arepo/zz936/logs/test.py", line 49, in <module>
+    mytest()
+    -> <function mytest at 0x000001ADA5A12EA0>
+
+> File "D:/_devs/Python01/gitdev/arepo/zz936/logs/test.py", line 14, in mytest
+    a = 1 / 0
+
+ZeroDivisionError: division by zero
+03.07.21 17:28:58|INFO    |   __main__    |    mytest     | 19|finish
+03.07.21 17:29:27|DEBUG_2 |   __main__    |    mytest     |  7|debug2
+03.07.21 17:29:27|DEBUG   |   __main__    |    mytest     |  8|debug
+03.07.21 17:29:27|INFO    |   __main__    |    mytest     |  9|info
+03.07.21 17:29:27|WARNING |   __main__    |    mytest     | 10|warning
+03.07.21 17:29:27|CRITICAL|   __main__    |    mytest     | 11|critical
+03.07.21 17:29:27|ERROR   |   __main__    |    mytest     | 16|error,division by zero
+03.07.21 17:29:27|ERROR   |   __main__    |    mytest     | 17|Exception
+Traceback (most recent call last):
+
+  File "D:/_devs/Python01/gitdev/arepo/zz936/logs/test.py", line 51, in <module>
+    mytest()
+    -> <function mytest at 0x000001EFFD212EA0>
+
+> File "D:/_devs/Python01/gitdev/arepo/zz936/logs/test.py", line 14, in mytest
+    a = 1 / 0
+
+ZeroDivisionError: division by zero
+03.07.21 17:29:27|INFO    |   __main__    |    mytest     | 19|finish
+03.07.21 17:30:31|DEBUG_2 |   __main__    |    mytest     |  7|debug2
+03.07.21 17:30:31|DEBUG   |   __main__    |    mytest     |  8|debug
+03.07.21 17:30:31|INFO    |   __main__    |    mytest     |  9|info
+03.07.21 17:30:31|WARNING |   __main__    |    mytest     | 10|warning
+03.07.21 17:30:31|CRITICAL|   __main__    |    mytest     | 11|critical
+03.07.21 17:30:31|ERROR   |   __main__    |    mytest     | 16|error,division by zero
+03.07.21 17:30:31|ERROR   |   __main__    |    mytest     | 17|Exception
+Traceback (most recent call last):
+
+  File "D:/_devs/Python01/gitdev/arepo/zz936/logs/test.py", line 51, in <module>
+    mytest()
+    -> <function mytest at 0x000002B511AF2EA0>
+
+> File "D:/_devs/Python01/gitdev/arepo/zz936/logs/test.py", line 14, in mytest
+    a = 1 / 0
+
+ZeroDivisionError: division by zero
+03.07.21 17:30:31|INFO    |   __main__    |    mytest     | 19|finish

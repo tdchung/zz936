@@ -11,7 +11,7 @@
 # ERROR	        40	            logger.error()
 # CRITICAL	    50	            logger.critical()
 ### TRACE : log3, DEBUG: log2, INFO: log, WARNING: log2,
-level     : DEBUG
+level     : TRACE
 
 
 format    : "<level>{message}</level>"
@@ -37,11 +37,12 @@ rotation  : "00:00"
 handlers :
     default:
         - sink: "sys.stdout"
-          format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
+          format: "<level>{level: <8}</level>|<level>{message}</level>"
+          #format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
 
-        - sink: "sys.stderr"
-          serialize: False
-          format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
+        #- sink: "sys.stderr"
+        #  serialize: False
+        #  format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
 
 
     mytemplate2:
@@ -54,19 +55,24 @@ handlers :
 
     debug0:
         - sink: "sys.stdout"
-          format: "<green>{time:DD.MM.YY HH:mm:ss}</green>|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
+          format: "<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
 
         - sink: "debug0.log"
-          serialize: False
-          colorize: True
-          enqueue: True
+          serialize: False   ## into json format
+          colorize:  False
+          enqueue:   True    ### Thread Safe
+          format:    "{time:DD.MM.YY HH:mm:ss}|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
+          rotation  : "5 min"
+
 
     debug1:
         - sink: "sys.stdout"
           format: "<green>{time:DD.MM.YY HH:mm:ss}</green>|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
 
         - sink: "mydebug2.log"
-          serialize: True
+          serialize: False
+          format:    "{time:DD.MM.YY HH:mm:ss}|<level>{level: <8}</level>|{name: ^15}|{function: ^15}|{line: >3}|<level>{message}</level>"
+
 
     debug2:
         - sink: "sys.stdout"
@@ -91,11 +97,15 @@ handlers :
           backtrace: False
           colorize: False
 
+
+    ### Send Log to Network system
     socket_test:
       - sink: "socket,localhost,5000"
         serialize: True
         enqueue: True
         format: "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level}</level> | <level>{message}</level>"
+
+
 
 ###### Template format for helpers
 #formats:
@@ -103,6 +113,9 @@ handlers :
 #    'format1': "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>"
 #    'format2': "<level>{level: <8}</level>|<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
 # format: "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
+
+
+
 
 
 
