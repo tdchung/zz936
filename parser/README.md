@@ -94,58 +94,26 @@ List functions:
 
 ### Example code
 
-```
-    CUR_DIR = os.path.abspath(os.path.dirname(__file__))
-
-    test_files = ['test.py', 'test2.py', 'test3.py', "model_gefs.py", "model_sklearn.py"]
-
-    for file in test_files:
-        print('----------------------------------------')
-        print("Start test with file: {}".format(file))
-        file = "{}/test/{}".format(CUR_DIR, file)
-
-        # get all functions
-        functions = get_list_function_name(file)
-        print("     List functions:")
-        for i in functions:
-            print("         - {}".format(i))
-            
-        # get all class
-        classes = get_list_class_name(file)
-        print("     List classes:")
-        for i in classes:
-            print("         - {}".format(i))
-    
-        # get all variable
-        variables = get_list_variable_global(file)
-        print("     List variables:")
-        for i in variables:
-            print("         - {}".format(i))
-
-        # get all class methods
-        class_methods = get_list_class_methods(file)
-        print("     List class methods:")
-        for i in class_methods:
-            print("         {} - {}".format(i['name'], i['listMethods']))
-
-        # get function stats
-        functions_stats = get_list_function_stats(file)
-        print("     List functions_stats:")
-        for i in functions_stats:
-            print("       Name: {} - Lines: {} - Var: {}".format(i['function'], i['lines'], i['variables']))
-
-        # get file stats
-        file_stats = get_file_stats(file)
-        print("     File_stats:")
-        print("       {} ".format(file_stats))
+Example1:
 ```
 
-Example2:
-```
     # Example save in csv format
-    file = "{}/test/{}".format(CUR_DIR, "test2.py")
+    file = "{}/test/{}".format(CUR_DIR, "keys.py")
     df = get_list_function_stats(file)
     print(df)
-    df.to_csv('functions_stats.csv', index=False)
+    if df is not None:
+        df.to_csv('functions_stats1.csv', index=False)
+
+    df = get_list_class_stats(file)
+    print(df)
+    if df is not None:
+        df.to_csv('class_stats1.csv', index=False)
+
+    df = get_list_method_stats(file)
+    print(df)
+    if df is not None:
+        df.to_csv('method_stats1.csv', index=False)
+
+
 
 ```

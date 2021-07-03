@@ -114,17 +114,17 @@ def get_list_class_methods(file_path):
         OUT: An array of class info [{dict}, {dict}, ...]
     Example Output:
     [
-        {"name": "Class1", "listMethods": ["method1", "method2", "method3"]},
-        {"name": "Class2", "listMethods": ["method4", "method5", "method6"]},
+        {"class_name": "Class1", "listMethods": ["method1", "method2", "method3"]},
+        {"class_name": "Class2", "listMethods": ["method4", "method5", "method6"]},
     ]
     """
     list_names = []
     all_lines = _get_and_clean_all_lines(file_path)
     for class_name in get_list_class_name(file_path):
         class_info = {}
-        class_info["name"] = class_name
-        class_lines = _get_all_lines_in_class(class_name, all_lines)
-        re_check = r"def (\w+)\(.+\):"
+        class_info["class_name"] = class_name
+        class_lines, class_indent = _get_all_lines_in_class(class_name, all_lines)
+        re_check = r"{}def (\w+)".format(class_indent)
         class_info["listMethods"] = []
         for line in class_lines:
             re_response = re.match(re_check, line.rstrip())
@@ -176,6 +176,7 @@ def get_list_function_info(file_path):
         lines, indent = _get_all_lines_in_function(function, all_lines)
         data["n_lines"] = len(lines)
         data["variables"], data["n_loop"], data['n_ifthen'] = _get_function_stats(lines, indent)
+        data["type"] = "function"
 
         # calculate code_source
         data["code_source"] = ""
@@ -184,6 +185,193 @@ def get_list_function_info(file_path):
 
         output.append(data)
     return output
+
+
+def get_list_class_info(file_path):
+    """The class use to get functions stars
+    Args:
+        IN: file_path         - the file path input
+        OUT: Array of functions, lines of the function, and variable in function
+    Example Output:
+        [
+            {"function": "function_name1", "lines": 20, "variables": ["a", "b", "c"]},
+            {"function": "function_name2", "lines": 30, "variables": []},
+        ]
+    """
+    all_lines = _get_and_clean_all_lines(file_path)
+    all_classes = get_list_class_name(file_path)
+    output = []
+    for class_name in all_classes:
+        data = {}
+        data["name"] = class_name
+        lines, indent = _get_all_lines_in_class(class_name, all_lines)
+        data["n_lines"] = len(lines)
+        data["variables"], data["n_loop"], data['n_ifthen'] = _get_function_stats(lines, indent)
+        data["type"] = "class"
+
+        # calculate code_source
+        data["code_source"] = ""
+        for line in lines:
+            data["code_source"] += line
+
+        output.append(data)
+    return output
+
+
+def get_list_method_info(file_path):
+    """get_list_method_info
+    Args:
+        IN: file_path         - the file path input
+        OUT: Array of methods in class
+    Example Output:
+        [
+            {"function": "function_name1", "lines": 20, "variables": ["a", "b", "c"]},
+            {"function": "function_name2", "lines": 30, "variables": []},
+        ]
+    """
+    all_lines = _get_and_clean_all_lines(file_path)
+    all_methods = get_list_class_methods(file_path)
+
+    output = []
+
+    for method in all_methods:
+        class_lines, class_indent = _get_all_lines_in_class(method['class_name'], all_lines)
+        for method_name in method['listMethods']:
+            data = {}
+            data["name"] = "{}:{}".format(method['class_name'], method_name)
+            lines, indent = _get_all_lines_in_function(method_name, class_lines, class_indent)
+            data["n_lines"] = len(lines)
+            data["variables"], data["n_loop"], data['n_ifthen'] = _get_function_stats(lines, indent)
+            data["type"] = "method"
+
+            # calculate code_source
+            data["code_source"] = ""
+            for line in lines:
+                data["code_source"] += line
+
+            output.append(data)
+    return output
+
+
+def get_list_method_stats(file_path):
+    """The function use to get methods stars
+    Args:
+        IN: file_path         - the file path input
+        OUT: Dataframe with bellow fields
+            uri:   path1/path2/filename.py:function1
+            name: function1
+            n_lines
+            n_words
+            n_words_unqiue
+            n_characters
+            avg_char_per_word = n_charaecter / n_words
+            n_loop  : nb of for, while loop
+            n_ifthen  : nb of if_then
+        
+        **** return None if no function in file
+    Example Output:
+                                                    uri                                               name    type  n_variable  n_words  n_words_unique  n_characters  avg_char_per_word  n_loop  n_ifthen
+    0   d:/Project/job/test2/zz936/parser/test/keys.py...                              VerifyingKey:__init__  method           2       11              11           100           9.090909       0         1      
+    1   d:/Project/job/test2/zz936/parser/test/keys.py...                     VerifyingKey:from_public_point  method          10       13              12           185          14.230769       0         0      
+    2   d:/Project/job/test2/zz936/parser/test/keys.py...                           VerifyingKey:from_string  method          17       45              39           504          11.200000       0         1      
+    3   d:/Project/job/test2/zz936/parser/test/keys.py...                              VerifyingKey:from_pem  method           2        2               2            39          19.500000       0         0      
+    4   d:/Project/job/test2/zz936/parser/test/keys.py...                              VerifyingKey:from_der  method          19       64              38           683          10.671875       0         3      
+    5   d:/Project/job/test2/zz936/parser/test/keys.py...              VerifyingKey:from_public_key_recovery  method           4        8               8           137          17.125000       0         0      
+    6   d:/Project/job/test2/zz936/parser/test/keys.py...  VerifyingKey:from_public_key_recovery_with_digest  method          13       24              23           288          12.000000       0         0      
+    7   d:/Project/job/test2/zz936/parser/test/keys.py...                             VerifyingKey:to_string  method           6       11               8           145          13.181818       0         0      
+    8   d:/Project/job/test2/zz936/parser/test/keys.py...                                VerifyingKey:to_pem  method           2        4               4            42          10.500000       0         0  
+    """
+    list_info = get_list_method_info(file_path)
+    if (len(list_info)):
+        df = pd.DataFrame.from_records(list_info)
+        # print(df)
+
+        df['uri']               = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
+        df['n_variable']        = df['variables'].apply(lambda x : len( x ))
+        df['list_words']        = df.apply( lambda x : _get_words(x), axis=1)
+        df['n_words']           = df['list_words'].apply(lambda x : len( x ))
+        df['n_words_unique']    = df['list_words'].apply(lambda x : len(set( x )))
+        df['n_characters']      = df['code_source'].apply(lambda x : len(x.strip().replace(" ","") ))
+        df['avg_char_per_word']   = df.apply(lambda x : _get_avg_char_per_word(x), axis=1)
+        # print(df)
+
+        cols = [
+            'uri',
+            'name',
+            'type',
+            'n_variable',
+            'n_words',
+            'n_words_unique',
+            'n_characters',
+            'avg_char_per_word',
+            'n_loop',
+            'n_ifthen',
+        ]
+
+        df = df[cols]
+        # print(df)
+        # df.to_csv('functions_stats.csv', index=False)
+        return df
+    else:
+        return None
+
+
+def get_list_class_stats(file_path):
+    """The class use to get functions stars
+    Args:
+        IN: file_path         - the file path input
+        OUT: Dataframe with bellow fields
+            uri:   path1/path2/filename.py:function1
+            name: function1
+            n_lines
+            n_words
+            n_words_unqiue
+            n_characters
+            avg_char_per_word = n_charaecter / n_words
+            n_loop  : nb of for, while loop
+            n_ifthen  : nb of if_then
+        
+        **** return None if no function in file
+    Example Output:
+                                                    uri               name   type  n_variable  n_words  n_words_unique  n_characters  avg_char_per_word  n_loop  n_ifthen
+    0  d:/Project/job/test2/zz936/parser/test/keys.py...  BadSignatureError  class           0        1               1             4           4.000000       0         0
+    1  d:/Project/job/test2/zz936/parser/test/keys.py...     BadDigestError  class           0        1               1             4           4.000000       0         0
+    2  d:/Project/job/test2/zz936/parser/test/keys.py...       VerifyingKey  class          84      301             189          3584          11.906977       0         7
+    3  d:/Project/job/test2/zz936/parser/test/keys.py...         SigningKey  class         138      482             310          4615           9.574689       3         9
+    """
+    list_info = get_list_class_info(file_path)
+    if (len(list_info)):
+        df = pd.DataFrame.from_records(list_info)
+        # print(df)
+
+        df['uri']            = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
+        df['n_variable']     = df['variables'].apply(lambda x : len( x ))
+        df['list_words']        = df.apply( lambda x : _get_words(x), axis=1)
+        df['n_words']           = df['list_words'].apply(lambda x : len( x ))
+        df['n_words_unique']    = df['list_words'].apply(lambda x : len(set( x )))
+        df['n_characters']      = df['code_source'].apply(lambda x : len(x.strip().replace(" ","") ))
+        df['avg_char_per_word']   = df.apply(lambda x : _get_avg_char_per_word(x), axis=1)
+        # print(df)
+
+        cols = [
+            'uri',
+            'name',
+            'type',
+            'n_variable',
+            'n_words',
+            'n_words_unique',
+            'n_characters',
+            'avg_char_per_word',
+            'n_loop',
+            'n_ifthen',
+        ]
+
+        df = df[cols]
+        # print(df)
+        # df.to_csv('functions_stats.csv', index=False)
+        return df
+    else:
+        return None
 
 
 def get_list_function_stats(file_path):
@@ -200,6 +388,8 @@ def get_list_function_stats(file_path):
             avg_char_per_word = n_charaecter / n_words
             n_loop  : nb of for, while loop
             n_ifthen  : nb of if_then
+        
+        **** return None if no function in file
     Example Output:
             uri                                 name  n_variable  n_words  n_words_unique  n_characters  avg_char_per_word  n_loop  n_ifthen
         0   d:\Project\job\test2\zz936\parser/test/test2.p...     prepare_target_and_clean_up_test           8       92              32           535           5.815217       0         0
@@ -212,33 +402,38 @@ def get_list_function_stats(file_path):
     """
     #### Calcualte Stats:
     list_info = get_list_function_info(file_path)
-    df = pd.DataFrame.from_records(list_info)
-    # print(df)
+    if (len(list_info)):
+        df = pd.DataFrame.from_records(list_info)
+        # print(df)
 
-    df['uri']            = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
-    df['n_variable']     = df['variables'].apply(lambda x : len( x ))
-    df['n_words']        = df['code_source'].apply(lambda x : len( x.split(" ") ))
-    df['n_words_unique'] = df['code_source'].apply(lambda x : len(set( x.split(" ") )))
-    df['n_characters']   = df['code_source'].apply(lambda x : len(x.strip().replace(" ","") ))
-    df['avg_char_per_word']   = df['code_source'].apply(lambda x : len(x.strip().replace(" ",""))/len( x.split(" ")))
-    # print(df)
+        df['uri']            = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
+        df['n_variable']     = df['variables'].apply(lambda x : len( x ))
+        df['list_words']        = df.apply( lambda x : _get_words(x), axis=1)
+        df['n_words']           = df['list_words'].apply(lambda x : len( x ))
+        df['n_words_unique']    = df['list_words'].apply(lambda x : len(set( x )))
+        df['n_characters']      = df['code_source'].apply(lambda x : len(x.strip().replace(" ","") ))
+        df['avg_char_per_word']   = df.apply(lambda x : _get_avg_char_per_word(x), axis=1)
+        # print(df)
 
-    cols = [
-        'uri',
-        'name',
-        'n_variable',
-        'n_words',
-        'n_words_unique',
-        'n_characters',
-        'avg_char_per_word',
-        'n_loop',
-        'n_ifthen',
-    ]
+        cols = [
+            'uri',
+            'name',
+            'type',
+            'n_variable',
+            'n_words',
+            'n_words_unique',
+            'n_characters',
+            'avg_char_per_word',
+            'n_loop',
+            'n_ifthen',
+        ]
 
-    df = df[cols]
-    # print(df)
-    # df.to_csv('functions_stats.csv', index=False)
-    return df
+        df = df[cols]
+        # print(df)
+        # df.to_csv('functions_stats.csv', index=False)
+        return df
+    else:
+        return None
 
 
 def get_file_stats(file_path):
@@ -266,6 +461,20 @@ def get_file_stats(file_path):
 # ====================================================================================
 # internal Functions
 # ====================================================================================
+
+
+def _get_words(row):
+    data = [row['code_source'].strip().split(" ")]
+    # print(data)
+    for ele in data[0].copy():
+        if ele in ['', '-', '+', '=', '*', '/', '==', '<=', '>=', '!=']:
+            data[0].remove(ele)
+    # print(data)
+    return data[0]
+
+
+def _get_avg_char_per_word(row):
+    return row['n_characters']/row['n_words']
 
 
 def _validate_file(file_path):
@@ -349,7 +558,7 @@ def _get_and_clean_all_lines(file_path):
     return all_lines
 
 
-def _get_all_lines_in_function(function_name, array):
+def _get_all_lines_in_function(function_name, array, indentMethod=''):
     """The function use to get all lines of the function
     Args:
         IN: function_name - name of the function will be used to get all line
@@ -357,7 +566,8 @@ def _get_all_lines_in_function(function_name, array):
         OUT: list_lines   - Array of all line of this function
         OUT: indent       - The indent of this function (this will be used for another calculation)
     """
-    re_check = r"def {}".format(function_name)
+    re_check = r"{}def {}".format(indentMethod, function_name)
+
     response = array.copy()
 
     # 1. get start line
@@ -403,7 +613,7 @@ def _get_function_stats(array, indent):
     """
     list_python_kwd = ["if", "elif", "else", "True", "False", "for", "while", "not", "None", "global", "self",
                        "try", "except", "Exception", "as", "e", "in", "def", "class", "assert",
-                       "int", "float", "list", "set", "dict", "len", "yield", "is", "then"]
+                       "int", "float", "list", "set", "dict", "len", "yield", "is", "then", "pass", "raise"]
     check_array = array.copy()
 
     list_var = []
@@ -510,7 +720,7 @@ def _get_all_lines_in_class(class_name, array):
             list_lines.append(line)
         else:
             break
-    return list_lines
+    return list_lines, indent
 
 
 # ====================================================================================
@@ -519,55 +729,25 @@ def _get_all_lines_in_class(class_name, array):
 def main():
     CUR_DIR = os.path.abspath(os.path.dirname(__file__))
 
-    test_files = ['test.py', 'test2.py', 'test3.py',
-                  "model_gefs.py", "model_sklearn.py"]
-
-    # for file in test_files:
-    #     print('----------------------------------------')
-    #     print("Start test with file: {}".format(file))
-    #     file = "{}/test/{}".format(CUR_DIR, file)
-
-    #     # get all functions
-    #     functions = get_list_function_name(file)
-    #     print("     List functions:")
-    #     for i in functions:
-    #         print("         - {}".format(i))
-
-    #     # get all class
-    #     classes = get_list_class_name(file)
-    #     print("     List classes:")
-    #     for i in classes:
-    #         print("         - {}".format(i))
-
-    #     # get all variable
-    #     variables = get_list_variable_global(file)
-    #     print("     List variables:")
-    #     for i in variables:
-    #         print("         - {}".format(i))
-
-    #     # get all class methods
-    #     class_methods = get_list_class_methods(file)
-    #     print("     List class methods:")
-    #     for i in class_methods:
-    #         print("         {} - {}".format(i['name'], i['listMethods']))
-
-    #     # get function stats
-    #     functions_stats = get_list_function_stats(file)
-    #     print("     List functions_stats:")
-    #     for i in functions_stats:
-    #         print("       Name: {} - Lines: {} - Var: {}".format(
-    #             i['function'], i['lines'], i['variables']))
-
-    #     # get file stats
-    #     file_stats = get_file_stats(file)
-    #     print("     File_stats:")
-    #     print("       {} ".format(file_stats))
-
     # Example save in csv format
-    file = "{}/test/{}".format(CUR_DIR, "test2.py")
+    file = "{}/test/{}".format(CUR_DIR, "keys.py")
     df = get_list_function_stats(file)
     print(df)
-    df.to_csv('functions_stats.csv', index=False)
+    if df is not None:
+        df.to_csv('functions_stats1.csv', index=False)
+
+    df = get_list_class_stats(file)
+    print(df)
+    if df is not None:
+        df.to_csv('class_stats1.csv', index=False)
+
+    df = get_list_method_stats(file)
+    print(df)
+    if df is not None:
+        df.to_csv('method_stats1.csv', index=False)
+
+
+
 
 
 
