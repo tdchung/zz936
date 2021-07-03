@@ -10,23 +10,20 @@
 # ERROR	        40	            logger.error()
 # CRITICAL	    50	            logger.critical()
 """
-import sys, os
+import sys
+from logging.handlers import SocketHandler
 from pathlib import Path
 
 import yaml
 from loguru import logger
-from logging.handlers import SocketHandler
-
 
 #####################################################################################
 root = Path(__file__).resolve().parent
 LOG_CONFIG_PATH = root / "config_log.yaml"
 
-# "socket_test", 'default'
-#
+# "socket_test", 'default'  'debug0;
 #
 LOG_TEMPLATE = "debug0"
-
 
 
 #####################################################################################
@@ -66,14 +63,14 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
 
         elif handler["sink"] == "sys.stderr":
             handler["sink"] = sys.stderr
-        
+
         elif handler["sink"].startswith("socket"):
             sink_data = handler["sink"].split(",")
             ip = sink_data[1]
             port = int(sink_data[2])
             handler["sink"] = SocketHandler(ip, port)
 
-        elif  ".log" in handler["sink"] or ".txt" in handler["sink"]   :
+        elif ".log" in handler["sink"] or ".txt" in handler["sink"]:
             handler["rotation"] = handler.get("rotation", rotation)
 
         # override globals values
@@ -86,24 +83,73 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     ########## Addon config  ##############################################
     logger.configure(handlers=handlers)
 
-
     ########## Custom log levels  #########################################
     # configure log level in config_log.yaml to be able to use logs depends on severity value
     # if no=9 it means that you should set log level below DEBUG to see logs,
-    try :
-       logger.level("DEBUG_2", no=9, color="<cyan>")
+    try:
+        logger.level("DEBUG_2", no=9, color="<cyan>")
 
     except Exception as e:
-       ### Error when re=-defining
-       print('warning', e)
-
+        ### Error when re=-defining level
+        print('warning', e)
 
     return logger
 
 
+#######################################################################################
+##### Initialization ##################################################################
+logger_setup(log_config_path=LOG_CONFIG_PATH, log_template=LOG_TEMPLATE)
 
 
-def logger_stdout_override():
+#######################################################################################
+def log(*s):
+    logger.opt(depth=1, lazy=True).info(",".join([str(t) for t in s]))
+
+
+def log2(*s):
+    logger.opt(depth=1, lazy=True).debug(",".join([str(t) for t in s]))
+
+
+def log3(*s):  ### Debuggine level 2
+    # to enable debug2 logs set level: TRACE in config_log.yaml
+    logger.opt(depth=1, lazy=True).log("DEBUG_2", ",".join([str(t) for t in s]))
+
+
+def logw(*s):
+    logger.opt(depth=1, lazy=True).warning(",".join([str(t) for t in s]))
+
+
+def logc(*s):
+    logger.opt(depth=1, lazy=True).critical(",".join([str(t) for t in s]))
+
+
+def loge(*s):
+    logger.opt(depth=1, lazy=True).exception(",".join([str(t) for t in s]))
+
+
+def logr(*s):
+    logger.opt(depth=1, lazy=True).error(",".join([str(t) for t in s]))
+
+
+#########################################################################################
+def test():
+    log3("debug2")
+    log2("debug")
+    log("info")
+    logw("warning")
+    loge("error")
+    logc("critical")
+
+    try:
+        a = 1 / 0
+    except Exception as e:
+        logr("error", e)
+        loge("Catcch"), e
+
+
+#######################################################################################
+#######################################################################################
+def z_logger_stdout_override():
     """ Redirect stdout --> logger
     Returns:
     """
@@ -128,53 +174,80 @@ def logger_stdout_override():
         print("Standard output is sent to added handlers.")
 
 
+def z_logger_custom_1():
+    import logging
+    import sys
+    from pprint import pformat
+    from loguru._defaults import LOGURU_FORMAT
 
+    # LOGURU_FORMAT = "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
+    LOGURU_FORMAT = "<green>{time:DD.MM.YY HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>"
 
-############################################################################
-##### Initialization #######################################################
-logger_setup(log_config_path=LOG_CONFIG_PATH, log_template=LOG_TEMPLATE)
+    class InterceptHandler(logging.Handler):
+        """Logs to loguru from Python logging module"""
 
+        def emit(self, record: logging.LogRecord) -> None:
+            try:
+                level = logger.level(record.levelname).name
+            except ValueError:
+                level = str(record.levelno)
 
+            frame, depth = logging.currentframe(), 2
+            while frame.f_code.co_filename == logging.__file__:  # noqa: WPS609
+                # frame = cast(FrameType, frame.f_back)
+                frame = frame.f_back
+                depth += 1
 
-############################################################################
-def log(*s):
-    logger.opt(depth=1, lazy=True).info(",".join([str(t) for t in s]))
+            logger.opt(depth=depth, exception=record.exc_info).log(
+                level,
+                record.getMessage(),
+            )
 
-def log2(*s):
-    logger.opt(depth=1, lazy=True).debug(",".join([str(t) for t in s]))
+    def format_record(record: dict) -> str:
+        """
+        Custom format for loguru loggers.
+        Uses pformat for log any data like request/response body during debug.
+        Works with logging if loguru handler it.
+        Example:
+        >>> payload = [{"users":[{"name": "Nick", "age": 87, "is_active": True}, {"name": "Alex", "age": 27, "is_active": True}], "count": 2}]
+        >>> logger.bind(payload=).debug("users payload")
+        >>> [   {   'count': 2,
+        >>>         'users': [   {'age': 87, 'is_active': True, 'name': 'Nick'},
+        >>>                      {'age': 27, 'is_active': True, 'name': 'Alex'}]}]
+        """
 
-def log3(*s):  ### Debuggine level 2
-    # to enable debug2 logs set level: TRACE in config_log.yaml
-    logger.opt(depth=1, lazy=True).log("DEBUG_2", ",".join([str(t) for t in s]))
+        format_string = LOGURU_FORMAT
+        if record["extra"].get("payload") is not None:
+            record["extra"]["payload"] = pformat(
+                record["extra"]["payload"], indent=4, compact=True, width=88
+            )
+            format_string += "\n<level>{extra[payload]}</level>"
 
-def logw(*s):
-    logger.opt(depth=1, lazy=True).warning(",".join([str(t) for t in s]))
+        format_string += "{exception}\n"
+        return format_string
 
-def logc(*s):
-    logger.opt(depth=1, lazy=True).critical(",".join([str(t) for t in s]))
+    def setup_logging():
+        # intercept everything at the root logger
+        logging.root.handlers = [InterceptHandler()]
+        logging.root.setLevel("INFO")
 
-def loge(*s):
-    logger.opt(depth=1, lazy=True).exception(",".join([str(t) for t in s]))
+        # remove every other logger's handlers
+        # and propagate to root logger
+        for name in logging.root.manager.loggerDict.keys():
+            logging.getLogger(name).handlers = []
+            logging.getLogger(name).propagate = True
 
-def logr(*s):
-    logger.opt(depth=1, lazy=True).error(",".join([str(t) for t in s]))
-
-
-############################################################################
-def test():
-    log3("debug2")
-    log2("debug")
-    log("info")
-    logw("warning")
-    loge("error")
-    logc("critical")
-
-    try:
-        a = 1 / 0
-    except Exception as e:
-        logr("error", e)
-        loge("Catcch"), e
-
+        # configure loguru
+        logger.configure(
+            handlers=[
+                {
+                    "sink": sys.stdout,
+                    "level": logging.DEBUG,
+                    "format": format_record,
+                }
+            ]
+        )
+        logger.level("TIMEIT", no=22, color="<cyan>")
 
 
 ############################################################################
