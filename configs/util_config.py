@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 # python util_config.py test
-Deps
 
 
 
@@ -31,11 +30,11 @@ def loge(*s):
 
 #########################################################################################################
 def config_load(
-    config_path: str = None,
-    path_default: str = None,
-    config_default: dict = None,
-    save_default: bool = False,
-    to_dataclass: bool = True,
+        config_path: str = None,
+        path_default: str = None,
+        config_default: dict = None,
+        save_default: bool = False,
+        to_dataclass: bool = True,
 ) -> Union[dict, Box]:
     """Load Config file into a dict
     1) load config_path
@@ -103,7 +102,7 @@ def config_load(
     return config_default
 
 
-def config_isvalid_yamlschema(config_dict: dict, schema_path: str= 'config_val.yaml', silent: bool = False) -> bool:
+def config_isvalid_yamlschema(config_dict: dict, schema_path: str = 'config_val.yaml', silent: bool = False) -> bool:
     """Validate using a  yaml file
     Args:
         config_dict:
@@ -127,9 +126,8 @@ def config_isvalid_yamlschema(config_dict: dict, schema_path: str= 'config_val.y
         return False
 
 
-
 def config_isvalid_pydantic(config_dict: dict,
-                            pydanctic_schema: str='config_py.yaml', silent: bool = False) -> bool:
+                            pydanctic_schema: str = 'config_py.yaml', silent: bool = False) -> bool:
     """Validate using a pydantic files
     Args:
         config_dict:
@@ -142,8 +140,6 @@ def config_isvalid_pydantic(config_dict: dict,
 
     except yamale.YamaleError as e:
         return False
-
-
 
 
 ##################################################################################################
@@ -168,10 +164,10 @@ def convert_dict_to_pydantic(config_dict: dict, schema_name: str):
 
 
 def pydantic_model_generator(
-    input_file: Union[Path, str],
-    input_file_type,
-    output_file: Path,
-    **kwargs,
+        input_file: Union[Path, str],
+        input_file_type,
+        output_file: Path,
+        **kwargs,
 ) -> None:
     """
     Args:
@@ -199,18 +195,15 @@ def pydantic_model_generator(
         )
 
 
-
-
-
 #########################################################################################################
 #########################################################################################################
-def test2():
+def test_yamlschema():
     cfg_dict = config_load("config.yaml")
     isok = config_isvalid_yamlschema(cfg_dict, "config_val.yaml")
     log(isok)
 
 
-def test3():
+def test_pydanticgenrator():
     from datamodel_code_generator import InputFileType
     # generating from json file
     pydantic_model_generator(
@@ -256,38 +249,8 @@ if __name__ == "__main__":
     fire.Fire()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def zzz_config_load_validate(config_path: str, schema_path: str, silent: bool = False
-                         ) -> Union[Box, None]:
-
+                             ) -> Union[Box, None]:
     schema = yamale.make_schema(schema_path)
     data = yamale.make_data(config_path)
 
