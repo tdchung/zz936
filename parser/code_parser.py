@@ -1,60 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-python code_parse.py
-List functions:
-- get_list_function_name(file_path)
-    The function use to get all functions of the python file
-    Args:
-        IN: file_path         - the file path input
-        OUT: list_functions   - List all python functions in the input file
-    Example Output:
-        ['func1', 'func2']
-- get_list_class_name(file_path):
-    The function use to get all classes of the python file
-    Args:
-        IN: file_path         - the file path input
-        OUT: list_classes     - List all python classes in the input file
-    Example Output:
-        ['Class1', 'Class1']
-- get_list_class_methods(file_path):
-    The function use to get all classes and all methods in this class of the python file
-    Args:
-        IN: file_path         - the file path input
-        OUT: An array of class info [{dict}, {dict}, ...]
-    
-    Example Output:
-    [
-        {"name": "Class1", "listMethods": ["method1", "method2", "method3"]},
-        {"name": "Class2", "listMethods": ["method4", "method5", "method6"]},
-    ]
-- get_list_variable_global(file_path):
-    The function use to get all global variable of the python file
-    Args:
-        IN: file_path         - the file path input
-        OUT: list_var         - Array of all global variable
-    Example Output:
-        ['Var1', 'Var2']
-- get_list_function_stats(file_path):
-    The function use to get functions stars
-    Args:
-        IN: file_path         - the file path input
-        OUT: Array of functions, lines of the function, and variable in function
-    Example Output:
-        [
-            {"function": "function_name1", "lines": 20, "variables": ["a", "b", "c"]},
-            {"function": "function_name2", "lines": 30, "variables": []},
-        ]
-- get_file_stats(file_path):
-    The function use to get file stars
-    Args:
-        IN: file_path         - the file path input
-        OUT: Dict of file stars
-    Example Output:
-        {
-            "total_functions": 22,
-            "avg_lines" : 110.2,
-            "total_class": 3
-        }
+Usage
+
+
+python code_parser.py
+
+
+
 """
 
 import os
@@ -404,36 +356,51 @@ def get_list_function_stats(file_path):
     list_info = get_list_function_info(file_path)
     if (len(list_info)):
         df = pd.DataFrame.from_records(list_info)
-        # print(df)
+        dfstats = get_stats(df)
+        return dfstats
 
-        df['uri']            = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
-        df['n_variable']     = df['variables'].apply(lambda x : len( x ))
-        df['list_words']        = df.apply( lambda x : _get_words(x), axis=1)
-        df['n_words']           = df['list_words'].apply(lambda x : len( x ))
-        df['n_words_unique']    = df['list_words'].apply(lambda x : len(set( x )))
-        df['n_characters']      = df['code_source'].apply(lambda x : len(x.strip().replace(" ","") ))
-        df['avg_char_per_word']   = df.apply(lambda x : _get_avg_char_per_word(x), axis=1)
-        # print(df)
-
-        cols = [
-            'uri',
-            'name',
-            'type',
-            'n_variable',
-            'n_words',
-            'n_words_unique',
-            'n_characters',
-            'avg_char_per_word',
-            'n_loop',
-            'n_ifthen',
-        ]
-
-        df = df[cols]
-        # print(df)
-        # df.to_csv('functions_stats.csv', index=False)
-        return df
     else:
         return None
+
+
+
+def get_stats(df:pd.DataFrame):
+    """ Calculate stats from datafaframe
+    Args:
+        df:
+
+    Returns:
+
+    """
+
+    df['uri']            = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
+    df['n_variable']     = df['variables'].apply(lambda x : len( x ))
+    df['list_words']        = df.apply( lambda x : _get_words(x), axis=1)
+    df['n_words']           = df['list_words'].apply(lambda x : len( x ))
+    df['n_words_unique']    = df['list_words'].apply(lambda x : len(set( x )))
+    df['n_characters']      = df['code_source'].apply(lambda x : len(x.strip().replace(" ","") ))
+    df['avg_char_per_word']   = df.apply(lambda x : _get_avg_char_per_word(x), axis=1)
+    # print(df)
+
+    cols = [
+        'uri',
+        'name',
+        'type',
+        'n_variable',
+        'n_words',
+        'n_words_unique',
+        'n_characters',
+        'avg_char_per_word',
+        'n_loop',
+        'n_ifthen',
+    ]
+
+    df = df[cols]
+    # print(df)
+    # df.to_csv('functions_stats.csv', index=False)
+    return df
+
+
 
 
 def get_file_stats(file_path):
@@ -726,8 +693,14 @@ def _get_all_lines_in_class(class_name, array):
 # ====================================================================================
 # MAIN
 # ====================================================================================
-def main():
-    CUR_DIR = os.path.abspath(os.path.dirname(__file__))
+def export_stats_pertype(in_path:str=None, out_path:str=None):
+    """
+      python code_parser.py  export_stats_pertype
+    Returns:
+
+    """
+    CUR_DIR = in_path if in_path is not None else os.path.abspath(os.path.dirname(__file__))
+
 
     # Example save in csv format
     file = "{}/test/{}".format(CUR_DIR, "keys.py")
@@ -747,12 +720,42 @@ def main():
         df.to_csv('method_stats1.csv', index=False)
 
 
+def export_stats_perfile(in_path:str=None, out_path:str=None):
+    """
+      python code_parser.py  export_stats_perfile
+    Returns:
+
+      1 python file myfile.py  --->   myfile_stats.csv
+
+
+    """
+    pass
 
 
 
+def export_stats_perrepo(in_path:str=None, out_path:str=None):
+    """
+      python code_parser.py  export_stats_perfile
+    Returns:
+
+      1  repo   --->  a single file stats for all sub-diractory
+
+
+    """
+    import glob
+    root = in_path
+    flist = glob.glob(root +"/*.py")
+    flist = flist + glob.glob(root +"/*/*.py")
+    flist = flist + glob.glob(root +"/*/*/*.py")
+    flist = flist + glob.glob(root +"/*/*/*/*.py")
+    flist = flist + glob.glob(root +"/*/*/*/*/*.py")
+
+
+
+    
 
 if __name__ == "__main__":
     ## python code_parser.py   main
-    # import fire
-    # fire.Fire()
-    main()
+    import fire
+    fire.Fire()
+    # main()
