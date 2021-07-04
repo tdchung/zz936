@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 # python util_config.py test
-Deps
 
 
 
@@ -12,13 +11,7 @@ import importlib
 import os
 from pathlib import Path
 from typing import Union
-
-import fire
-import yamale
 import yaml
-from box import Box
-from pydantic import BaseModel
-
 
 #########################################################################################################
 def log(*s):
@@ -31,12 +24,12 @@ def loge(*s):
 
 #########################################################################################################
 def config_load(
-    config_path: str = None,
-    path_default: str = None,
-    config_default: dict = None,
-    save_default: bool = False,
-    to_dataclass: bool = True,
-) -> Union[dict, Box]:
+        config_path: str = None,
+        path_default: str = None,
+        config_default: dict = None,
+        save_default: bool = False,
+        to_dataclass: bool = True,
+) :
     """Load Config file into a dict
     1) load config_path
     2) If not, load in USER/.myconfig/.config.yaml
@@ -86,6 +79,7 @@ def config_load(
             raise Exception(f"not supported file {config_path}")
 
         if to_dataclass:  ### myconfig.val  , myconfig.val2
+            from box import Box
             return Box(cfg)
         return cfg
 
@@ -103,18 +97,19 @@ def config_load(
     return config_default
 
 
-def config_isvalid_yamlschema(config_dict: dict, schema_path: str= 'config_val.yaml', silent: bool = False) -> bool:
+def config_isvalid_yamlschema(config_dict: dict, yamlschema_path: str = 'config_val.yaml',) -> bool:
     """Validate using a  yaml file
     Args:
         config_dict:
-        schema_path:
+        yamlschema_path:
         silent:
     Returns: True/False
     """
-    schema = yamale.make_schema(schema_path)
+    import yamale
+    schema = yamale.make_schema(yamlschema_path)
 
     try:
-        result = schema.validate(config_dict, data_name=schema_path, strict=True)
+        result = schema.validate(config_dict, data_name=yamlschema_path, strict=True)
         if not result.isValid():
             raise yamale.YamaleError([result])
         return True
@@ -127,9 +122,9 @@ def config_isvalid_yamlschema(config_dict: dict, schema_path: str= 'config_val.y
         return False
 
 
-
 def config_isvalid_pydantic(config_dict: dict,
-                            pydanctic_schema: str='config_py.yaml', silent: bool = False) -> bool:
+                            pydanctic_schema: str = 'config_val.py',
+                            schema_name:str=None) -> bool:
     """Validate using a pydantic files
     Args:
         config_dict:
@@ -137,6 +132,10 @@ def config_isvalid_pydantic(config_dict: dict,
         silent:
     Returns: True/False
     """
+    import importlib
+    module_schema = job = importlib.import_module(pydanctic_schema)
+    schemaClass   = None
+
     try:
         return True
 
@@ -146,9 +145,11 @@ def config_isvalid_pydantic(config_dict: dict,
 
 
 
+
 ##################################################################################################
 ##################################################################################################
-def convert_yaml_to_box(yaml_path: str) -> Box:
+def convert_yaml_to_box(yaml_path: str) :
+    from box import Box
     with open(yaml_path) as f:
         data = yaml.load(f)
     return Box(data)
@@ -168,10 +169,10 @@ def convert_dict_to_pydantic(config_dict: dict, schema_name: str):
 
 
 def pydantic_model_generator(
-    input_file: Union[Path, str],
-    input_file_type,
-    output_file: Path,
-    **kwargs,
+        input_file: Union[Path, str],
+        input_file_type,
+        output_file: Path,
+        **kwargs,
 ) -> None:
     """
     Args:
@@ -199,18 +200,15 @@ def pydantic_model_generator(
         )
 
 
-
-
-
 #########################################################################################################
 #########################################################################################################
-def test2():
+def test_yamlschema():
     cfg_dict = config_load("config.yaml")
     isok = config_isvalid_yamlschema(cfg_dict, "config_val.yaml")
     log(isok)
 
 
-def test3():
+def test_pydanticgenrator():
     from datamodel_code_generator import InputFileType
     # generating from json file
     pydantic_model_generator(
@@ -226,6 +224,7 @@ def test3():
 
 
 def test4():
+    from pydantic import BaseModel
     cfg_dict = config_load("config.yaml")
     pydantic_model = convert_dict_to_pydantic(cfg_dict, "pydantic_config_val.yaml")
     assert isinstance(pydantic_model, BaseModel)
@@ -253,41 +252,12 @@ nest:
 
 
 if __name__ == "__main__":
+    import fire
     fire.Fire()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def zzz_config_load_validate(config_path: str, schema_path: str, silent: bool = False
-                         ) -> Union[Box, None]:
-
+                             ) -> Union[Box, None]:
     schema = yamale.make_schema(schema_path)
     data = yamale.make_data(config_path)
 
