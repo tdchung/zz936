@@ -191,12 +191,12 @@ def get_list_method_info(file_path):
     for method in all_methods:
         class_lines, class_indent = _get_all_lines_in_class(method['class_name'], all_lines)
         for method_name in method['listMethods']:
-            data = {}
-            data["name"] = "{}:{}".format(method['class_name'], method_name)
-            lines, indent = _get_all_lines_in_function(method_name, class_lines, class_indent)
-            data["n_lines"] = len(lines)
+            data                                                = {}
+            data["name"]                                        = "{}:{}".format(method['class_name'], method_name)
+            lines, indent                                       = _get_all_lines_in_function(method_name, class_lines, class_indent)
+            data["n_lines"]                                     = len(lines)
             data["variables"], data["n_loop"], data['n_ifthen'] = _get_function_stats(lines, indent)
-            data["type"] = "method"
+            data["type"]                                        = "method"
 
             # calculate code_source
             data["code_source"] = ""
@@ -319,27 +319,18 @@ def get_stats(df:pd.DataFrame, file_path:str):
         pandas DataFrame
 
     """
-    df['uri']            = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
-    df['n_variable']     = df['variables'].apply(lambda x : len( x ))
+    df['uri']               = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
+    df['n_variable']        = df['variables'].apply(lambda x : len( x ))
     df['list_words']        = df.apply( lambda x : _get_words(x), axis=1)
     df['n_words']           = df['list_words'].apply(lambda x : len( x ))
     df['n_words_unique']    = df['list_words'].apply(lambda x : len(set( x )))
     df['n_characters']      = df['code_source'].apply(lambda x : len(x.strip().replace(" ","") ))
-    df['avg_char_per_word']   = df.apply(lambda x : _get_avg_char_per_word(x), axis=1)
+    df['avg_char_per_word'] = df.apply(lambda x : _get_avg_char_per_word(x), axis=1)
     # print(df)
 
-    cols = [
-        'uri',
-        'name',
-        'type',
-        'n_variable',
-        'n_words',
-        'n_words_unique',
-        'n_characters',
-        'avg_char_per_word',
-        'n_loop',
-        'n_ifthen',
-    ]
+    cols = ['uri', 'name', 'type', 'n_variable', 'n_words', 
+            'n_words_unique', 'n_characters', 'avg_char_per_word', 
+            'n_loop', 'n_ifthen', ]
 
     df = df[cols]
     # print(df)
