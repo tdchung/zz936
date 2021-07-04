@@ -78,7 +78,7 @@ def get_list_class_methods(file_path):
         class_info = {}
         class_info["class_name"] = class_name
         class_lines, class_indent = _get_all_lines_in_class(class_name, all_lines)
-        re_check = r"{}def (\w+)".format(class_indent)
+        re_check = f"{class_indent}def (\w+)"
         class_info["listMethods"] = []
         for line in class_lines:
             re_response = re.match(re_check, line.rstrip())
@@ -192,7 +192,7 @@ def get_list_method_info(file_path):
         class_lines, class_indent = _get_all_lines_in_class(method['class_name'], all_lines)
         for method_name in method['listMethods']:
             data                                                = {}
-            data["name"]                                        = "{}:{}".format(method['class_name'], method_name)
+            data["name"]                                        = f"{method['class_name']}:{method_name}"
             lines, indent                                       = _get_all_lines_in_function(method_name, class_lines, class_indent)
             data["n_lines"]                                     = len(lines)
             data["variables"], data["n_loop"], data['n_ifthen'] = _get_function_stats(lines, indent)
@@ -319,7 +319,7 @@ def get_stats(df:pd.DataFrame, file_path:str):
         pandas DataFrame
 
     """
-    df['uri']               = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
+    df['uri']               = df['name'].apply(lambda x : f"{file_path}:{x}".replace('\\','/'))
     df['n_variable']        = df['variables'].apply(lambda x : len( x ))
     df['list_words']        = df.apply( lambda x : _get_words(x), axis=1)
     df['n_words']           = df['list_words'].apply(lambda x : len( x ))
@@ -383,7 +383,6 @@ def _get_avg_char_per_word(row):
 def _validate_file(file_path):
     """Check if the file is existed and it's a python file
     """
-    # print("Validate: {}".format(file_path))
     if not os.path.exists(file_path):
         print("Input file is not exists")
         return False
@@ -469,7 +468,7 @@ def _get_all_lines_in_function(function_name, array, indentMethod=''):
         OUT: list_lines   - Array of all line of this function
         OUT: indent       - The indent of this function (this will be used for another calculation)
     """
-    re_check = r"{}def {}".format(indentMethod, function_name)
+    re_check = f"{indentMethod}def {function_name}"
 
     response = array.copy()
 
@@ -479,7 +478,6 @@ def _get_all_lines_in_function(function_name, array, indentMethod=''):
         if re_response == None:
             response.remove(line)
         else:
-            # print("Debug: _get_all_lines_in_function. {}".format(line))
             break
 
     # 2. get indent
@@ -561,12 +559,16 @@ def _get_function_stats(array, indent):
             line = line.rstrip()[:line.rstrip().find('r"')]
         elif line.rstrip().find('b"') >= 0:
             line = line.rstrip()[:line.rstrip().find('b"')]
+        elif line.rstrip().find('f"') >= 0:
+            line = line.rstrip()[:line.rstrip().find('f"')]
         elif line.rstrip().find('"') >= 0:
             line = line.rstrip()[:line.rstrip().find('"')]
         elif line.rstrip().find("r'") >= 0:
             line = line.rstrip()[:line.rstrip().find("r'")]
         elif line.rstrip().find("b'") >= 0:
             line = line.rstrip()[:line.rstrip().find("b'")]
+        elif line.rstrip().find("f'") >= 0:
+            line = line.rstrip()[:line.rstrip().find("f'")]
         elif line.rstrip().find("'") >= 0:
             line = line.rstrip()[:line.rstrip().find("'")]
         else:
@@ -596,8 +598,8 @@ def _get_all_lines_in_class(class_name, array):
         IN: array         - list all lines of the file have this input class
         OUT: list_lines   - Array of all line of this class
     """
-    re_check1 = r"class {}\(.+\):".format(class_name)
-    re_check2 = r"class {}:".format(class_name)
+    re_check1 = f"class {class_name}\(.+\):"
+    re_check2 = f"class {class_name}:"
     response = array.copy()
 
     # 1. get start line
@@ -608,7 +610,6 @@ def _get_all_lines_in_class(class_name, array):
         if re_response1 == None and re_response2 == None:
             response.remove(line)
         else:
-            # print("Debug: _get_all_lines_in_class. {}".format(line))
             break
 
     # 2. get indent
@@ -640,17 +641,17 @@ def export_stats_pertype(in_path:str=None, type:str=None, out_path:str=None):
         df = get_list_function_stats(file)
         print(df)
         if df is not None:
-            df.to_csv('{}'.format(out_path), index=False)
+            df.to_csv(f'{out_path}', index=False)
     elif type == "class":
         df = get_list_class_stats(file)
         print(df)
         if df is not None:
-            df.to_csv('{}'.format(out_path), index=False)
+            df.to_csv(f'{out_path}', index=False)
     elif type == "method":
         df = get_list_method_stats(file)
         print(df)
         if df is not None:
-            df.to_csv('{}'.format(out_path), index=False)
+            df.to_csv(f'{out_path}', index=False)
     else:
         print("Type is invalid. ")
 
@@ -666,17 +667,17 @@ def export_stats_perfile(in_path:str=None, out_path:str=None):
     df = get_list_function_stats(file)
     print(df)
     if df is not None:
-        df.to_csv('{}'.format(out_path), index=False)
+        df.to_csv(f'{out_path}', index=False)
 
     df = get_list_class_stats(file)
     print(df)
     if df is not None:
-        df.to_csv('{}'.format(out_path), mode='a', header=False, index=False)
+        df.to_csv(f'{out_path}', mode='a', header=False, index=False)
 
     df = get_list_method_stats(file)
     print(df)
     if df is not None:
-        df.to_csv('{}'.format(out_path), mode='a', header=False, index=False)
+        df.to_csv(f'{out_path}', mode='a', header=False, index=False)
 
 
 def export_stats_perrepo(in_path:str=None, out_path:str=None):
@@ -696,13 +697,13 @@ def export_stats_perrepo(in_path:str=None, out_path:str=None):
     # print(flist)
     for file in flist:
         output_file = re.search(r'(\w+).py', file).group(1)
-        export_stats_perfile(file, "{}/{}.csv".format(out_path, output_file))
+        export_stats_perfile(file, f"{out_path}/file_{output_file}.csv")
 
 
-def test_example():
-    export_stats_pertype('parser/code_parser.py', "function", "output_function.csv")
-    export_stats_perfile('parser/code_parser.py', "output.csv")
-    export_stats_perrepo('parser', "output_csv")
+def example_test():
+    export_stats_pertype('parser/code_parser.py', "function", "logs/output/output_function.csv")
+    export_stats_perfile('parser/code_parser.py', "logs/output/output_file.csv")
+    export_stats_perrepo('parser', "logs/output/")
 
 if __name__ == "__main__":
     fire.Fire({
