@@ -708,7 +708,7 @@ def export_stats_perrepo(in_path:str=None, out_path:str=None):
         export_stats_perfile(file, "{}/{}.csv".format(out_path, output_file))
 
 
-def example_test():
+def test_example():
     export_stats_pertype('parser/code_parser.py', "function", "output_function.csv")
     export_stats_perfile('parser/code_parser.py', "output.csv")
     export_stats_perrepo('parser', "output_csv")
@@ -719,4 +719,4 @@ if __name__ == "__main__":
       'file': export_stats_perfile,
       'repo': export_stats_perrepo,
     })
-    # example_test()
+    # test_example()
