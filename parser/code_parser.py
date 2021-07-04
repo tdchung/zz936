@@ -10,6 +10,8 @@ python code_parser.py
 """
 
 import os
+import glob
+import fire
 from posixpath import dirname, split
 import re
 import pandas as pd
@@ -236,34 +238,7 @@ def get_list_method_stats(file_path):
     list_info = get_list_method_info(file_path)
     if (len(list_info)):
         df = pd.DataFrame.from_records(list_info)
-        # print(df)
-
-        df['uri']               = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
-        df['n_variable']        = df['variables'].apply(lambda x : len( x ))
-        df['list_words']        = df.apply( lambda x : _get_words(x), axis=1)
-        df['n_words']           = df['list_words'].apply(lambda x : len( x ))
-        df['n_words_unique']    = df['list_words'].apply(lambda x : len(set( x )))
-        df['n_characters']      = df['code_source'].apply(lambda x : len(x.strip().replace(" ","") ))
-        df['avg_char_per_word']   = df.apply(lambda x : _get_avg_char_per_word(x), axis=1)
-        # print(df)
-
-        cols = [
-            'uri',
-            'name',
-            'type',
-            'n_variable',
-            'n_words',
-            'n_words_unique',
-            'n_characters',
-            'avg_char_per_word',
-            'n_loop',
-            'n_ifthen',
-        ]
-
-        df = df[cols]
-        # print(df)
-        # df.to_csv('functions_stats.csv', index=False)
-        return df
+        return get_stats(df, file_path)
     else:
         return None
 
@@ -294,34 +269,7 @@ def get_list_class_stats(file_path):
     list_info = get_list_class_info(file_path)
     if (len(list_info)):
         df = pd.DataFrame.from_records(list_info)
-        # print(df)
-
-        df['uri']            = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
-        df['n_variable']     = df['variables'].apply(lambda x : len( x ))
-        df['list_words']        = df.apply( lambda x : _get_words(x), axis=1)
-        df['n_words']           = df['list_words'].apply(lambda x : len( x ))
-        df['n_words_unique']    = df['list_words'].apply(lambda x : len(set( x )))
-        df['n_characters']      = df['code_source'].apply(lambda x : len(x.strip().replace(" ","") ))
-        df['avg_char_per_word']   = df.apply(lambda x : _get_avg_char_per_word(x), axis=1)
-        # print(df)
-
-        cols = [
-            'uri',
-            'name',
-            'type',
-            'n_variable',
-            'n_words',
-            'n_words_unique',
-            'n_characters',
-            'avg_char_per_word',
-            'n_loop',
-            'n_ifthen',
-        ]
-
-        df = df[cols]
-        # print(df)
-        # df.to_csv('functions_stats.csv', index=False)
-        return df
+        return get_stats(df, file_path)
     else:
         return None
 
@@ -356,23 +304,21 @@ def get_list_function_stats(file_path):
     list_info = get_list_function_info(file_path)
     if (len(list_info)):
         df = pd.DataFrame.from_records(list_info)
-        dfstats = get_stats(df)
-        return dfstats
+        return get_stats(df, file_path)
 
     else:
         return None
 
 
-
-def get_stats(df:pd.DataFrame):
+def get_stats(df:pd.DataFrame, file_path:str):
     """ Calculate stats from datafaframe
     Args:
-        df:
+        df: pandas DataFrame
 
     Returns:
+        pandas DataFrame
 
     """
-
     df['uri']            = df['name'].apply(lambda x : "{}:{}".format(file_path, x).replace('\\','/'))
     df['n_variable']     = df['variables'].apply(lambda x : len( x ))
     df['list_words']        = df.apply( lambda x : _get_words(x), axis=1)
@@ -401,8 +347,6 @@ def get_stats(df:pd.DataFrame):
     return df
 
 
-
-
 def get_file_stats(file_path):
     """The function use to get file stars
     Args:
@@ -424,6 +368,7 @@ def get_file_stats(file_path):
     output["avg_lines"] = avg_lines/len(res)
     output["total_class"] = len(get_list_class_name(file_path))
     return output
+
 
 # ====================================================================================
 # internal Functions
@@ -693,56 +638,63 @@ def _get_all_lines_in_class(class_name, array):
 # ====================================================================================
 # MAIN
 # ====================================================================================
-def export_stats_pertype(in_path:str=None, out_path:str=None):
+def export_stats_pertype(in_path:str=None, type:str=None, out_path:str=None):
     """
-      python code_parser.py  export_stats_pertype
+        python code_parser.py type <in_path> <type> <out_path>
     Returns:
 
     """
-    CUR_DIR = in_path if in_path is not None else os.path.abspath(os.path.dirname(__file__))
-
-
-    # Example save in csv format
-    file = "{}/test/{}".format(CUR_DIR, "keys.py")
-    df = get_list_function_stats(file)
-    print(df)
-    if df is not None:
-        df.to_csv('functions_stats1.csv', index=False)
-
-    df = get_list_class_stats(file)
-    print(df)
-    if df is not None:
-        df.to_csv('class_stats1.csv', index=False)
-
-    df = get_list_method_stats(file)
-    print(df)
-    if df is not None:
-        df.to_csv('method_stats1.csv', index=False)
+    file = in_path
+    if type == "function":
+        df = get_list_function_stats(file)
+        print(df)
+        if df is not None:
+            df.to_csv('{}'.format(out_path), index=False)
+    elif type == "class":
+        df = get_list_class_stats(file)
+        print(df)
+        if df is not None:
+            df.to_csv('{}'.format(out_path), index=False)
+    elif type == "method":
+        df = get_list_method_stats(file)
+        print(df)
+        if df is not None:
+            df.to_csv('{}'.format(out_path), index=False)
+    else:
+        print("Type is invalid. ")
 
 
 def export_stats_perfile(in_path:str=None, out_path:str=None):
     """
-      python code_parser.py  export_stats_perfile
+        python code_parser.py  export_stats_perfile <in_path> <out_path>
+
     Returns:
 
-      1 python file myfile.py  --->   myfile_stats.csv
-
-
     """
-    pass
+    file = in_path
+    df = get_list_function_stats(file)
+    print(df)
+    if df is not None:
+        df.to_csv('{}'.format(out_path), index=False)
 
+    df = get_list_class_stats(file)
+    print(df)
+    if df is not None:
+        df.to_csv('{}'.format(out_path), mode='a', header=False, index=False)
+
+    df = get_list_method_stats(file)
+    print(df)
+    if df is not None:
+        df.to_csv('{}'.format(out_path), mode='a', header=False, index=False)
 
 
 def export_stats_perrepo(in_path:str=None, out_path:str=None):
-    """
-      python code_parser.py  export_stats_perfile
+    """ 
+        python code_parser.py  export_stats_perfile <in_path> <out_path>
+
     Returns:
-
-      1  repo   --->  a single file stats for all sub-diractory
-
-
+        1  repo   --->  a single file stats for all sub-diractory
     """
-    import glob
     root = in_path
     flist = glob.glob(root +"/*.py")
     flist = flist + glob.glob(root +"/*/*.py")
@@ -750,12 +702,21 @@ def export_stats_perrepo(in_path:str=None, out_path:str=None):
     flist = flist + glob.glob(root +"/*/*/*/*.py")
     flist = flist + glob.glob(root +"/*/*/*/*/*.py")
 
+    # print(flist)
+    for file in flist:
+        output_file = re.search(r'(\w+).py', file).group(1)
+        export_stats_perfile(file, "{}/{}.csv".format(out_path, output_file))
 
 
-
+def example_test():
+    export_stats_pertype('parser/code_parser.py', "function", "output_function.csv")
+    export_stats_perfile('parser/code_parser.py', "output.csv")
+    export_stats_perrepo('parser', "output_csv")
 
 if __name__ == "__main__":
-    ## python code_parser.py   main
-    import fire
-    fire.Fire()
-    # main()
+    fire.Fire({
+      'type': export_stats_pertype,
+      'file': export_stats_perfile,
+      'repo': export_stats_perrepo,
+    })
+    # example_test()
