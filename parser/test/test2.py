@@ -517,3 +517,16 @@ def _new_function(asd:str=None,
 
 def _new_2():
     pass
+
+
+# test multi line
+def test_function_multiL_lines(test:float,
+                                multi: str="asd",
+                                line: int=12):
+    pass
+
+# test
+def test_special_chars(test: str= "Hello, World!", 
+                        interger: int = 0,
+                        true = True):
+    pass

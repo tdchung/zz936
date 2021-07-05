@@ -576,8 +576,19 @@ def _get_define_function_stats(array):
     else:
         print("Invalid array data")
     if data != '':
+        check = ([ i.start() for i in re.finditer('"', data)])
+        if len(check) > 0 and len(check)%2 == 0:
+            for i in range(0, len(check), 2):
+                data = (data.replace(data[check[i]+1:check[i+1]], data[check[i]+1:check[i+1]].replace(',', '^^^')))
+
+        check = ([ i.start() for i in re.finditer("'", data)])
+        if len(check) > 0 and len(check)%2 == 0:
+            for i in range(0, len(check), 2):
+                data = (data.replace(data[check[i]+1:check[i+1]], data[check[i]+1:check[i+1]].replace(',', '^^^')))
+
         args = data.split(',')
         for arg in args:
+            arg = arg.replace('^^^', ',')
             arg = arg.strip()
             # print(arg)
             if arg.find(':') >= 0:
