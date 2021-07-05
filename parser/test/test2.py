@@ -509,3 +509,11 @@ def L_RTOS_KTCPTLS_0022(target, prep_target):
             assert 0, "[FAILED] Connection is not closed after issuing AT+KTCPCLOSE"
     # Clean up configuration after testing
     clean_up_config_test(target, prep_target)
+
+
+def _new_function(asd:str=None,
+                    zxc="asdad"):
+    print("asdadadas")
+
+def _new_2():
+    pass

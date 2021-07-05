@@ -1,53 +1,53 @@
-uri,name,type,n_variable,n_words,n_words_unique,n_characters,avg_char_per_word,n_loop,n_ifthen
-parser/test/keys.py:prepare_target_and_clean_up_test,prepare_target_and_clean_up_test,function,8,40,30,535,13.375,0,0
-parser/test/keys.py:clean_up_config_test,clean_up_config_test,function,6,17,17,241,14.176470588235293,0,1
-parser/test/keys.py:check_default_network_config,check_default_network_config,function,22,87,70,955,10.977011494252874,1,5
-parser/test/keys.py:check_module_env,check_module_env,function,9,57,52,553,9.701754385964913,1,1
-parser/test/keys.py:provision_certificates_to_target,provision_certificates_to_target,function,7,37,28,384,10.378378378378379,0,3
-parser/test/keys.py:config_session_connection,config_session_connection,function,2,7,7,97,13.857142857142858,0,0
-parser/test/keys.py:config_cipher_suite_and_tcps_action,config_cipher_suite_and_tcps_action,function,8,34,27,335,9.852941176470589,0,3
-parser/test/keys.py:L_RTOS_KTCPTLS_0001,L_RTOS_KTCPTLS_0001,function,11,36,31,434,12.055555555555555,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0002,L_RTOS_KTCPTLS_0002,function,12,33,31,439,13.303030303030303,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0003,L_RTOS_KTCPTLS_0003,function,14,33,32,476,14.424242424242424,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0004,L_RTOS_KTCPTLS_0004,function,11,32,29,411,12.84375,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0005,L_RTOS_KTCPTLS_0005,function,12,32,30,426,13.3125,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0006,L_RTOS_KTCPTLS_0006,function,13,32,31,445,13.90625,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0014,L_RTOS_KTCPTLS_0014,function,14,30,29,480,16.0,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0016,L_RTOS_KTCPTLS_0016,function,14,30,29,482,16.066666666666666,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0017,L_RTOS_KTCPTLS_0017,function,14,30,29,483,16.1,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0018,L_RTOS_KTCPTLS_0018,function,14,30,29,473,15.766666666666667,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0019,L_RTOS_KTCPTLS_0019,function,14,30,29,473,15.766666666666667,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0020,L_RTOS_KTCPTLS_0020,function,14,30,29,476,15.866666666666667,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0021,L_RTOS_KTCPTLS_0021,function,14,30,29,476,15.866666666666667,0,0
-parser/test/keys.py:L_RTOS_KTCPTLS_0022,L_RTOS_KTCPTLS_0022,function,31,163,125,1554,9.533742331288343,1,1
-parser/test/keys.py:BadSignatureError,BadSignatureError,class,0,1,1,4,4.0,0,0
-parser/test/keys.py:BadDigestError,BadDigestError,class,0,1,1,4,4.0,0,0
-parser/test/keys.py:VerifyingKey,VerifyingKey,class,84,301,189,3584,11.906976744186046,0,7
-parser/test/keys.py:SigningKey,SigningKey,class,138,482,310,4615,9.574688796680498,3,9
-parser/test/keys.py:VerifyingKey:__init__,VerifyingKey:__init__,method,2,11,11,100,9.090909090909092,0,1
-parser/test/keys.py:VerifyingKey:from_public_point,VerifyingKey:from_public_point,method,10,13,12,185,14.23076923076923,0,0
-parser/test/keys.py:VerifyingKey:from_string,VerifyingKey:from_string,method,17,45,39,504,11.2,0,1
-parser/test/keys.py:VerifyingKey:from_pem,VerifyingKey:from_pem,method,2,2,2,39,19.5,0,0
-parser/test/keys.py:VerifyingKey:from_der,VerifyingKey:from_der,method,19,64,38,683,10.671875,0,3
-parser/test/keys.py:VerifyingKey:from_public_key_recovery,VerifyingKey:from_public_key_recovery,method,4,8,8,137,17.125,0,0
-parser/test/keys.py:VerifyingKey:from_public_key_recovery_with_digest,VerifyingKey:from_public_key_recovery_with_digest,method,13,24,23,288,12.0,0,0
-parser/test/keys.py:VerifyingKey:to_string,VerifyingKey:to_string,method,6,11,8,145,13.181818181818182,0,0
-parser/test/keys.py:VerifyingKey:to_pem,VerifyingKey:to_pem,method,2,4,4,42,10.5,0,0
-parser/test/keys.py:VerifyingKey:to_der,VerifyingKey:to_der,method,9,16,14,290,18.125,0,0
-parser/test/keys.py:VerifyingKey:verify,VerifyingKey:verify,method,18,51,45,496,9.72549019607843,0,2
-parser/test/keys.py:VerifyingKey:verify_digest,VerifyingKey:verify_digest,method,13,36,34,303,8.416666666666666,0,2
-parser/test/keys.py:SigningKey:__init__,SigningKey:__init__,method,2,10,10,95,9.5,0,1
-parser/test/keys.py:SigningKey:generate,SigningKey:generate,method,4,7,7,93,13.285714285714286,0,0
-parser/test/keys.py:SigningKey:from_secret_exponent,SigningKey:from_secret_exponent,method,21,34,31,414,12.176470588235293,0,0
-parser/test/keys.py:SigningKey:from_string,SigningKey:from_string,method,4,11,11,148,13.454545454545455,0,0
-parser/test/keys.py:SigningKey:from_pem,SigningKey:from_pem,method,7,13,13,168,12.923076923076923,0,1
-parser/test/keys.py:SigningKey:from_der,SigningKey:from_der,method,22,88,59,735,8.352272727272727,0,5
-parser/test/keys.py:SigningKey:to_string,SigningKey:to_string,method,5,7,6,91,13.0,0,0
-parser/test/keys.py:SigningKey:to_pem,SigningKey:to_pem,method,2,5,5,45,9.0,0,0
-parser/test/keys.py:SigningKey:to_der,SigningKey:to_der,method,7,11,11,263,23.90909090909091,0,0
-parser/test/keys.py:SigningKey:get_verifying_key,SigningKey:get_verifying_key,method,2,2,2,24,12.0,0,0
-parser/test/keys.py:SigningKey:sign_deterministic,SigningKey:sign_deterministic,method,6,12,11,184,15.333333333333334,0,0
-parser/test/keys.py:SigningKey:sign_digest_deterministic,SigningKey:sign_digest_deterministic,method,27,66,56,509,7.712121212121212,2,0
-parser/test/keys.py:SigningKey:sign,SigningKey:sign,method,75,249,178,1964,7.887550200803213,3,2
-parser/test/keys.py:SigningKey:sign_digest,SigningKey:sign_digest,method,27,66,56,509,7.712121212121212,2,0
-parser/test/keys.py:SigningKey:sign_number,SigningKey:sign_number,method,11,25,23,165,6.6,0,1
+uri,name,type,n_variable,n_words,n_words_unique,n_characters,avg_char_per_word,n_loop,n_ifthen,arg_name,arg_type,arg_value
+parser/test/keys.py:prepare_target_and_clean_up_test,prepare_target_and_clean_up_test,function,8,40,30,535,13.38,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:clean_up_config_test,clean_up_config_test,function,6,17,17,241,14.18,0,1,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:check_default_network_config,check_default_network_config,function,22,87,70,955,10.98,1,5,['target'],[None],[None]
+parser/test/keys.py:check_module_env,check_module_env,function,9,57,52,553,9.7,1,1,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:provision_certificates_to_target,provision_certificates_to_target,function,7,37,28,384,10.38,0,3,"['target', 'auth', 'nist', 'root_ca_path', 'client_cert_path', 'client_key_path']","[None, None, None, None, None, None]","[None, None, None, None, None, None]"
+parser/test/keys.py:config_session_connection,config_session_connection,function,2,7,7,97,13.86,0,0,"['target', 'prep_target', 'sid']","[None, None, None]","[None, None, '1']"
+parser/test/keys.py:config_cipher_suite_and_tcps_action,config_cipher_suite_and_tcps_action,function,8,34,27,335,9.85,0,3,"['target', 'auth', 'nist_value', 'profile_id', 'config_cipher', 'valid']","[None, None, None, None, None, None]","[None, None, None, '0', '1', '1']"
+parser/test/keys.py:L_RTOS_KTCPTLS_0001,L_RTOS_KTCPTLS_0001,function,11,36,31,434,12.06,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0002,L_RTOS_KTCPTLS_0002,function,12,33,31,439,13.3,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0003,L_RTOS_KTCPTLS_0003,function,14,33,32,476,14.42,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0004,L_RTOS_KTCPTLS_0004,function,11,32,29,411,12.84,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0005,L_RTOS_KTCPTLS_0005,function,12,32,30,426,13.31,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0006,L_RTOS_KTCPTLS_0006,function,13,32,31,445,13.91,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0014,L_RTOS_KTCPTLS_0014,function,14,30,29,480,16.0,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0016,L_RTOS_KTCPTLS_0016,function,14,30,29,482,16.07,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0017,L_RTOS_KTCPTLS_0017,function,14,30,29,483,16.1,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0018,L_RTOS_KTCPTLS_0018,function,14,30,29,473,15.77,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0019,L_RTOS_KTCPTLS_0019,function,14,30,29,473,15.77,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0020,L_RTOS_KTCPTLS_0020,function,14,30,29,476,15.87,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0021,L_RTOS_KTCPTLS_0021,function,14,30,29,476,15.87,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0022,L_RTOS_KTCPTLS_0022,function,31,163,125,1554,9.53,1,1,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:BadSignatureError,BadSignatureError,class,0,1,1,4,4.0,0,0,[],[],[]
+parser/test/keys.py:BadDigestError,BadDigestError,class,0,1,1,4,4.0,0,0,[],[],[]
+parser/test/keys.py:VerifyingKey,VerifyingKey,class,84,301,189,3584,11.91,0,7,[],[],[]
+parser/test/keys.py:SigningKey,SigningKey,class,138,482,310,4615,9.57,3,9,[],[],[]
+parser/test/keys.py:VerifyingKey:__init__,VerifyingKey:__init__,method,2,11,11,100,9.09,0,1,"['self', '_error__please_use_generate']","[None, None]","[None, 'None']"
+parser/test/keys.py:VerifyingKey:from_public_point,VerifyingKey:from_public_point,method,10,13,12,185,14.23,0,0,"['klass', 'point', 'curve', 'hashfunc']","[None, None, None, None]","[None, None, 'NIST192p', 'sha1']"
+parser/test/keys.py:VerifyingKey:from_string,VerifyingKey:from_string,method,17,45,39,504,11.2,0,1,"['klass', 'string', 'curve', 'hashfunc', 'validate_point']","[None, None, None, None, None]","[None, None, 'NIST192p', 'sha1', 'True']"
+parser/test/keys.py:VerifyingKey:from_pem,VerifyingKey:from_pem,method,2,2,2,39,19.5,0,0,"['klass', 'string']","[None, None]","[None, None]"
+parser/test/keys.py:VerifyingKey:from_der,VerifyingKey:from_der,method,19,64,38,683,10.67,0,3,"['klass', 'string']","[None, None]","[None, None]"
+parser/test/keys.py:VerifyingKey:from_public_key_recovery,VerifyingKey:from_public_key_recovery,method,4,8,8,137,17.12,0,0,"['klass', 'signature', 'data', 'curve', 'hashfunc', 'sigdecode']","[None, None, None, None, None, None]","[None, None, None, None, 'sha1', 'sigdecode_string']"
+parser/test/keys.py:VerifyingKey:from_public_key_recovery_with_digest,VerifyingKey:from_public_key_recovery_with_digest,method,13,24,23,288,12.0,0,0,"['klass', 'signature', 'digest', 'curve', 'hashfunc', 'sigdecode']","[None, None, None, None, None, None]","[None, None, None, None, 'sha1', 'sigdecode_string']"
+parser/test/keys.py:VerifyingKey:to_string,VerifyingKey:to_string,method,6,11,8,145,13.18,0,0,['self'],[None],[None]
+parser/test/keys.py:VerifyingKey:to_pem,VerifyingKey:to_pem,method,2,4,4,42,10.5,0,0,['self'],[None],[None]
+parser/test/keys.py:VerifyingKey:to_der,VerifyingKey:to_der,method,9,16,14,290,18.12,0,0,['self'],[None],[None]
+parser/test/keys.py:VerifyingKey:verify,VerifyingKey:verify,method,18,51,45,496,9.73,0,2,"['self', 'signature', 'data', 'hashfunc', 'sigdecode']","[None, None, None, None, None]","[None, None, None, 'None', 'sigdecode_string']"
+parser/test/keys.py:VerifyingKey:verify_digest,VerifyingKey:verify_digest,method,13,36,34,303,8.42,0,2,"['self', 'signature', 'digest', 'sigdecode']","[None, None, None, None]","[None, None, None, 'sigdecode_string']"
+parser/test/keys.py:SigningKey:__init__,SigningKey:__init__,method,2,10,10,95,9.5,0,1,"['self', '_error__please_use_generate']","[None, None]","[None, 'None']"
+parser/test/keys.py:SigningKey:generate,SigningKey:generate,method,4,7,7,93,13.29,0,0,"['klass', 'curve', 'entropy', 'hashfunc']","[None, None, None, None]","[None, 'NIST192p', 'None', 'sha1']"
+parser/test/keys.py:SigningKey:from_secret_exponent,SigningKey:from_secret_exponent,method,21,34,31,414,12.18,0,0,"['klass', 'secexp', 'curve', 'hashfunc']","[None, None, None, None]","[None, None, 'NIST192p', 'sha1']"
+parser/test/keys.py:SigningKey:from_string,SigningKey:from_string,method,4,11,11,148,13.45,0,0,"['klass', 'string', 'curve', 'hashfunc']","[None, None, None, None]","[None, None, 'NIST192p', 'sha1']"
+parser/test/keys.py:SigningKey:from_pem,SigningKey:from_pem,method,7,13,13,168,12.92,0,1,"['klass', 'string', 'hashfunc']","[None, None, None]","[None, None, 'sha1']"
+parser/test/keys.py:SigningKey:from_der,SigningKey:from_der,method,22,88,59,735,8.35,0,5,"['klass', 'string', 'hashfunc']","[None, None, None]","[None, None, 'sha1']"
+parser/test/keys.py:SigningKey:to_string,SigningKey:to_string,method,5,7,6,91,13.0,0,0,['self'],[None],[None]
+parser/test/keys.py:SigningKey:to_pem,SigningKey:to_pem,method,2,5,5,45,9.0,0,0,['self'],[None],[None]
+parser/test/keys.py:SigningKey:to_der,SigningKey:to_der,method,7,11,11,263,23.91,0,0,['self'],[None],[None]
+parser/test/keys.py:SigningKey:get_verifying_key,SigningKey:get_verifying_key,method,2,2,2,24,12.0,0,0,['self'],[None],[None]
+parser/test/keys.py:SigningKey:sign_deterministic,SigningKey:sign_deterministic,method,6,12,11,184,15.33,0,0,"['self', 'data', 'hashfunc', 'sigencode', 'extra_entropy']","[None, None, None, None, None]","[None, None, 'None', 'sigencode_string', ""b''""]"
+parser/test/keys.py:SigningKey:sign_digest_deterministic,SigningKey:sign_digest_deterministic,method,27,66,56,509,7.71,2,0,"['self', 'digest', 'hashfunc', 'sigencode', 'extra_entropy']","[None, None, None, None, None]","[None, None, 'None', 'sigencode_string', ""b''""]"
+parser/test/keys.py:SigningKey:sign,SigningKey:sign,method,75,249,178,1964,7.89,3,2,"['self', 'data', 'hashfunc', 'sigencode', 'extra_entropy']","[None, None, None, None, None]","[None, None, 'None', 'sigencode_string', ""b''""]"
+parser/test/keys.py:SigningKey:sign_digest,SigningKey:sign_digest,method,27,66,56,509,7.71,2,0,"['self', 'digest', 'hashfunc', 'sigencode', 'extra_entropy']","[None, None, None, None, None]","[None, None, 'None', 'sigencode_string', ""b''""]"
+parser/test/keys.py:SigningKey:sign_number,SigningKey:sign_number,method,11,25,23,165,6.6,0,1,"['self', 'number', 'entropy', 'k']","[None, None, None, None]","[None, None, 'None', 'None']"
