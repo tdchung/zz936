@@ -117,8 +117,8 @@ def get_list_function_info(file_path):
         OUT: Array of functions, lines of the function, and variable in function
     Example Output:
         [
-            {"function": "function_name1", "lines": 20, "variables": ["a", "b", "c"]},
-            {"function": "function_name2", "lines": 30, "variables": []},
+            {"name": "function_name1", "lines": 20, "variables": ["a", "b", "c"]},
+            {"name": "function_name2", "lines": 30, "variables": []},
         ]
     """
     all_lines = _get_and_clean_all_lines(file_path)
@@ -136,6 +136,10 @@ def get_list_function_info(file_path):
         data["code_source"] = ""
         for line in lines:
             data["code_source"] += line
+
+        # get input variable stats
+        lines, indent = _get_all_lines_define_function(function, all_lines)
+        data['arg_name'], data['arg_type'], data['arg_value'] = _get_define_function_stats(lines)
 
         output.append(data)
     return output
@@ -167,6 +171,8 @@ def get_list_class_info(file_path):
         data["code_source"] = ""
         for line in lines:
             data["code_source"] += line
+
+        data['arg_name'], data['arg_type'], data['arg_value'] = [], [], []
 
         output.append(data)
     return output
@@ -202,6 +208,10 @@ def get_list_method_info(file_path):
             data["code_source"] = ""
             for line in lines:
                 data["code_source"] += line
+
+            # get input variable stats
+            lines, indent = _get_all_lines_define_function(method_name, class_lines, class_indent)
+            data['arg_name'], data['arg_type'], data['arg_value'] = _get_define_function_stats(lines)
 
             output.append(data)
     return output
@@ -330,7 +340,7 @@ def get_stats(df:pd.DataFrame, file_path:str):
 
     cols = ['uri', 'name', 'type', 'n_variable', 'n_words', 
             'n_words_unique', 'n_characters', 'avg_char_per_word', 
-            'n_loop', 'n_ifthen', ]
+            'n_loop', 'n_ifthen', 'arg_name', 'arg_type', 'arg_value']
 
     df = df[cols]
     # print(df)
@@ -377,7 +387,7 @@ def _get_words(row):
 
 
 def _get_avg_char_per_word(row):
-    return row['n_characters']/row['n_words']
+    return (round(row['n_characters']/row['n_words'], 2))
 
 
 def _validate_file(file_path):
@@ -503,6 +513,104 @@ def _get_all_lines_in_function(function_name, array, indentMethod=''):
             break
 
     return list_lines, indent
+
+
+def _get_all_lines_define_function(function_name, array, indentMethod=''):
+    """The function use to get all lines define_function
+    Args:
+        IN: function_name - name of the function will be used to get all line
+        IN: array         - list all lines of the file have this input function
+        OUT: list_lines   - Array of all line used to define the function
+        OUT: indent       - The indent of this function (this will be used for another calculation)
+    """
+    re_check = f"{indentMethod}def {function_name}"
+
+    list_lines = list()
+    response = array.copy()
+
+    # 1. get start line
+    for line in array:
+        re_response = re.match(re_check, line.rstrip())
+        if re_response == None:
+            response.remove(line)
+        else:
+            break
+
+    # 2. check if the is one or multi lines
+    start_idx = 0
+    if response[0].rstrip()[-1] == ':':
+        indent = re.match(r"(\s+)\w*", response[1]).group(1)
+        start_idx = 1
+        list_lines.append(response[0])
+    else:
+        for i in range(len(response)):
+            list_lines.append(response[i])
+            if response[i].rstrip()[-1] == ':':
+                start_idx = i+1
+                break
+        indent = re.match(r"(\s+)\w*", response[start_idx]).group(1)
+    return list_lines, indent
+
+
+def _get_define_function_stats(array):
+    """The function use to get define function stats: arg_name, arg_type, arg_value
+    Args:
+        IN: array         - list all lines of function to get variables
+        OUT: function stats: arg_name, arg_type, arg_value
+    """
+    arg_name  = []
+    arg_type  = []
+    arg_value = []
+    data      = ''
+    if len(array) == 1:
+        data = array[0].strip()[array[0].strip().find('(') + 1: array[0].strip().find(')')]
+    elif len(array) > 1:
+        data = ''
+        for line in array:
+            if line.strip().find('(') >= 0:
+                data += line.strip()[line.strip().find('(')+1:]
+            elif line.strip().find(')') >= 0:
+                data += line.strip()[: line.strip().find(')')]
+            else:
+                data += line.strip()
+    else:
+        print("Invalid array data")
+    if data != '':
+        check = ([ i.start() for i in re.finditer('"', data)])
+        if len(check) > 0 and len(check)%2 == 0:
+            for i in range(0, len(check), 2):
+                data = (data.replace(data[check[i]+1:check[i+1]], data[check[i]+1:check[i+1]].replace(',', '^^^')))
+
+        check = ([ i.start() for i in re.finditer("'", data)])
+        if len(check) > 0 and len(check)%2 == 0:
+            for i in range(0, len(check), 2):
+                data = (data.replace(data[check[i]+1:check[i+1]], data[check[i]+1:check[i+1]].replace(',', '^^^')))
+
+        args = data.split(',')
+        for arg in args:
+            arg = arg.replace('^^^', ',')
+            arg = arg.strip()
+            # print(arg)
+            if arg.find(':') >= 0:
+                arg_name.append(arg[: arg.find(':')])
+                if arg.find('=') >= 0:
+                    arg_type.append(arg[arg.find(':')+1: arg.find('=')])
+                    arg_value.append(arg[arg.find('=')+1 : ])
+                else:
+                    arg_type.append(arg[arg.find(':')+1: ])
+                    arg_value.append(None)
+            else:
+                arg_type.append(None)
+                if arg.find('=') >= 0:
+                    arg_name.append(arg[ : arg.find('=')])
+                    arg_value.append(arg[arg.find('=')+1 : ])
+                else:
+                    arg_name.append(arg)
+                    arg_value.append(None)
+
+    # print(array, data)
+    # print(arg_name, arg_type, arg_value)
+    return arg_name, arg_type, arg_value
 
 
 def _get_function_stats(array, indent):
@@ -700,7 +808,7 @@ def export_stats_perrepo(in_path:str=None, out_path:str=None):
         export_stats_perfile(file, f"{out_path}/file_{output_file}.csv")
 
 
-def example_test():
+def test_example():
     export_stats_pertype('parser/code_parser.py', "function", "logs/output/output_function.csv")
     export_stats_perfile('parser/code_parser.py', "logs/output/output_file.csv")
     export_stats_perrepo('parser', "logs/output/")
