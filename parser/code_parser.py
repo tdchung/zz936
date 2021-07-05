@@ -808,4 +808,4 @@ if __name__ == "__main__":
       'file': export_stats_perfile,
       'repo': export_stats_perrepo,
     })
-    test_example()
+    # test_example()
