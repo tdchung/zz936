@@ -148,9 +148,6 @@ def config_isvalid_pydantic(
     """
     import importlib
 
-    if pydantic_module.endswith(".py"):
-        pydantic_module = pydantic_module.split(".")[0]
-
     module_schema = importlib.import_module(pydantic_module)
 
     try:
