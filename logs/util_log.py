@@ -2,11 +2,9 @@
 """
 Usage :
   from util_log import log,log2,loge,logw
+  log('ok1', 'ok2')
 
-log('ok1', 'ok2')
-
-
-# The severity levels
+Severity levels
 # Level name    Severity value  Logger method
 # TRACE         5               logger.trace()
 # DEBUG         10              logger.debug()
@@ -17,6 +15,7 @@ log('ok1', 'ok2')
 # CRITICAL      50              logger.critical()
 """
 import sys
+import logging
 from logging.handlers import SocketHandler
 from pathlib import Path
 
@@ -47,14 +46,13 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
 
     TODO:
 
-
     """
     try:
         with open(log_config_path, "r") as fp:
             cfg = yaml.safe_load(fp)
 
     except Exception as e:
-        print(f"Cannot load yaml file {log_config_path}, Using Default logging setup")
+        logging.getLogger().warning(f"Cannot load yaml file {log_config_path}, Using Default logging setup")
         cfg = {"log_level": "DEBUG", "handlers": {"default": [{"sink": "sys.stdout"}]}}
 
     ########## Parse handlers  ####################################################
