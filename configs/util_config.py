@@ -14,10 +14,13 @@ from typing import Union
 
 import pydantic
 import yaml
-
-#########################################################################################################
 from box import Box
 from yamale import yamale
+
+from zz936.logs.util_log import logr
+
+
+#########################################################################################################
 
 
 def log(*s):
@@ -153,13 +156,14 @@ def config_isvalid_pydantic(
     try:
         schema_class = getattr(module_schema, schema_name)
     except AttributeError as e:
-        loge(f"Schema class {schema_name} not found: {e!r}")
+        logr(f"Schema class {schema_name} not found: {e}")
         return False
 
     try:
         schema_class(**config_dict)
         return True
-    except pydantic.ValidationError:
+    except pydantic.ValidationError as e:
+        logr(f"Pydantic validation failed: {e.errors()}")
         return False
 
 
