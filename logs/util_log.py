@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 Usage :
-  from util_log import log
+  from util_log import log,log2,loge,logw
+
+log('ok1', 'ok2')
 
 
 # The severity levels
@@ -25,9 +27,10 @@ from loguru import logger
 root = Path(__file__).resolve().parent
 LOG_CONFIG_PATH = root / "config_log.yaml"
 
+
 # "socket_test", 'default'  'debug0;
-#
 LOG_TEMPLATE = "debug0"
+
 
 
 #####################################################################################
@@ -36,7 +39,6 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
       Overide logging using loguru setup
       1) Custom config from log_config_path .yaml file
       2) Use shortname log, log2, logw, loge for logging output
-
     Args:
         log_config_path:
         template_name:
@@ -61,6 +63,8 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     rotation = globals_.pop("rotation")
 
     for handler in handlers:
+        if 'sink' not in handler : continue
+
         if handler["sink"] == "sys.stdout":
             handler["sink"] = sys.stdout
 
@@ -69,8 +73,8 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
 
         elif handler["sink"].startswith("socket"):
             sink_data = handler["sink"].split(",")
-            ip = sink_data[1]
-            port = int(sink_data[2])
+            ip        = sink_data[1]
+            port      = int(sink_data[2])
             handler["sink"] = SocketHandler(ip, port)
 
         elif ".log" in handler["sink"] or ".txt" in handler["sink"]:
@@ -86,6 +90,7 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
     ########## Addon config  ##############################################
     logger.configure(handlers=handlers)
 
+
     ########## Custom log levels  #########################################
     # configure log level in config_log.yaml to be able to use logs depends on severity value
     # if no=9 it means that you should set log level below DEBUG to see logs,
@@ -100,13 +105,12 @@ def logger_setup(log_config_path: str = None, log_template: str = "default", **k
 
 
 #######################################################################################
-##### Initialization ##################################################################
+##### Initialization root logger at the module level (singleton-like) #################
 logger_setup(log_config_path=LOG_CONFIG_PATH, log_template=LOG_TEMPLATE)
 
 
 #######################################################################################
 ##### Alias ###########################################################################
-
 def log(*s):
     logger.opt(depth=1, lazy=True).info(",".join([str(t) for t in s]))
 
@@ -253,6 +257,138 @@ def z_logger_custom_1():
             ]
         )
         logger.level("TIMEIT", no=22, color="<cyan>")
+
+
+
+def z_logging_only():
+    """ Logging utilities. """
+    import logging
+    import os
+    from logging import CRITICAL  # NOQA
+    from logging import DEBUG  # NOQA
+    from logging import ERROR  # NOQA
+    from logging import FATAL  # NOQA
+    from logging import INFO  # NOQA
+    from logging import NOTSET  # NOQA
+    from logging import WARN  # NOQA
+    from logging import WARNING  # NOQA
+    from typing import Optional
+
+    log_levels = {
+        "debug": logging.DEBUG,
+        "warning": logging.WARNING,
+        "error": logging.ERROR,
+        "info": logging.INFO,
+        "critical": logging.CRITICAL,
+    }
+
+    _default_log_level = logging.WARNING
+
+
+    def _get_default_logging_level():
+        """
+        If DATASETS_VERBOSITY env var is set to one of the valid choices return that as the new default level.
+        If it is not - fall back to ``_default_log_level``
+        """
+        env_level_str = os.getenv("DATASETS_VERBOSITY", None)
+        if env_level_str:
+            if env_level_str in log_levels:
+                return log_levels[env_level_str]
+            else:
+                logging.getLogger().warning(
+                    f"Unknown option DATASETS_VERBOSITY={env_level_str}, "
+                    f"has to be one of: { ', '.join(log_levels.keys()) }"
+                )
+        return _default_log_level
+
+
+    def _get_library_name() -> str:
+        return __name__.split(".")[0]
+
+
+    def _get_library_root_logger() -> logging.Logger:
+        return logging.getLogger(_get_library_name())
+
+
+    def _configure_library_root_logger() -> None:
+        # Apply our default configuration to the library root logger.
+        library_root_logger = _get_library_root_logger()
+        library_root_logger.setLevel(_get_default_logging_level())
+
+
+    def _reset_library_root_logger() -> None:
+        library_root_logger = _get_library_root_logger()
+        library_root_logger.setLevel(logging.NOTSET)
+
+
+    def get_logger(name: Optional[str] = None) -> logging.Logger:
+        """Return a logger with the specified name.
+        This function can be used in dataset and metrics scripts.
+        """
+        if name is None:
+            name = _get_library_name()
+        return logging.getLogger(name)
+
+
+    def get_verbosity() -> int:
+        """Return the current level for the library's root logger.
+        """
+        return _get_library_root_logger().getEffectiveLevel()
+
+
+    def set_verbosity(verbosity: int) -> None:
+        """Set the level for the library's root logger.
+        Args:
+            verbosity:
+                Logging level, e.g., ``datasets.logging.DEBUG`` and ``datasets.logging.INFO``.
+        """
+        _get_library_root_logger().setLevel(verbosity)
+
+
+    def set_verbosity_info():
+        """Set the level for the library's root logger to INFO.
+        """
+        return set_verbosity(INFO)
+
+
+    def set_verbosity_warning():
+        """Set the level for the library's root logger to WARNING.
+        """
+        return set_verbosity(WARNING)
+
+
+    def set_verbosity_debug():
+        """Set the level for the library's root logger to DEBUG.
+        """
+        return set_verbosity(DEBUG)
+
+
+    def set_verbosity_error():
+        """Set the level for the library's root logger to ERROR.
+        """
+        return set_verbosity(ERROR)
+
+
+    def disable_propagation() -> None:
+        """Disable propagation of the library log outputs.
+        Note that log propagation is disabled by default.
+        """
+        _get_library_root_logger().propagate = False
+
+
+    def enable_propagation() -> None:
+        """Enable propagation of the library log outputs.
+        Please disable the library's default handler to prevent double logging if the root logger has
+        been configured.
+        """
+        _get_library_root_logger().propagate = True
+
+
+    # Configure the library root logger at the module level (singleton-like)
+    _configure_library_root_logger()
+
+
+
 
 
 ############################################################################
