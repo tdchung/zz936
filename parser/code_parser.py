@@ -47,17 +47,19 @@ def get_list_class_name(file_path):
         ['Class1', 'Class1']
     """
     all_lines = _get_and_clean_all_lines(file_path)
-    re_check1 = r'class (\w+)*\(.+\)*:'
-    re_check2 = r'class (\w+)*:'
+    re_check1 = r'class (\w+)'
+    # re_check2 = r'class (\w+)'
 
     list_classes = list()
     for line in all_lines:
         re_response = re.match(re_check1, line.rstrip())
         if re_response:
             list_classes.append(re_response.group(1))
-        re_response2 = re.match(re_check2, line.rstrip())
-        if re_response2:
-            list_classes.append(re_response2.group(1))
+            # print(list_classes)
+        # re_response2 = re.match(re_check2, line.rstrip())
+        # if re_response2:
+        #     list_classes.append(re_response2.group(1))
+        #     print(list_classes)
     return list_classes
 
 
@@ -160,6 +162,7 @@ def get_list_class_info(file_path):
     all_classes = get_list_class_name(file_path)
     output = []
     for class_name in all_classes:
+        # print(class_name)
         data = {}
         data["name"] = class_name
         lines, indent = _get_all_lines_in_class(class_name, all_lines)
@@ -387,7 +390,7 @@ def _get_words(row):
 
 
 def _get_avg_char_per_word(row):
-    return (round(row['n_characters']/row['n_words'], 2))
+    return (round(row['n_characters']/row['n_words'], 2)) if (row['n_words'] > 0) else 0
 
 
 def _validate_file(file_path):
@@ -464,7 +467,7 @@ def _get_and_clean_all_lines(file_path):
     if not _validate_file(file_path):
         return []
     all_lines = []
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', encoding='utf-8') as f:
         all_lines = (f.readlines())
     all_lines = _clean_data(all_lines)
     return all_lines
@@ -706,7 +709,7 @@ def _get_all_lines_in_class(class_name, array):
         IN: array         - list all lines of the file have this input class
         OUT: list_lines   - Array of all line of this class
     """
-    re_check1 = f"class {class_name}\(.+\):"
+    re_check1 = f"class {class_name}\("
     re_check2 = f"class {class_name}:"
     response = array.copy()
 
@@ -721,7 +724,10 @@ def _get_all_lines_in_class(class_name, array):
             break
 
     # 2. get indent
-    indent = re.match(r"(\s+)\w*", response[1]).group(1)
+    if re.match(r"(\s+)\w*", response[1]):
+        indent = re.match(r"(\s+)\w*", response[1]).group(1)
+    else:
+        return [], ''
 
     # 3. get all line in class
     list_lines = list()
@@ -803,15 +809,33 @@ def export_stats_perrepo(in_path:str=None, out_path:str=None):
     flist = flist + glob.glob(root +"/*/*/*/*/*.py")
 
     # print(flist)
-    for file in flist:
-        output_file = re.search(r'(\w+).py', file).group(1)
-        export_stats_perfile(file, f"{out_path}/file_{output_file}.csv")
+    for i in range(len(flist)):
+        # output_file = re.search(r'(\w+).py', file).group(1)
+        # export_stats_perfile(file, f"{out_path}/file_{output_file}.csv")
+        df = get_list_function_stats(flist[i])
+        print(df)
+        if df is not None:
+            if i == 0:
+                df.to_csv(f'{out_path}', index=False)
+            else:
+                df.to_csv(f'{out_path}', mode='a', header=False, index=False)
+        df = get_list_class_stats(flist[i])
+        print(df)
+        if df is not None:
+            df.to_csv(f'{out_path}', mode='a', header=False, index=False)
+
+        df = get_list_method_stats(flist[i])
+        print(df)
+        if df is not None:
+            df.to_csv(f'{out_path}', mode='a', header=False, index=False)
 
 
 def test_example():
-    export_stats_pertype('parser/code_parser.py', "function", "logs/output/output_function.csv")
-    export_stats_perfile('parser/code_parser.py', "logs/output/output_file.csv")
-    export_stats_perrepo('parser', "logs/output/")
+    # export_stats_pertype('parser/test3/arrow_dataset.py', "function", "parser/output/output_function.csv")
+    # export_stats_pertype('parser/test3/arrow_dataset.py', "class", "parser/output/output_function.csv")
+    export_stats_pertype('parser/test3/arrow_dataset.py', "method", "parser/output/output_function.csv")
+    export_stats_perfile('parser/code_parser.py', "parser/output/output_file.csv")
+    export_stats_perrepo('parser/test3', "parser/output/output_repo.csv")
 
 if __name__ == "__main__":
     fire.Fire({
@@ -820,3 +844,9 @@ if __name__ == "__main__":
       'repo': export_stats_perrepo,
     })
     # test_example()
+
+    '''List example to run:
+        python code_parser.py type parser/test3/arrow_dataset.py method parser/output/output_method.csv
+        python code_parser.py file parser/code_parser.py method parser/output/output_file.csv
+        python code_parser.py repo parser/test3 parser/output/output_repo.csv
+    '''
