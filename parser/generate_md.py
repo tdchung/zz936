@@ -31,7 +31,7 @@ def create_markdown_file(list_info):
     rsp = '''
 <details>
 <summary>
-<a name='{}' href='https://github.com'>{}</a>
+<a name='{}' href='{}'>{}</a>
 </summary>
 <ul>{}</ul>
 </details>
@@ -43,7 +43,7 @@ def create_markdown_file(list_info):
         for data in list_info:
             if data['file'] == file:
                 eles += '{}'.format(data['info'])
-        output_str += rsp.format(file, file, eles)
+        output_str += rsp.format(file, file, file, eles)
     # print(output_str)
     return(output_str)
 
