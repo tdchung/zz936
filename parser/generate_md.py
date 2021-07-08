@@ -86,12 +86,13 @@ def main():
     # with open(input_file, 'r', encoding='utf-8') as f:
     dfi = pd.read_csv(input_file)
 
-    str_table = create_table(dfi)
-    with open(output_file, 'w+', encoding='utf-8') as f:
-        f.write(str_table)
+    # str_table = create_table(dfi)
+    # with open(output_file, 'w+', encoding='utf-8') as f:
+    #     f.write(str_table)
 
     str_markdown = creat_all_markdown(dfi)
-    with open(output_file, 'a+', encoding='utf-8') as f:
+    with open(output_file, 'w+', encoding='utf-8') as f:
+        f.write('# All files\n')
         f.write(str_markdown)
 
 
