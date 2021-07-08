@@ -28,13 +28,17 @@ def get_list_function_name(file_path):
     Example Output:
         ['func1', 'func2']
     """
-    all_lines = _get_and_clean_all_lines(file_path)
+    all_lines = _get_all_line(file_path)
+    all_clean_lines = _get_and_clean_all_lines(file_path)
     re_check = r"def (\w+)"
     list_functions = list()
-    for line in all_lines:
+    for line in all_clean_lines:
         re_response = re.match(re_check, line.rstrip())
         if re_response:
-            list_functions.append(re_response.group(1))
+            info = {}
+            info['function_name'] = re_response.group(1)
+            info['line'] = all_lines.index(line)+1
+            list_functions.append(info)
     return list_functions
 
 
@@ -46,20 +50,20 @@ def get_list_class_name(file_path):
     Example Output:
         ['Class1', 'Class1']
     """
-    all_lines = _get_and_clean_all_lines(file_path)
+    all_lines = _get_all_line(file_path)
+    all_clean_lines = _get_and_clean_all_lines(file_path)
     re_check1 = r'class (\w+)'
     # re_check2 = r'class (\w+)'
 
     list_classes = list()
-    for line in all_lines:
+    for line in all_clean_lines:
         re_response = re.match(re_check1, line.rstrip())
         if re_response:
-            list_classes.append(re_response.group(1))
-            # print(list_classes)
-        # re_response2 = re.match(re_check2, line.rstrip())
-        # if re_response2:
-        #     list_classes.append(re_response2.group(1))
-        #     print(list_classes)
+            # list_classes.append(re_response.group(1))
+            info = {}
+            info['class_name'] = re_response.group(1)
+            info['line'] = all_lines.index(line)+1
+            list_classes.append(info)
     return list_classes
 
 
@@ -75,17 +79,22 @@ def get_list_class_methods(file_path):
     ]
     """
     list_names = []
-    all_lines = _get_and_clean_all_lines(file_path)
+    all_lines = _get_all_line(file_path)
+    all_clean_lines = _get_and_clean_all_lines(file_path)
     for class_name in get_list_class_name(file_path):
         class_info = {}
-        class_info["class_name"] = class_name
-        class_lines, class_indent = _get_all_lines_in_class(class_name, all_lines)
+        class_info["class_name"] = class_name['class_name']
+        class_lines, class_indent = _get_all_lines_in_class(class_name['class_name'], all_clean_lines)
         re_check = f"{class_indent}def (\w+)"
         class_info["listMethods"] = []
         for line in class_lines:
             re_response = re.match(re_check, line.rstrip())
             if re_response:
-                class_info["listMethods"].append(re_response.group(1))
+                # class_info["listMethods"].append(re_response.group(1))
+                info = {}
+                info['method_name'] = re_response.group(1)
+                info['line'] = all_lines.index(line)+1
+                class_info["listMethods"].append(info)
         list_names.append(class_info)
     return list_names
 
@@ -112,6 +121,46 @@ def get_list_variable_global(file_path):
     return list(dict.fromkeys(list_var))
 
 
+def _get_docs(all_lines, index_1, func_lines):
+    response=[]
+    detect_block = False
+    start = ''
+    for line in all_lines[index_1-1:]:
+        # print(line)
+        # start block comments detected
+        if not detect_block:
+            if line.strip()[:3] == "'''":
+                if len(line.strip()) > 5 and line.strip()[-3:] == "'''":
+                    response.append(line)
+                    break
+                else:
+                    detect_block = True
+                    response.append(line)
+                    start = "'''"
+            elif line.strip()[:3] == '"""':
+                if len(line.strip()) > 5 and line.strip()[-3:] == '"""':
+                    response.append(line)
+                    break
+                else:
+                    detect_block = True
+                    response.append(line)
+                    start = '"""'
+            elif line in func_lines:
+                break
+        else:
+            # end block comments detected
+            if start == "'''" and line.strip()[-3:] == "'''":
+                detect_block = False
+                response.append(line)
+                break
+            if start == '"""' and line.strip()[-3:] == '"""':
+                detect_block = False
+                response.append(line)
+                break
+            response.append(line)
+    return response
+
+
 def get_list_function_info(file_path):
     """The function use to get functions stars
     Args:
@@ -123,16 +172,19 @@ def get_list_function_info(file_path):
             {"name": "function_name2", "lines": 30, "variables": []},
         ]
     """
+    all_file_lines = _get_all_line(file_path)
     all_lines = _get_and_clean_all_lines(file_path)
     all_functions = get_list_function_name(file_path)
     output = []
     for function in all_functions:
         data = {}
-        data["name"] = function
-        lines, indent = _get_all_lines_in_function(function, all_lines)
+        data["name"] = function['function_name']
+        lines, indent = _get_all_lines_in_function(function['function_name'], all_lines)
         data["n_lines"] = len(lines)
         data["variables"], data["n_loop"], data['n_ifthen'] = _get_function_stats(lines, indent)
         data["type"] = "function"
+        data['line'] = function['line']
+        data['docs'] = _get_docs(all_file_lines, function['line'], lines)
 
         # calculate code_source
         data["code_source"] = ""
@@ -140,7 +192,7 @@ def get_list_function_info(file_path):
             data["code_source"] += line
 
         # get input variable stats
-        lines, indent = _get_all_lines_define_function(function, all_lines)
+        lines, indent = _get_all_lines_define_function(function['function_name'], all_lines)
         data['arg_name'], data['arg_type'], data['arg_value'] = _get_define_function_stats(lines)
 
         output.append(data)
@@ -164,11 +216,13 @@ def get_list_class_info(file_path):
     for class_name in all_classes:
         # print(class_name)
         data = {}
-        data["name"] = class_name
-        lines, indent = _get_all_lines_in_class(class_name, all_lines)
+        data["name"] = class_name['class_name']
+        lines, indent = _get_all_lines_in_class(class_name['class_name'], all_lines)
         data["n_lines"] = len(lines)
         data["variables"], data["n_loop"], data['n_ifthen'] = _get_function_stats(lines, indent)
         data["type"] = "class"
+        data['line'] = class_name['line']
+        data['docs'] = []
 
         # calculate code_source
         data["code_source"] = ""
@@ -192,6 +246,7 @@ def get_list_method_info(file_path):
             {"function": "function_name2", "lines": 30, "variables": []},
         ]
     """
+    all_file_lines = _get_all_line(file_path)
     all_lines = _get_and_clean_all_lines(file_path)
     all_methods = get_list_class_methods(file_path)
 
@@ -201,11 +256,13 @@ def get_list_method_info(file_path):
         class_lines, class_indent = _get_all_lines_in_class(method['class_name'], all_lines)
         for method_name in method['listMethods']:
             data                                                = {}
-            data["name"]                                        = f"{method['class_name']}:{method_name}"
-            lines, indent                                       = _get_all_lines_in_function(method_name, class_lines, class_indent)
+            data["name"]                                        = f"{method['class_name']}:{method_name['method_name']}"
+            lines, indent                                       = _get_all_lines_in_function(method_name['method_name'], class_lines, class_indent)
             data["n_lines"]                                     = len(lines)
             data["variables"], data["n_loop"], data['n_ifthen'] = _get_function_stats(lines, indent)
             data["type"]                                        = "method"
+            data['line']                                        = method_name['line']
+            data['docs'] =                                      _get_docs(all_file_lines, method_name['line'], lines)
 
             # calculate code_source
             data["code_source"] = ""
@@ -213,7 +270,7 @@ def get_list_method_info(file_path):
                 data["code_source"] += line
 
             # get input variable stats
-            lines, indent = _get_all_lines_define_function(method_name, class_lines, class_indent)
+            lines, indent = _get_all_lines_define_function(method_name['method_name'], class_lines, class_indent)
             data['arg_name'], data['arg_type'], data['arg_value'] = _get_define_function_stats(lines)
 
             output.append(data)
@@ -343,7 +400,8 @@ def get_stats(df:pd.DataFrame, file_path:str):
 
     cols = ['uri', 'name', 'type', 'n_variable', 'n_words', 
             'n_words_unique', 'n_characters', 'avg_char_per_word', 
-            'n_loop', 'n_ifthen', 'arg_name', 'arg_type', 'arg_value']
+            'n_loop', 'n_ifthen', 'arg_name', 'arg_type', 'arg_value',
+            'line', 'docs']
 
     df = df[cols]
     # print(df)
@@ -421,7 +479,7 @@ def _clean_data(array):
         # start block comments detected
         if not detect_block:
             if line.strip()[:3] == '"""':
-                if line.strip()[-3:] == '"""':
+                if len(line.strip()) > 5 and line.strip()[-3:] == '"""':
                     response.remove(line)
                 else:
                     detect_block = True
@@ -437,7 +495,7 @@ def _clean_data(array):
         # start block comments detected
         if not detect_block:
             if line.strip()[:3] == "'''":
-                if line.strip()[-3:] == "'''":
+                if len(line.strip()) > 5 and line.strip()[-3:] == "'''":
                     response.remove(line)
                 else:
                     detect_block = True
@@ -466,10 +524,14 @@ def _get_and_clean_all_lines(file_path):
     """
     if not _validate_file(file_path):
         return []
-    all_lines = []
+    all_lines = _get_all_line(file_path)
+    all_lines = _clean_data(all_lines)
+    return all_lines
+
+
+def _get_all_line(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         all_lines = (f.readlines())
-    all_lines = _clean_data(all_lines)
     return all_lines
 
 
@@ -833,7 +895,7 @@ def export_stats_perrepo(in_path:str=None, out_path:str=None):
 def test_example():
     # export_stats_pertype('parser/test3/arrow_dataset.py', "function", "parser/output/output_function.csv")
     # export_stats_pertype('parser/test3/arrow_dataset.py', "class", "parser/output/output_function.csv")
-    export_stats_pertype('parser/test3/arrow_dataset.py', "method", "parser/output/output_function.csv")
+    export_stats_pertype('parser/code_parser.py', "function", "parser/output/output_function.csv")
     export_stats_perfile('parser/code_parser.py', "parser/output/output_file.csv")
     export_stats_perrepo('parser', "parser/output/output_repo.csv")
 
