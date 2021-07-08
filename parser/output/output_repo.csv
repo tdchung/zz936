@@ -1,4 +1,177 @@
 uri,name,type,n_variable,n_words,n_words_unique,n_characters,avg_char_per_word,n_loop,n_ifthen,arg_name,arg_type,arg_value
+parser/code_parser.py:get_list_function_name,get_list_function_name,function,10,19,18,233,12.26,1,1,['file_path'],[None],[None]
+parser/code_parser.py:get_list_class_name,get_list_class_name,function,10,19,18,231,12.16,1,1,['file_path'],[None],[None]
+parser/code_parser.py:get_list_class_methods,get_list_class_methods,function,19,34,30,475,13.97,2,1,['file_path'],[None],[None]
+parser/code_parser.py:get_list_variable_global,get_list_variable_global,function,12,26,24,357,13.73,1,2,['file_path'],[None],[None]
+parser/code_parser.py:get_list_function_info,get_list_function_info,function,25,47,40,604,12.85,2,0,['file_path'],[None],[None]
+parser/code_parser.py:get_list_class_info,get_list_class_info,function,20,45,39,508,11.29,2,0,['file_path'],[None],[None]
+parser/code_parser.py:get_list_method_info,get_list_method_info,function,31,57,46,783,13.74,3,0,['file_path'],[None],[None]
+parser/code_parser.py:get_list_method_stats,get_list_method_stats,function,6,12,11,148,12.33,0,1,['file_path'],[None],[None]
+parser/code_parser.py:get_list_class_stats,get_list_class_stats,function,6,12,11,147,12.25,0,1,['file_path'],[None],[None]
+parser/code_parser.py:get_list_function_stats,get_list_function_stats,function,6,12,11,150,12.5,0,1,['file_path'],[None],[None]
+parser/code_parser.py:get_stats,get_stats,function,16,66,44,637,9.65,0,0,"['df', 'file_path']","['pd.DataFrame', 'str']","[None, None]"
+parser/code_parser.py:get_file_stats,get_file_stats,function,11,21,19,244,11.62,1,0,['file_path'],[None],[None]
+parser/code_parser.py:_get_words,_get_words,function,6,23,21,154,6.7,1,1,['row'],[None],[None]
+parser/code_parser.py:_get_avg_char_per_word,_get_avg_char_per_word,function,1,9,9,76,8.44,0,0,['row'],[None],[None]
+parser/code_parser.py:_validate_file,_validate_file,function,5,34,18,227,6.68,0,3,['file_path'],[None],[None]
+parser/code_parser.py:_clean_data,_clean_data,function,10,67,23,655,9.78,3,9,['array'],[None],[None]
+parser/code_parser.py:_remove_empty_line,_remove_empty_line,function,2,7,7,37,5.29,0,1,['line'],[None],[None]
+parser/code_parser.py:_remmove_commemt_line,_remmove_commemt_line,function,2,17,14,97,5.71,0,1,['line'],[None],[None]
+parser/code_parser.py:_get_and_clean_all_lines,_get_and_clean_all_lines,function,6,19,14,173,9.11,0,1,['file_path'],[None],[None]
+parser/code_parser.py:_get_all_lines_in_function,_get_all_lines_in_function,function,21,65,44,661,10.17,3,4,"['function_name', 'array', 'indentMethod']","[None, None, None]","[None, None, ""''""]"
+parser/code_parser.py:_get_all_lines_in_class,_get_all_lines_in_class,function,16,63,44,633,10.05,2,3,"['class_name', 'array']","[None, None]","[None, None]"
+parser/code_parser.py:_get_all_lines_define_function,_get_all_lines_define_function,function,20,49,36,538,10.98,2,3,"['function_name', 'array', 'indentMethod']","[None, None, None]","[None, None, ""''""]"
+parser/code_parser.py:_get_define_function_stats,_get_define_function_stats,function,24,145,71,1337,9.22,4,8,['array'],[None],[None]
+parser/code_parser.py:_get_function_stats,_get_function_stats,function,16,206,105,1958,9.5,4,11,"['array', 'indent']","[None, None]","[None, None]"
+parser/code_parser.py:export_stats_pertype,export_stats_pertype,function,3,6,6,49,8.17,0,0,"['in_path', 'type', 'out_path']","['str', 'str', 'str']","['None', 'None', 'None']"
+parser/code_parser.py:export_stats_perfile,export_stats_perfile,function,3,5,5,59,11.8,0,0,"['in_path', 'out_path']","['str', 'str']","['None', 'None']"
+parser/code_parser.py:export_stats_perrepo,export_stats_perrepo,function,3,5,5,59,11.8,0,0,"['in_path', 'out_path']","['str', 'str']","['None', 'None']"
+parser/code_parser.py:test_example,test_example,function,3,7,7,239,34.14,0,0,[],[],[]
+parser/generate_md.py:create_markdown_function,create_markdown_function,function,19,67,56,617,9.21,1,0,"['uri', 'name', 'type', 'args_name', 'args_type', 'args_value']","[None, None, None, None, None, None]","[None, None, None, None, None, None]"
+parser/generate_md.py:create_markdown_file,create_markdown_file,function,1,2,2,7,3.5,0,0,['list_info'],[None],[None]
+parser/generate_md.py:creat_all_markdown,creat_all_markdown,function,5,21,20,236,11.24,0,0,['dfi'],[None],[None]
+parser/generate_md.py:table_create_row,table_create_row,function,5,17,15,97,5.71,0,0,"['uri', 'name', 'type']","[None, None, None]","[None, None, None]"
+parser/generate_md.py:table_all_row,table_all_row,function,1,2,2,7,3.5,0,0,['list_rows'],[None],[None]
+parser/generate_md.py:create_table,create_table,function,6,14,13,139,9.93,1,0,['dfi'],[None],[None]
+parser/generate_md.py:main,main,function,11,24,19,294,12.25,0,0,[],[],[]
+parser/test/keys.py:prepare_target_and_clean_up_test,prepare_target_and_clean_up_test,function,8,40,30,535,13.38,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:clean_up_config_test,clean_up_config_test,function,6,17,17,241,14.18,0,1,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:check_default_network_config,check_default_network_config,function,22,87,70,955,10.98,1,5,['target'],[None],[None]
+parser/test/keys.py:check_module_env,check_module_env,function,9,57,52,553,9.7,1,1,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:provision_certificates_to_target,provision_certificates_to_target,function,7,37,28,384,10.38,0,3,"['target', 'auth', 'nist', 'root_ca_path', 'client_cert_path', 'client_key_path']","[None, None, None, None, None, None]","[None, None, None, None, None, None]"
+parser/test/keys.py:config_session_connection,config_session_connection,function,2,7,7,97,13.86,0,0,"['target', 'prep_target', 'sid']","[None, None, None]","[None, None, '1']"
+parser/test/keys.py:config_cipher_suite_and_tcps_action,config_cipher_suite_and_tcps_action,function,8,34,27,335,9.85,0,3,"['target', 'auth', 'nist_value', 'profile_id', 'config_cipher', 'valid']","[None, None, None, None, None, None]","[None, None, None, '0', '1', '1']"
+parser/test/keys.py:L_RTOS_KTCPTLS_0001,L_RTOS_KTCPTLS_0001,function,11,36,31,434,12.06,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0002,L_RTOS_KTCPTLS_0002,function,12,33,31,439,13.3,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0003,L_RTOS_KTCPTLS_0003,function,14,33,32,476,14.42,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0004,L_RTOS_KTCPTLS_0004,function,11,32,29,411,12.84,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0005,L_RTOS_KTCPTLS_0005,function,12,32,30,426,13.31,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0006,L_RTOS_KTCPTLS_0006,function,13,32,31,445,13.91,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0014,L_RTOS_KTCPTLS_0014,function,14,30,29,480,16.0,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0016,L_RTOS_KTCPTLS_0016,function,14,30,29,482,16.07,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0017,L_RTOS_KTCPTLS_0017,function,14,30,29,483,16.1,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0018,L_RTOS_KTCPTLS_0018,function,14,30,29,473,15.77,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0019,L_RTOS_KTCPTLS_0019,function,14,30,29,473,15.77,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0020,L_RTOS_KTCPTLS_0020,function,14,30,29,476,15.87,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0021,L_RTOS_KTCPTLS_0021,function,14,30,29,476,15.87,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:L_RTOS_KTCPTLS_0022,L_RTOS_KTCPTLS_0022,function,31,163,125,1554,9.53,1,1,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/keys.py:BadSignatureError,BadSignatureError,class,0,1,1,4,4.0,0,0,[],[],[]
+parser/test/keys.py:BadDigestError,BadDigestError,class,0,1,1,4,4.0,0,0,[],[],[]
+parser/test/keys.py:VerifyingKey,VerifyingKey,class,84,301,189,3584,11.91,0,7,[],[],[]
+parser/test/keys.py:SigningKey,SigningKey,class,138,482,310,4615,9.57,3,9,[],[],[]
+parser/test/keys.py:VerifyingKey:__init__,VerifyingKey:__init__,method,2,11,11,100,9.09,0,1,"['self', '_error__please_use_generate']","[None, None]","[None, 'None']"
+parser/test/keys.py:VerifyingKey:from_public_point,VerifyingKey:from_public_point,method,10,13,12,185,14.23,0,0,"['klass', 'point', 'curve', 'hashfunc']","[None, None, None, None]","[None, None, 'NIST192p', 'sha1']"
+parser/test/keys.py:VerifyingKey:from_string,VerifyingKey:from_string,method,17,45,39,504,11.2,0,1,"['klass', 'string', 'curve', 'hashfunc', 'validate_point']","[None, None, None, None, None]","[None, None, 'NIST192p', 'sha1', 'True']"
+parser/test/keys.py:VerifyingKey:from_pem,VerifyingKey:from_pem,method,2,2,2,39,19.5,0,0,"['klass', 'string']","[None, None]","[None, None]"
+parser/test/keys.py:VerifyingKey:from_der,VerifyingKey:from_der,method,19,64,38,683,10.67,0,3,"['klass', 'string']","[None, None]","[None, None]"
+parser/test/keys.py:VerifyingKey:from_public_key_recovery,VerifyingKey:from_public_key_recovery,method,4,8,8,137,17.12,0,0,"['klass', 'signature', 'data', 'curve', 'hashfunc', 'sigdecode']","[None, None, None, None, None, None]","[None, None, None, None, 'sha1', 'sigdecode_string']"
+parser/test/keys.py:VerifyingKey:from_public_key_recovery_with_digest,VerifyingKey:from_public_key_recovery_with_digest,method,13,24,23,288,12.0,0,0,"['klass', 'signature', 'digest', 'curve', 'hashfunc', 'sigdecode']","[None, None, None, None, None, None]","[None, None, None, None, 'sha1', 'sigdecode_string']"
+parser/test/keys.py:VerifyingKey:to_string,VerifyingKey:to_string,method,6,11,8,145,13.18,0,0,['self'],[None],[None]
+parser/test/keys.py:VerifyingKey:to_pem,VerifyingKey:to_pem,method,2,4,4,42,10.5,0,0,['self'],[None],[None]
+parser/test/keys.py:VerifyingKey:to_der,VerifyingKey:to_der,method,9,16,14,290,18.12,0,0,['self'],[None],[None]
+parser/test/keys.py:VerifyingKey:verify,VerifyingKey:verify,method,18,51,45,496,9.73,0,2,"['self', 'signature', 'data', 'hashfunc', 'sigdecode']","[None, None, None, None, None]","[None, None, None, 'None', 'sigdecode_string']"
+parser/test/keys.py:VerifyingKey:verify_digest,VerifyingKey:verify_digest,method,13,36,34,303,8.42,0,2,"['self', 'signature', 'digest', 'sigdecode']","[None, None, None, None]","[None, None, None, 'sigdecode_string']"
+parser/test/keys.py:SigningKey:__init__,SigningKey:__init__,method,2,10,10,95,9.5,0,1,"['self', '_error__please_use_generate']","[None, None]","[None, 'None']"
+parser/test/keys.py:SigningKey:generate,SigningKey:generate,method,4,7,7,93,13.29,0,0,"['klass', 'curve', 'entropy', 'hashfunc']","[None, None, None, None]","[None, 'NIST192p', 'None', 'sha1']"
+parser/test/keys.py:SigningKey:from_secret_exponent,SigningKey:from_secret_exponent,method,21,34,31,414,12.18,0,0,"['klass', 'secexp', 'curve', 'hashfunc']","[None, None, None, None]","[None, None, 'NIST192p', 'sha1']"
+parser/test/keys.py:SigningKey:from_string,SigningKey:from_string,method,4,11,11,148,13.45,0,0,"['klass', 'string', 'curve', 'hashfunc']","[None, None, None, None]","[None, None, 'NIST192p', 'sha1']"
+parser/test/keys.py:SigningKey:from_pem,SigningKey:from_pem,method,7,13,13,168,12.92,0,1,"['klass', 'string', 'hashfunc']","[None, None, None]","[None, None, 'sha1']"
+parser/test/keys.py:SigningKey:from_der,SigningKey:from_der,method,22,88,59,735,8.35,0,5,"['klass', 'string', 'hashfunc']","[None, None, None]","[None, None, 'sha1']"
+parser/test/keys.py:SigningKey:to_string,SigningKey:to_string,method,5,7,6,91,13.0,0,0,['self'],[None],[None]
+parser/test/keys.py:SigningKey:to_pem,SigningKey:to_pem,method,2,5,5,45,9.0,0,0,['self'],[None],[None]
+parser/test/keys.py:SigningKey:to_der,SigningKey:to_der,method,7,11,11,263,23.91,0,0,['self'],[None],[None]
+parser/test/keys.py:SigningKey:get_verifying_key,SigningKey:get_verifying_key,method,2,2,2,24,12.0,0,0,['self'],[None],[None]
+parser/test/keys.py:SigningKey:sign_deterministic,SigningKey:sign_deterministic,method,6,12,11,184,15.33,0,0,"['self', 'data', 'hashfunc', 'sigencode', 'extra_entropy']","[None, None, None, None, None]","[None, None, 'None', 'sigencode_string', ""b''""]"
+parser/test/keys.py:SigningKey:sign_digest_deterministic,SigningKey:sign_digest_deterministic,method,27,66,56,509,7.71,2,0,"['self', 'digest', 'hashfunc', 'sigencode', 'extra_entropy']","[None, None, None, None, None]","[None, None, 'None', 'sigencode_string', ""b''""]"
+parser/test/keys.py:SigningKey:sign,SigningKey:sign,method,75,249,178,1964,7.89,3,2,"['self', 'data', 'hashfunc', 'sigencode', 'extra_entropy']","[None, None, None, None, None]","[None, None, 'None', 'sigencode_string', ""b''""]"
+parser/test/keys.py:SigningKey:sign_digest,SigningKey:sign_digest,method,27,66,56,509,7.71,2,0,"['self', 'digest', 'hashfunc', 'sigencode', 'extra_entropy']","[None, None, None, None, None]","[None, None, 'None', 'sigencode_string', ""b''""]"
+parser/test/keys.py:SigningKey:sign_number,SigningKey:sign_number,method,11,25,23,165,6.6,0,1,"['self', 'number', 'entropy', 'k']","[None, None, None, None]","[None, None, 'None', 'None']"
+parser/test/test2.py:prepare_target_and_clean_up_test,prepare_target_and_clean_up_test,function,8,40,30,535,13.38,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:clean_up_config_test,clean_up_config_test,function,6,17,17,241,14.18,0,1,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:check_default_network_config,check_default_network_config,function,22,87,70,955,10.98,1,5,['target'],[None],[None]
+parser/test/test2.py:check_module_env,check_module_env,function,9,57,52,553,9.7,1,1,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:provision_certificates_to_target,provision_certificates_to_target,function,7,37,28,384,10.38,0,3,"['target', 'auth', 'nist', 'root_ca_path', 'client_cert_path', 'client_key_path']","[None, None, None, None, None, None]","[None, None, None, None, None, None]"
+parser/test/test2.py:config_session_connection,config_session_connection,function,2,7,7,97,13.86,0,0,"['target', 'prep_target', 'sid']","[None, None, None]","[None, None, '1']"
+parser/test/test2.py:config_cipher_suite_and_tcps_action,config_cipher_suite_and_tcps_action,function,8,34,27,335,9.85,0,3,"['target', 'auth', 'nist_value', 'profile_id', 'config_cipher', 'valid']","[None, None, None, None, None, None]","[None, None, None, '0', '1', '1']"
+parser/test/test2.py:L_RTOS_KTCPTLS_0001,L_RTOS_KTCPTLS_0001,function,11,36,31,434,12.06,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0002,L_RTOS_KTCPTLS_0002,function,12,33,31,439,13.3,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0003,L_RTOS_KTCPTLS_0003,function,14,33,32,476,14.42,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0004,L_RTOS_KTCPTLS_0004,function,11,32,29,411,12.84,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0005,L_RTOS_KTCPTLS_0005,function,12,32,30,426,13.31,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0006,L_RTOS_KTCPTLS_0006,function,13,32,31,445,13.91,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0014,L_RTOS_KTCPTLS_0014,function,14,30,29,480,16.0,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0016,L_RTOS_KTCPTLS_0016,function,14,30,29,482,16.07,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0017,L_RTOS_KTCPTLS_0017,function,14,30,29,483,16.1,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0018,L_RTOS_KTCPTLS_0018,function,14,30,29,473,15.77,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0019,L_RTOS_KTCPTLS_0019,function,14,30,29,473,15.77,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0020,L_RTOS_KTCPTLS_0020,function,14,30,29,476,15.87,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0021,L_RTOS_KTCPTLS_0021,function,14,30,29,476,15.87,0,0,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:L_RTOS_KTCPTLS_0022,L_RTOS_KTCPTLS_0022,function,31,163,125,1554,9.53,1,1,"['target', 'prep_target']","[None, None]","[None, None]"
+parser/test/test2.py:_new_function,_new_function,function,1,1,1,18,18.0,0,0,"['asd', 'zxc']","['str', None]","['None', '""asdad""']"
+parser/test/test2.py:_new_2,_new_2,function,0,1,1,4,4.0,0,0,[],[],[]
+parser/test/test2.py:test_function_multiL_lines,test_function_multiL_lines,function,0,1,1,4,4.0,0,0,"['test', 'multi', 'line']","['float', ' str', ' int']","[None, '""asd""', '12']"
+parser/test/test2.py:test_special_chars,test_special_chars,function,0,1,1,4,4.0,0,0,"['test', 'interger', 'true ']","[' str', ' int ', None]","[' ""Hello, World!""', ' 0', ' True']"
+parser/test2/model_gefs.py:log,log,function,4,16,10,118,7.38,0,2,['*s'],[None],[None]
+parser/test2/model_gefs.py:log2,log2,function,2,6,6,35,5.83,0,1,['*s'],[None],[None]
+parser/test2/model_gefs.py:log3,log3,function,2,6,6,35,5.83,0,1,['*s'],[None],[None]
+parser/test2/model_gefs.py:init,init,function,4,8,8,58,7.25,0,0,"['*kw', '**kwargs']","[None, None]","[None, None]"
+parser/test2/model_gefs.py:reset,reset,function,3,7,6,43,6.14,0,0,[],[],[]
+parser/test2/model_gefs.py:fit,fit,function,28,101,91,1053,10.43,1,1,"['data_pars', 'compute_pars', 'out_pars', '**kw']","[None, None, None, None]","['None', 'None', 'None', None]"
+parser/test2/model_gefs.py:eval,eval,function,7,7,7,34,4.86,0,0,"['data_pars', 'compute_pars', 'out_pars', '**kw']","[None, None, None, None]","['None', 'None', 'None', None]"
+parser/test2/model_gefs.py:predict,predict,function,20,47,36,582,12.38,0,3,"['Xpred', 'data_pars', 'compute_pars', 'out_pars', '**kw']","[None, None, None, None, None]","['None', '{}', '{}', '{}', None]"
+parser/test2/model_gefs.py:save,save,function,8,26,22,299,11.5,0,0,"['path', 'info']","[None, None]","['None', 'None']"
+parser/test2/model_gefs.py:load_model,load_model,function,16,26,24,258,9.92,0,0,['path'],[None],"['""""']"
+parser/test2/model_gefs.py:load_info,load_info,function,13,25,23,172,6.88,1,1,['path'],[None],"['""""']"
+parser/test2/model_gefs.py:get_dataset,get_dataset,function,0,4,4,14,3.5,0,0,"['data_pars', 'task_type', '**kw']","[None, None, None]","['None', '""train""', None]"
+parser/test2/model_gefs.py:test,test,function,45,327,217,2946,9.01,0,0,['n_sample '],[None],[' 100']
+parser/test2/model_gefs.py:test_helper,test_helper,function,11,55,39,695,12.64,0,0,"['model_pars', 'data_pars', 'compute_pars']","[None, None, None]","[None, None, None]"
+parser/test2/model_gefs.py:pd_colcat_get_catcount,pd_colcat_get_catcount,function,16,35,29,262,7.49,1,2,"['df', 'colcat', 'coly', 'continuous_ids']","[None, None, None, None]","[None, None, None, 'None']"
+parser/test2/model_gefs.py:is_continuous,is_continuous,function,5,29,27,232,8.0,0,1,['v_array'],[None],[None]
+parser/test2/model_gefs.py:test2,test2,function,39,78,74,892,11.44,0,0,[],[],[]
+parser/test2/model_gefs.py:get_dummies,get_dummies,function,9,18,15,160,8.89,1,1,['data'],[None],[None]
+parser/test2/model_gefs.py:learncats,learncats,function,44,80,61,435,5.44,1,1,"['data', 'classcol', 'continuous_ids']","[None, None, None]","[None, 'None', '[]']"
+parser/test2/model_gefs.py:gef_is_continuous,gef_is_continuous,function,11,12,12,60,5.0,0,1,['data'],[None],[None]
+parser/test2/model_gefs.py:gef_get_stats,gef_get_stats,function,5,6,6,50,8.33,1,0,"['data', 'ncat']","[None, None]","[None, 'None']"
+parser/test2/model_gefs.py:gef_normalize_data,gef_normalize_data,function,11,12,11,63,5.25,0,0,"['data', 'maxv', 'minv']","[None, None, None]","[None, None, None]"
+parser/test2/model_gefs.py:gef_standardize_data,gef_standardize_data,function,10,11,10,60,5.45,0,0,"['data', 'mean', 'std']","[None, None, None]","[None, None, None]"
+parser/test2/model_gefs.py:train_test_split2,train_test_split2,function,25,65,41,686,10.55,0,1,"['data', 'ncat', 'train_ratio', 'prep']","[None, None, None, None]","[None, None, '0.7', ""'std'""]"
+parser/test2/model_gefs.py:test_converion,test_converion,function,96,273,191,1862,6.82,0,0,[],[],[]
+parser/test2/model_gefs.py:train_test_split,train_test_split,function,25,65,41,686,10.55,0,1,"['data', 'ncat', 'train_ratio', 'prep']","[None, None, None, None]","[None, None, '0.7', ""'std'""]"
+parser/test2/model_gefs.py:adult,adult,function,9,34,31,427,12.56,0,0,['data'],[None],[None]
+parser/test2/model_gefs.py:australia,australia,function,11,35,34,337,9.63,0,0,['data'],[None],[None]
+parser/test2/model_gefs.py:bank,bank,function,10,40,38,474,11.85,0,0,['data'],[None],[None]
+parser/test2/model_gefs.py:credit,credit,function,9,43,42,466,10.84,0,0,['data'],[None],[None]
+parser/test2/model_gefs.py:electricity,electricity,function,9,25,24,292,11.68,0,0,['data'],[None],[None]
+parser/test2/model_gefs.py:segment,segment,function,11,38,37,545,14.34,0,0,['data'],[None],[None]
+parser/test2/model_gefs.py:german,german,function,9,33,32,227,6.88,0,0,['data'],[None],[None]
+parser/test2/model_gefs.py:vowel,vowel,function,8,13,12,180,13.85,0,0,['data'],[None],[None]
+parser/test2/model_gefs.py:cmc,cmc,function,9,21,20,378,18.0,0,0,['data'],[None],[None]
+parser/test2/model_gefs.py:get_data,get_data,function,0,4,4,14,3.5,0,0,"['data_pars', 'task_type', '**kw']","[None, None, None]","['None', '""train""', None]"
+parser/test2/model_gefs.py:test_dataset_classi_fake,test_dataset_classi_fake,function,23,49,45,380,7.76,1,0,['nrows'],[None],['500']
+parser/test2/model_gefs.py:Model,Model,class,32,83,66,742,8.94,0,2,[],[],[]
+parser/test2/model_gefs.py:Model:__init__,Model:__init__,method,32,78,63,674,8.64,0,2,"['self', 'model_pars', 'data_pars', 'compute_pars']","[None, None, None, None]","[None, 'None', 'None', 'None']"
+parser/test2/model_sklearn.py:log,log,function,4,16,10,118,7.38,0,2,['*s'],[None],[None]
+parser/test2/model_sklearn.py:log2,log2,function,2,6,6,35,5.83,0,1,['*s'],[None],[None]
+parser/test2/model_sklearn.py:log3,log3,function,2,6,6,35,5.83,0,1,['*s'],[None],[None]
+parser/test2/model_sklearn.py:init,init,function,4,8,8,58,7.25,0,0,"['*kw', '**kwargs']","[None, None]","[None, None]"
+parser/test2/model_sklearn.py:reset,reset,function,3,7,6,43,6.14,0,0,[],[],[]
+parser/test2/model_sklearn.py:model_automl,model_automl,function,7,32,26,367,11.47,0,0,[],[],[]
+parser/test2/model_sklearn.py:fit,fit,function,12,33,29,365,11.06,1,1,"['data_pars', 'compute_pars', 'out_pars', '**kw']","[None, None, None, None]","['None', 'None', 'None', None]"
+parser/test2/model_sklearn.py:predict,predict,function,15,43,36,448,10.42,0,3,"['Xpred', 'data_pars', 'compute_pars', 'out_pars', '**kw']","[None, None, None, None, None]","['None', '{}', '{}', '{}', None]"
+parser/test2/model_sklearn.py:save,save,function,8,26,22,299,11.5,0,0,"['path', 'info']","[None, None]","['None', 'None']"
+parser/test2/model_sklearn.py:load_model,load_model,function,16,26,24,258,9.92,0,0,['path'],[None],"['""""']"
+parser/test2/model_sklearn.py:load_info,load_info,function,13,25,23,172,6.88,1,1,['path'],[None],"['""""']"
+parser/test2/model_sklearn.py:get_dataset_split_for_model_pandastuple,get_dataset_split_for_model_pandastuple,function,22,69,53,627,9.09,1,3,"['Xtrain', 'ytrain', 'data_pars', '']","[None, None, None, None]","[None, 'None', 'None', None]"
+parser/test2/model_sklearn.py:get_dataset2,get_dataset2,function,2,12,12,58,4.83,0,0,"['data_pars', 'task_type', '**kw']","[None, None, None]","['None', '""train""', None]"
+parser/test2/model_sklearn.py:get_dataset,get_dataset,function,41,202,129,1894,9.38,1,11,"['Xtrain', 'ytrain', 'data_pars', '']","[None, None, None, None]","[None, 'None', 'None', None]"
+parser/test2/model_sklearn.py:get_params_sklearn,get_params_sklearn,function,2,2,2,39,19.5,0,0,['deep'],[None],['False']
+parser/test2/model_sklearn.py:get_params,get_params,function,15,34,30,377,11.09,0,1,['deep'],[None],['False']
+parser/test2/model_sklearn.py:test,test,function,35,232,163,2289,9.87,1,0,['n_sample          '],[None],[' 1000']
+parser/test2/model_sklearn.py:get_dataset_split_for_model,get_dataset_split_for_model,function,22,69,53,627,9.09,1,3,"['Xtrain', 'ytrain', 'data_pars', '']","[None, None, None, None]","[None, 'None', 'None', None]"
+parser/test2/model_sklearn.py:zz_eval,zz_eval,function,7,7,7,34,4.86,0,0,"['data_pars', 'compute_pars', 'out_pars', '**kw']","[None, None, None, None]","['None', 'None', 'None', None]"
+parser/test2/model_sklearn.py:zz_preprocess,zz_preprocess,function,21,68,38,740,10.88,0,2,['prepro_pars'],[None],[None]
+parser/test2/model_sklearn.py:Model,Model,class,14,32,29,393,12.28,0,2,[],[],[]
+parser/test2/model_sklearn.py:Model:__init__,Model:__init__,method,13,26,23,324,12.46,0,2,"['self', 'model_pars', 'data_pars', 'compute_pars']","[None, None, None, None]","[None, 'None', 'None', 'None']"
 parser/test3/arrow_dataset.py:transmit_format,transmit_format,function,26,109,87,1119,10.27,1,4,['func'],[None],[None]
 parser/test3/arrow_dataset.py:update_metadata_with_features,update_metadata_with_features,function,15,33,27,554,16.79,0,2,"['table', 'features']","[' Table', ' Features']","[None, None]"
 parser/test3/arrow_dataset.py:_check_table,_check_table,function,5,22,19,189,8.59,0,1,['table'],[None],[None]

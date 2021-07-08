@@ -518,6 +518,45 @@ def _get_all_lines_in_function(function_name, array, indentMethod=''):
     return list_lines, indent
 
 
+def _get_all_lines_in_class(class_name, array):
+    """The function use to get all lines of the class
+    Args:
+        IN: class_name    - name of the class will be used to get all line
+        IN: array         - list all lines of the file have this input class
+        OUT: list_lines   - Array of all line of this class
+    """
+    re_check1 = f"class {class_name}\("
+    re_check2 = f"class {class_name}:"
+    response = array.copy()
+
+    # 1. get start line
+    for line in array:
+        re_response1 = re.match(re_check1, line.rstrip())
+        re_response2 = re.match(re_check2, line.rstrip())
+
+        if re_response1 == None and re_response2 == None:
+            response.remove(line)
+        else:
+            break
+
+    # 2. get indent
+    if re.match(r"(\s+)\w*", response[1]):
+        indent = re.match(r"(\s+)\w*", response[1]).group(1)
+    else:
+        return [], ''
+
+    # 3. get all line in class
+    list_lines = list()
+    for line in response[1:]:
+        if re.match(re_check1, line.rstrip()) or re.match(re_check2, line.rstrip()):
+            list_lines.append(line)
+        elif (len(line) > len(indent) and line[:len(indent)] == indent):
+            list_lines.append(line)
+        else:
+            break
+    return list_lines, indent
+
+
 def _get_all_lines_define_function(function_name, array, indentMethod=''):
     """The function use to get all lines define_function
     Args:
@@ -702,45 +741,6 @@ def _get_function_stats(array, indent):
     return list(dict.fromkeys(list_var)), n_loops, n_ifthen
 
 
-def _get_all_lines_in_class(class_name, array):
-    """The function use to get all lines of the class
-    Args:
-        IN: class_name    - name of the class will be used to get all line
-        IN: array         - list all lines of the file have this input class
-        OUT: list_lines   - Array of all line of this class
-    """
-    re_check1 = f"class {class_name}\("
-    re_check2 = f"class {class_name}:"
-    response = array.copy()
-
-    # 1. get start line
-    for line in array:
-        re_response1 = re.match(re_check1, line.rstrip())
-        re_response2 = re.match(re_check2, line.rstrip())
-
-        if re_response1 == None and re_response2 == None:
-            response.remove(line)
-        else:
-            break
-
-    # 2. get indent
-    if re.match(r"(\s+)\w*", response[1]):
-        indent = re.match(r"(\s+)\w*", response[1]).group(1)
-    else:
-        return [], ''
-
-    # 3. get all line in class
-    list_lines = list()
-    for line in response[1:]:
-        if re.match(re_check1, line.rstrip()) or re.match(re_check2, line.rstrip()):
-            list_lines.append(line)
-        elif (len(line) > len(indent) and line[:len(indent)] == indent):
-            list_lines.append(line)
-        else:
-            break
-    return list_lines, indent
-
-
 # ====================================================================================
 # MAIN
 # ====================================================================================
@@ -835,7 +835,7 @@ def test_example():
     # export_stats_pertype('parser/test3/arrow_dataset.py', "class", "parser/output/output_function.csv")
     export_stats_pertype('parser/test3/arrow_dataset.py', "method", "parser/output/output_function.csv")
     export_stats_perfile('parser/code_parser.py', "parser/output/output_file.csv")
-    export_stats_perrepo('parser/test3', "parser/output/output_repo.csv")
+    export_stats_perrepo('parser', "parser/output/output_repo.csv")
 
 if __name__ == "__main__":
     fire.Fire({
@@ -843,7 +843,7 @@ if __name__ == "__main__":
       'file': export_stats_perfile,
       'repo': export_stats_perrepo,
     })
-    # test_example()
+    test_example()
 
     '''List example to run:
         python code_parser.py type parser/test3/arrow_dataset.py method parser/output/output_method.csv
